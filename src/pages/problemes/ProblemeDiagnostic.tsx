@@ -15,10 +15,11 @@ import { useProbleme } from "../../context/ProblemeContext";
 import { useNotifier } from "../../context/SnackbarContext";
 import { useAsync } from "../../hooks/useAsync";
 import { dateHeure } from "../../utils/format";
+import { codeACopier, ouCorriger } from "../../utils/diff";
 import { options } from "../../utils/libelles";
 import { PERM } from "../../utils/permissions";
 
-function SolutionCarte({ solution, numero, peutEvaluer }: { solution: Solution; numero: number; peutEvaluer: boolean }) {
+function SolutionCarte({ solution, numero, peutEvaluer, fichier, ligne }: { solution: Solution; numero: number; peutEvaluer: boolean; fichier: string | null; ligne: number | null }) {
   const notifier = useNotifier();
   const [utilite, setUtilite] = useState("");
   const [commentaire, setCommentaire] = useState("");
@@ -36,9 +37,13 @@ function SolutionCarte({ solution, numero, peutEvaluer }: { solution: Solution; 
         <Chip size="small" color="warning" label="Proposition" />
       </Stack>
       <Typography variant="body2" sx={{ my: 1 }}>{solution.description}</Typography>
+      {(() => {
+        const ou = ouCorriger(solution.format_code === "diff" ? solution.extrait_code : null, fichier, ligne);
+        return ou ? <Typography variant="body2" sx={{ mb: 1 }}><strong>Où corriger :</strong> <code>{ou}</code></Typography> : null;
+      })()}
       {solution.extrait_code && (solution.format_code === "diff" ? <DiffBlock diff={solution.extrait_code} /> : <CodeBlock code={solution.extrait_code} />)}
       {solution.extrait_code && (
-        <Button size="small" sx={{ mt: 1 }} onClick={() => navigator.clipboard.writeText(solution.extrait_code ?? "").then(() => notifier("Code copié."))}>Copier le code</Button>
+        <Button size="small" sx={{ mt: 1 }} onClick={() => navigator.clipboard.writeText(solution.format_code === "diff" ? codeACopier(solution.extrait_code ?? "") : solution.extrait_code ?? "").then(() => notifier("Code corrigé copié."))}>Copier le code corrigé</Button>
       )}
       {solution.fiabilite && <Box sx={{ mt: 1.5 }}><FiabiliteBadge fiabilite={solution.fiabilite} titre="Probabilité de validation au test" /></Box>}
       {solution.risques && <Typography variant="body2" sx={{ mt: 1 }}><strong>Risques :</strong> {solution.risques}</Typography>}
@@ -115,7 +120,7 @@ export default function ProblemeDiagnostic() {
               </Typography>
             </Paper>
             <Typography variant="subtitle1" fontWeight={600}>Solutions proposées</Typography>
-            {diagnostic.solutions.map((s, i) => <SolutionCarte key={s.id} solution={s} numero={i + 1} peutEvaluer={peut(PERM.SOLUTION_DECIDER) && !archivee} />)}
+            {diagnostic.solutions.map((s, i) => <SolutionCarte key={s.id} solution={s} numero={i + 1} peutEvaluer={peut(PERM.SOLUTION_DECIDER) && !archivee} fichier={probleme.fichier} ligne={probleme.ligne_debut} />)}
             <Typography variant="caption" color="text.secondary">Le code proposé n'est jamais appliqué au dépôt : c'est au développeur de le reprendre, le modifier ou l'ignorer.</Typography>
           </>
         )}
