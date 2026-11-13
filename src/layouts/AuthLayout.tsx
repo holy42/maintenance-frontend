@@ -28,7 +28,6 @@ export default function AuthLayout() {
           borderRadius: 4, bgcolor: "#fff", color: "#1a365d", boxShadow: "0 22px 64px rgba(15, 42, 77, 0.12)",
           borderColor: "rgba(49, 130, 206, 0.16)",
         }}>
-          <Box sx={{ position: "absolute", top: 0, left: 0, right: 0, height: 5, background: "linear-gradient(90deg, #3182ce, #4299e0)" }} />
           <Stack alignItems="center" spacing={1.25}>
             <Box sx={{
               width: 52, height: 52, display: "grid", placeItems: "center", borderRadius: 2.5,
