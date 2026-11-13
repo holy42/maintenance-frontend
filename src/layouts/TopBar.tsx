@@ -4,33 +4,98 @@ import NotificationsOutlined from "@mui/icons-material/NotificationsOutlined";
 import PersonOutline from "@mui/icons-material/PersonOutline";
 import SearchOutlined from "@mui/icons-material/SearchOutlined";
 import { AppBar, Avatar, Badge, Box, IconButton, InputAdornment, ListItemIcon, Menu, MenuItem, TextField, Toolbar, useMediaQuery, useTheme } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { compteurNotifications } from "../api/suivi";
+import { messageErreur } from "../api/client";
+import { compteurNotifications, notifications, preferencesCanaux } from "../api/suivi";
 import { useAuth } from "../context/AuthContext";
+import { useNotifier } from "../context/SnackbarContext";
 import { useSidebar } from "../context/SidebarContext";
 import { usePolling } from "../hooks/usePolling";
-import { EVENEMENT_DONNEES_MODIFIEES } from "../utils/actualisation";
+import { EVENEMENT_DONNEES_MODIFIEES, EVENEMENT_PREFERENCES_NOTIFICATIONS_MODIFIEES } from "../utils/actualisation";
+import { emettreSonNotification, preparerSonNotification } from "../utils/sonNotification";
 
 export default function TopBar() {
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("md"));
   const { setMobileOuvert } = useSidebar();
   const { user, deconnecter } = useAuth();
+  const notifier = useNotifier();
   const navigate = useNavigate();
   const [recherche, setRecherche] = useState("");
   const [ancre, setAncre] = useState<HTMLElement | null>(null);
   const [nonLues, setNonLues] = useState(0);
+  const [preferencesChargees, setPreferencesChargees] = useState(false);
+  const [canaux, setCanaux] = useState({ son: true, navigateur: true });
+  const canauxCourants = useRef(canaux);
+  const dernierIdNotification = useRef<number | null>(null);
+  const erreurPollingSignalee = useRef(false);
+  const chargementEnCours = useRef(false);
 
-  const charger = useCallback(() => {
-    compteurNotifications().then((c) => setNonLues(c.non_lues)).catch(() => undefined);
-  }, []);
-  useEffect(charger, [charger]);
+  const charger = useCallback(async () => {
+    if (chargementEnCours.current) return;
+    chargementEnCours.current = true;
+    try {
+      if (!preferencesChargees) {
+        const [compteur, prefs] = await Promise.all([compteurNotifications(), preferencesCanaux()]);
+        setNonLues(compteur.non_lues);
+        canauxCourants.current = prefs;
+        setCanaux(prefs);
+        dernierIdNotification.current = compteur.dernier_id ?? 0;
+        setPreferencesChargees(true);
+      } else {
+        const [compteur, nouvelles] = await Promise.all([
+          compteurNotifications(),
+          notifications({ apres_id: dernierIdNotification.current ?? 0, limit: 300 }),
+        ]);
+        setNonLues(compteur.non_lues);
+        for (const n of nouvelles) {
+          dernierIdNotification.current = n.id;
+          if (canauxCourants.current.son) emettreSonNotification();
+          if (canauxCourants.current.navigateur && typeof Notification !== "undefined" && Notification.permission === "granted") {
+            const alerte = new Notification("Maintenance des applications", { body: n.message, tag: `notification-${n.id}` });
+            alerte.onclick = () => {
+              window.focus();
+              navigate("/notifications");
+              alerte.close();
+            };
+          }
+        }
+      }
+      erreurPollingSignalee.current = false;
+    } catch (e) {
+      if (!erreurPollingSignalee.current) notifier(messageErreur(e), "error");
+      erreurPollingSignalee.current = true;
+    } finally {
+      chargementEnCours.current = false;
+    }
+  }, [navigate, notifier, preferencesChargees]);
+  useEffect(() => { void charger(); }, [charger]);
   useEffect(() => {
     window.addEventListener(EVENEMENT_DONNEES_MODIFIEES, charger);
     return () => window.removeEventListener(EVENEMENT_DONNEES_MODIFIEES, charger);
   }, [charger]);
-  usePolling(charger, true, 60000);
+  useEffect(() => {
+    const actualiserCanaux = () => {
+      preferencesCanaux().then((prefs) => {
+        canauxCourants.current = prefs;
+        setCanaux(prefs);
+      }).catch((e) => notifier(messageErreur(e), "error"));
+    };
+    window.addEventListener(EVENEMENT_PREFERENCES_NOTIFICATIONS_MODIFIEES, actualiserCanaux);
+    return () => window.removeEventListener(EVENEMENT_PREFERENCES_NOTIFICATIONS_MODIFIEES, actualiserCanaux);
+  }, [notifier]);
+  useEffect(() => {
+    if (!preferencesChargees || !canaux.son) return;
+    const preparer = () => preparerSonNotification();
+    window.addEventListener("pointerdown", preparer, { once: true });
+    window.addEventListener("keydown", preparer, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", preparer);
+      window.removeEventListener("keydown", preparer);
+    };
+  }, [canaux.son, preferencesChargees]);
+  usePolling(charger, true, 10000);
 
   return (
     <AppBar position="sticky" color="inherit" elevation={0} sx={{ borderBottom: 1, borderColor: "divider", bgcolor: "background.paper", backgroundImage: "none" }}>

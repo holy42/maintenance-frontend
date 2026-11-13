@@ -153,6 +153,7 @@ export interface MessageIA {
 }
 export interface Notification { id: Id; application_id: Id | null; type_evenement: string; message: string; type_element: string | null; element_id: Id | null; lu: boolean; cree_le: string }
 export interface Preference { type_evenement: string; active: boolean }
+export interface PreferenceCanalNotification { son: boolean; navigateur: boolean }
 export interface Evenement {
   id: Id; application_id: Id | null; type_element: string; element_id: Id; auteur_id: Id | null; action: string;
   ancienne_valeur: Record<string, unknown> | null; nouvelle_valeur: Record<string, unknown> | null; commentaire: string | null; cree_le: string;

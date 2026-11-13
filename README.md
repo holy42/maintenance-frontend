@@ -62,6 +62,7 @@ src/
 - Boutons masqués selon les permissions (`GET /applications/{id}/mes-permissions`) : **simple confort**, le serveur contrôle les droits.
 - Conversation de l'assistant IA **commune** à l'équipe ; « Demander de l'aide » (tâche, sous-tâche) redirige vers elle.
 - Historique en lecture seule ; notes et messages modifiables par leur seul auteur.
+- Les alertes sonores et les notifications système sont réglables dans « Mon compte » ; elles sont activées par défaut. Le navigateur doit autoriser les notifications système séparément.
 
 ## Limites et points à décider
 
