@@ -1,4 +1,5 @@
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
+import FactCheckOutlined from "@mui/icons-material/FactCheckOutlined";
 import { Alert, Button, List, ListItemButton, ListItemText, Paper, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -42,11 +43,13 @@ export default function ProblemeTest() {
 
   return (
     <Etat loading={loading} error={error}>
-      <Stack spacing={2}>
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="subtitle1" fontWeight={600} gutterBottom>Description du test</Typography>
+      <Stack spacing={2} sx={{ maxWidth: 1000, width: "100%", mx: "auto" }}>
+        <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", borderTop: 3, borderTopColor: "secondary.main" }}>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+            <FactCheckOutlined color="primary" /><Typography variant="subtitle1" fontWeight={700}>Description du test</Typography>
+          </Stack>
           <TextField multiline minRows={4} fullWidth size="small" value={description} onChange={(e) => setDescription(e.target.value)} disabled={!modifiable}
-            placeholder="Étapes à suivre et résultat attendu" />
+            placeholder="Étapes à suivre et résultat attendu" sx={{ "& .MuiOutlinedInput-root": { bgcolor: "background.default" } }} />
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
             <Button variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={proposer} disabled={!modifiable || attente}>{attente ? "L'IA rédige…" : "Proposer avec l'IA"}</Button>
             <Button variant="outlined" onClick={sauvegarder} disabled={!modifiable || !description.trim()}>Enregistrer la description</Button>
@@ -57,13 +60,16 @@ export default function ProblemeTest() {
             Un test non validé fait passer le problème à « rouvert ».
           </Alert>
         </Paper>
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="subtitle1" fontWeight={600}>Passages de test</Typography>
+        <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", overflow: "hidden" }}>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+            <FactCheckOutlined color="primary" /><Typography variant="subtitle1" fontWeight={700}>Passages de test</Typography>
+          </Stack>
           <List>
-            {(data?.sessions ?? []).length === 0 && <Typography color="text.secondary" variant="body2">Aucun passage.</Typography>}
+            {(data?.sessions ?? []).length === 0 && <Typography color="text.secondary" variant="body2" sx={{ py: 2 }}>Aucun passage.</Typography>}
             {(data?.sessions ?? []).map((s) => (
-              <ListItemButton key={s.id} component={RouterLink} to={`/applications/${application.id}/tests/${s.id}`}>
-                <ListItemText primary={`Passage n°${s.numero} · branche ${s.branche_testee}`}
+              <ListItemButton key={s.id} component={RouterLink} to={`/applications/${application.id}/tests/${s.id}`}
+                sx={{ px: { xs: 1, sm: 1.5 }, gap: 1, borderRadius: 1.5, flexWrap: { xs: "wrap", sm: "nowrap" } }}>
+                <ListItemText primary={`Passage n°${s.numero} · branche ${s.branche_testee}`} primaryTypographyProps={{ fontWeight: 600 }}
                   secondary={`Demandé le ${dateHeure(s.demande_le)}${s.testeur_id ? ` · testeur : ${nom(s.testeur_id)}` : " · pas encore pris en charge"}`} />
                 <StatutChip groupe="statutSession" valeur={s.statut} />
               </ListItemButton>

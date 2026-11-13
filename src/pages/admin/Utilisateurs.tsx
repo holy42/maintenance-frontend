@@ -1,8 +1,9 @@
 import KeyOutlined from "@mui/icons-material/KeyOutlined";
 import PersonOffOutlined from "@mui/icons-material/PersonOffOutlined";
 import PersonOutline from "@mui/icons-material/PersonOutline";
+import PersonAddAlt1Outlined from "@mui/icons-material/PersonAddAlt1Outlined";
 import {
-  Alert, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, IconButton, Paper, Stack, Switch, Table,
+  Alert, Avatar, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, IconButton, Paper, Stack, Switch, Table,
   TableBody, TableCell, TableHead, TableRow, TextField, Tooltip,
 } from "@mui/material";
 import { useState } from "react";
@@ -49,9 +50,9 @@ export default function Utilisateurs() {
   return (
     <>
       <PageHeader titre="Utilisateurs" fil={[{ libelle: "Administration" }, { libelle: "Utilisateurs" }]}
-        actions={<Button variant="contained" onClick={() => setCreation(true)}>Nouvel utilisateur</Button>} />
+        actions={<Button variant="contained" startIcon={<PersonAddAlt1Outlined />} onClick={() => setCreation(true)}>Nouvel utilisateur</Button>} />
       <Etat loading={loading} error={error}>
-        <Paper sx={{ overflowX: "auto" }}>
+        <Paper sx={{ overflowX: "auto", borderRadius: 2, display: { xs: "none", sm: "block" } }}>
           <Table size="small">
             <TableHead><TableRow><TableCell>Utilisateur</TableCell><TableCell>E-mail</TableCell><TableCell>Statut</TableCell><TableCell align="right">Actions</TableCell></TableRow></TableHead>
             <TableBody>
@@ -72,15 +73,40 @@ export default function Utilisateurs() {
             </TableBody>
           </Table>
         </Paper>
+        <Stack spacing={1.25} sx={{ display: { xs: "flex", sm: "none" } }}>
+          {(utilisateurs ?? []).map((u) => (
+            <Paper key={u.id} sx={{ p: 1.5, borderRadius: 2 }}>
+              <Stack direction="row" spacing={1.25} alignItems="center">
+                <Avatar sx={{ bgcolor: "primary.main", width: 40, height: 40 }}>{u.identifiant.slice(0, 1).toUpperCase()}</Avatar>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap>
+                    <Box component="span" sx={{ fontWeight: 700, overflowWrap: "anywhere" }}>{u.identifiant}</Box>
+                    {u.est_admin && <Chip size="small" label="Administrateur" />}
+                  </Stack>
+                  <Box sx={{ color: "text.secondary", fontSize: 13, overflowWrap: "anywhere" }}>{u.email ?? "E-mail non renseigné"}</Box>
+                  <Chip size="small" sx={{ mt: 0.75 }} label={u.actif ? "Actif" : "Désactivé"} color={u.actif ? "success" : "default"} variant={u.actif ? "filled" : "outlined"} />
+                </Box>
+              </Stack>
+              <Stack direction="row" justifyContent="flex-end" sx={{ mt: 0.5 }}>
+                <Tooltip title="Attribuer un rôle dans une équipe"><IconButton onClick={() => setCible(u)} aria-label="Attribuer un rôle"><PersonOutline /></IconButton></Tooltip>
+                <Tooltip title="Réinitialiser le mot de passe"><IconButton onClick={() => agir(() => reinitialiserMotDePasseUtilisateur(u.id), "Lien de réinitialisation envoyé.")} aria-label="Réinitialiser le mot de passe"><KeyOutlined /></IconButton></Tooltip>
+                {u.actif
+                  ? <Tooltip title="Désactiver (on ne supprime jamais un compte)"><IconButton onClick={() => agir(() => desactiverUtilisateur(u.id), "Compte désactivé.")} aria-label="Désactiver"><PersonOffOutlined /></IconButton></Tooltip>
+                  : <Button size="small" onClick={() => agir(() => reactiverUtilisateur(u.id), "Compte réactivé.")}>Réactiver</Button>}
+              </Stack>
+            </Paper>
+          ))}
+          {(utilisateurs ?? []).length === 0 && <Paper sx={{ p: 3, textAlign: "center", color: "text.secondary" }}>Aucun utilisateur.</Paper>}
+        </Stack>
       </Etat>
 
       <Dialog open={creation} onClose={() => setCreation(false)} fullWidth maxWidth="xs">
         <DialogTitle>Nouvel utilisateur</DialogTitle>
         <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            <TextField size="small" label="Identifiant" value={form.identifiant} onChange={(e) => setForm({ ...form, identifiant: e.target.value })} />
-            <TextField size="small" label="E-mail (facultatif)" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-            <TextField size="small" label="Mot de passe initial" type="password" value={form.mot_de_passe} onChange={(e) => setForm({ ...form, mot_de_passe: e.target.value })} />
+          <Stack spacing={2} sx={{ mt: 1, maxWidth: 440, mx: "auto" }}>
+            <TextField fullWidth size="small" label="Identifiant" value={form.identifiant} onChange={(e) => setForm({ ...form, identifiant: e.target.value })} />
+            <TextField fullWidth size="small" label="E-mail (facultatif)" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+            <TextField fullWidth size="small" label="Mot de passe initial" type="password" value={form.mot_de_passe} onChange={(e) => setForm({ ...form, mot_de_passe: e.target.value })} />
             <FormControlLabel label="Administrateur de la plateforme" control={<Switch checked={form.est_admin} onChange={(e) => setForm({ ...form, est_admin: e.target.checked })} />} />
             {erreur && <Alert severity="error">{erreur}</Alert>}
           </Stack>
@@ -91,7 +117,7 @@ export default function Utilisateurs() {
       <Dialog open={cible !== null} onClose={() => setCible(null)} fullWidth maxWidth="xs">
         <DialogTitle>Attribuer un rôle à {cible?.identifiant}</DialogTitle>
         <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
+          <Stack spacing={2} sx={{ mt: 1, maxWidth: 440, mx: "auto" }}>
             <ChampSelect label="Équipe" valeur={equipeId} onChange={setEquipeId} options={(equipes ?? []).map((e) => ({ valeur: String(e.id), libelle: e.nom }))} />
             <ChampSelect label="Rôle" valeur={roleId} onChange={setRoleId} options={(roles ?? []).map((r) => ({ valeur: String(r.id), libelle: r.nom }))} />
           </Stack>

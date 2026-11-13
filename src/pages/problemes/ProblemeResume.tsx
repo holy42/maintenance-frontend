@@ -1,4 +1,8 @@
+import AssignmentOutlined from "@mui/icons-material/AssignmentOutlined";
+import TuneOutlined from "@mui/icons-material/TuneOutlined";
+import { alpha, type Theme } from "@mui/material/styles";
 import { Box, Button, Paper, Stack, TextField, Typography } from "@mui/material";
+import type { ReactNode } from "react";
 import FiabiliteBadge from "../../components/FiabiliteBadge";
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -42,31 +46,41 @@ export default function ProblemeResume() {
     try { await changerStatutProbleme(p.id, nouveau); notifier("Statut modifié."); recharger(); } catch (e) { notifier(messageErreur(e), "error"); }
   }
 
+  const carte = { p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", boxShadow: (theme: Theme) => `0 4px 18px ${alpha(theme.palette.primary.dark, theme.palette.mode === "light" ? 0.045 : 0.12)}` };
+  const titreSection = (icone: ReactNode, texte: string) => (
+    <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5, color: "primary.dark" }}>
+      {icone}<Typography variant="subtitle1" fontWeight={700} color="text.primary">{texte}</Typography>
+    </Stack>
+  );
   return (
-    <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.7fr 1fr" } }}>
+    <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.7fr 1fr" }, maxWidth: 1220, width: "100%", mx: "auto", alignItems: "start" }}>
       <Stack spacing={2}>
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="subtitle1" fontWeight={600}>Description</Typography>
-          <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>{p.description ?? "—"}</Typography>
-          <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1.5 }}>Comportement attendu</Typography>
-          <Typography variant="body2">{p.comportement_attendu ?? "—"}</Typography>
-          <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1.5 }}>Comportement observé</Typography>
-          <Typography variant="body2">{p.comportement_observe ?? "—"}</Typography>
+        <Paper sx={carte}>
+          {titreSection(<AssignmentOutlined fontSize="small" />, "Description")}
+          <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", lineHeight: 1.75 }}>{p.description ?? "—"}</Typography>
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5, mt: 2 }}>
+            {[["Comportement attendu", p.comportement_attendu], ["Comportement observé", p.comportement_observe]].map(([label, valeur]) => (
+              <Box key={label} sx={{ p: 1.5, borderRadius: 2, bgcolor: "action.hover", borderLeft: 3, borderColor: "secondary.main" }}>
+                <Typography variant="caption" color="text.secondary" fontWeight={700} display="block" sx={{ mb: 0.5 }}>{label}</Typography>
+                <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}>{valeur || "—"}</Typography>
+              </Box>
+            ))}
+          </Box>
         </Paper>
         {(p.fichier || p.extrait_code) && (
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom>Localisation</Typography>
-            <Typography variant="body2" sx={{ fontFamily: "monospace", mb: 1 }}>{p.fichier}{p.ligne_debut ? ` · ligne ${p.ligne_debut}` : ""}{p.fonction ? ` · ${p.fonction}()` : ""}</Typography>
+          <Paper sx={carte}>
+            {titreSection(<TuneOutlined fontSize="small" />, "Localisation")}
+            <Typography variant="body2" sx={{ fontFamily: "monospace", mb: 1.5, overflowWrap: "anywhere", color: "text.secondary" }}>{p.fichier}{p.ligne_debut ? ` · ligne ${p.ligne_debut}` : ""}{p.fonction ? ` · ${p.fonction}()` : ""}</Typography>
             {p.extrait_code && <CodeBlock code={p.extrait_code} premiereLigne={p.ligne_debut ?? 1} surlignees={p.ligne_debut ? [p.ligne_debut] : []} />}
           </Paper>
         )}
         {p.fiabilite_preuve && (
-          <Paper sx={{ p: 2 }}>
+          <Paper sx={carte}>
             <Typography variant="subtitle1" fontWeight={600} gutterBottom>Fiabilité de la preuve d'origine</Typography>
             <FiabiliteBadge fiabilite={p.fiabilite_preuve} titre="Probabilité d'anomalie réelle" />
           </Paper>
         )}
-        <Paper sx={{ p: 2 }}>
+        <Paper sx={carte}>
           <Typography variant="subtitle1" fontWeight={600}>Origine</Typography>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.5 }}>
             <SourceBadge source={p.source} />
@@ -77,10 +91,10 @@ export default function ProblemeResume() {
         </Paper>
       </Stack>
 
-      <Paper sx={{ p: 2, alignSelf: "start" }}>
-        <Typography variant="subtitle1" fontWeight={600} gutterBottom>Propriétés</Typography>
+      <Paper sx={{ ...carte, position: { md: "sticky" }, top: { md: 84 } }}>
+        {titreSection(<TuneOutlined fontSize="small" />, "Propriétés")}
         <Stack spacing={2}>
-          <Typography variant="caption" color="text.secondary">{p.code} · créé le {dateHeure(p.cree_le)} (non modifiables)</Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ p: 1, borderRadius: 1.5, bgcolor: "action.hover" }}>{p.code} · créé le {dateHeure(p.cree_le)} (non modifiables)</Typography>
           <ChampSelect label="Statut" valeur={p.statut} onChange={statut} disabled={!modifiable || suivants.length === 0}
             options={[p.statut, ...suivants].map((s) => ({ valeur: s, libelle: libelle("statutProbleme", s) }))} />
           <Typography variant="caption" color="text.secondary" sx={{ mt: "-8px !important" }}>

@@ -1,3 +1,5 @@
+import GavelOutlined from "@mui/icons-material/GavelOutlined";
+import HistoryOutlined from "@mui/icons-material/HistoryOutlined";
 import { Alert, Button, Checkbox, FormControlLabel, Paper, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { messageErreur } from "../../api/client";
@@ -61,20 +63,27 @@ export default function ProblemeDecision() {
 
   return (
     <Etat loading={loading} error={error}>
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{ maxWidth: 960, width: "100%", mx: "auto" }}>
         {!statutOk && <Alert severity="info">La décision se prend pour un problème confirmé, en cours ou rouvert (statut actuel : {libelle("statutProbleme", probleme.statut)}).</Alert>}
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="subtitle1" fontWeight={600} gutterBottom>Quelle correction retenez-vous ?</Typography>
+        <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", borderTop: 3, borderTopColor: "secondary.main" }}>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+            <GavelOutlined color="primary" /><Typography variant="subtitle1" fontWeight={700}>Quelle correction retenez-vous ?</Typography>
+          </Stack>
           <RadioGroup value={type} onChange={(e) => setType(e.target.value as TypeDecision)}>
             {CHOIX.map((c) => (
               <FormControlLabel key={c.valeur} value={c.valeur} disabled={!modifiable}
-                control={<Radio />} label={<span>{libelle("typeDecision", c.valeur)}<Typography variant="caption" display="block" color="text.secondary">{c.aide}</Typography></span>} />
+                control={<Radio />} label={<span>{libelle("typeDecision", c.valeur)}<Typography variant="caption" display="block" color="text.secondary">{c.aide}</Typography></span>}
+                sx={{
+                  m: 0, mb: 0.75, px: 1, py: 0.5, borderRadius: 2, border: 1, borderColor: type === c.valeur ? "secondary.main" : "divider",
+                  bgcolor: type === c.valeur ? "action.selected" : "transparent", transition: "background-color .15s, border-color .15s",
+                  "&:hover": { bgcolor: "action.hover" }, "& .MuiFormControlLabel-label": { py: 0.5 },
+                }} />
             ))}
           </RadioGroup>
           <Stack spacing={2} sx={{ mt: 2 }}>
             {avecIA && (
               <Stack>
-                <Typography variant="body2" color="text.secondary">Solutions de l'IA concernées (une ou plusieurs)</Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 0.75 }}>Solutions de l'IA concernées (une ou plusieurs)</Typography>
                 {toutes.length === 0 && <Alert severity="warning">Aucune solution de l'IA : demandez d'abord un diagnostic.</Alert>}
                 {toutes.map((s) => (
                   <FormControlLabel key={s.id} label={s.texte} disabled={!modifiable}
@@ -98,15 +107,22 @@ export default function ProblemeDecision() {
             <Typography variant="caption" color="text.secondary">La demande de test se fait depuis l'onglet « Tests », quand toutes les tâches sont terminées.</Typography>
           </Stack>
         </Paper>
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="subtitle1" fontWeight={600} gutterBottom>Décisions précédentes</Typography>
+        <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider" }}>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+            <HistoryOutlined color="primary" /><Typography variant="subtitle1" fontWeight={700}>Décisions précédentes</Typography>
+          </Stack>
           {(decisions ?? []).length === 0 && <Typography color="text.secondary" variant="body2">Aucune décision.</Typography>}
-          {(decisions ?? []).map((d) => (
-            <Typography key={d.id} variant="body2" sx={{ mb: 0.5 }}>
-              {dateHeure(d.cree_le)} · {libelle("typeDecision", d.type_decision)} · {nom(d.developpeur_id)}
-              {d.motif_non_utilisation ? ` · ${libelle("motifNonUtilisation", d.motif_non_utilisation)}` : ""}
-            </Typography>
-          ))}
+          <Stack spacing={1}>
+            {(decisions ?? []).map((d) => (
+              <Paper key={d.id} variant="outlined" sx={{ p: 1.25, borderRadius: 1.75, bgcolor: "action.hover" }}>
+                <Typography variant="body2" fontWeight={600}>{libelle("typeDecision", d.type_decision)}</Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {dateHeure(d.cree_le)} · {nom(d.developpeur_id)}
+                  {d.motif_non_utilisation ? ` · ${libelle("motifNonUtilisation", d.motif_non_utilisation)}` : ""}
+                </Typography>
+              </Paper>
+            ))}
+          </Stack>
         </Paper>
       </Stack>
     </Etat>

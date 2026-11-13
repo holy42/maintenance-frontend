@@ -57,7 +57,7 @@ export default function ResultatDetail() {
               <SourceBadge source={r.source} /><StatutChip groupe="validation" valeur={r.statut_validation} />
             </Stack>} />
           {r.source === "ia" && <Alert severity="warning" sx={{ mb: 2 }}>Hypothèse de l'IA, non vérifiée : elle n'a de valeur qu'après examen par une personne.</Alert>}
-          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.5fr 1fr" } }}>
+          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.5fr 1fr" }, maxWidth: 1200, width: "100%", mx: "auto" }}>
             <Stack spacing={2}>
               <Paper sx={{ p: 2 }}>
                 <Typography variant="subtitle1" fontWeight={600}>Localisation</Typography>

@@ -1,5 +1,7 @@
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import EditOutlined from "@mui/icons-material/EditOutlined";
+import StickyNote2Outlined from "@mui/icons-material/StickyNote2Outlined";
+import { alpha } from "@mui/material/styles";
 import { Button, Chip, IconButton, Paper, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { messageErreur } from "../../api/client";
@@ -35,20 +37,25 @@ export default function ProblemeNotes() {
 
   return (
     <Etat loading={loading} error={error}>
-      <Stack spacing={2}>
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="subtitle1" fontWeight={600} gutterBottom>Ajouter une note</Typography>
+      <Stack spacing={1.5} sx={{ maxWidth: 960, width: "100%", mx: "auto" }}>
+        <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", borderTop: 3, borderTopColor: "secondary.main" }}>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+            <StickyNote2Outlined color="primary" /><Typography variant="subtitle1" fontWeight={700}>Ajouter une note</Typography>
+          </Stack>
           <TextField multiline minRows={3} fullWidth size="small" placeholder="Votre note" value={contenu} onChange={(e) => setContenu(e.target.value)} disabled={!peutEcrire} />
-          <Stack direction="row" justifyContent="space-between" sx={{ mt: 1 }}>
-            <ChampSelect fullWidth={false} label="Type" valeur={type} onChange={setType} options={options("typeNote")} disabled={!peutEcrire} />
-            <Button variant="contained" disabled={!peutEcrire || !contenu.trim()}
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ xs: "stretch", sm: "center" }} justifyContent="space-between" sx={{ mt: 1.25 }}>
+            <ChampSelect fullWidth label="Type" valeur={type} onChange={setType} options={options("typeNote")} disabled={!peutEcrire} />
+            <Button variant="contained" sx={{ flexShrink: 0 }} disabled={!peutEcrire || !contenu.trim()}
               onClick={() => agir(async () => { await ajouterNoteProbleme(probleme.id, contenu.trim(), type); setContenu(""); })}>Ajouter la note</Button>
           </Stack>
         </Paper>
         {(data ?? []).slice().reverse().map((n) => (
-          <Paper key={n.id} sx={{ p: 2, opacity: n.supprime_le ? 0.65 : 1 }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Typography variant="body2"><strong>{nom(n.auteur_id)}</strong> · {dateHeure(n.cree_le)}{n.modifie_le ? ` · modifiée le ${dateHeure(n.modifie_le)}` : ""}</Typography>
+          <Paper key={n.id} sx={{
+            p: { xs: 1.5, sm: 2 }, borderRadius: 2, borderColor: "divider", opacity: n.supprime_le ? 0.65 : 1,
+            borderLeft: 3, borderLeftColor: (theme) => alpha(theme.palette.secondary.main, 0.7),
+          }}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }}>
+              <Typography variant="body2" sx={{ overflowWrap: "anywhere" }}><strong>{nom(n.auteur_id)}</strong> · {dateHeure(n.cree_le)}{n.modifie_le ? ` · modifiée le ${dateHeure(n.modifie_le)}` : ""}</Typography>
               <Chip size="small" variant="outlined" label={libelle("typeNote", n.type)} />
             </Stack>
             {n.supprime_le ? (

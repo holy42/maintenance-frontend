@@ -1,4 +1,10 @@
-import { Button, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import ArrowForwardOutlined from "@mui/icons-material/ArrowForwardOutlined";
+import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
+import ErrorOutlineOutlined from "@mui/icons-material/ErrorOutlineOutlined";
+import PlayCircleOutline from "@mui/icons-material/PlayCircleOutline";
+import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
+import { Box, Button, Chip, ListItemButton, Paper, Stack, Typography } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { useCallback } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { listVerifications } from "../../api/verifications";
@@ -32,30 +38,62 @@ export default function VerificationsListe() {
     <>
       <PageHeader titre="Vérifications" sousTitre={enCours ? "Une vérification est en cours : la liste se met à jour toute seule." : undefined}
         actions={ctx && ctx.peut(PERM.VERIFICATION_LANCER) && !ctx.archivee
-          ? <Button variant="contained" component={RouterLink} to={`/applications/${ctx.application.id}/verifications/nouvelle`}>Nouvelle vérification</Button> : undefined} />
+          ? <Button variant="contained" startIcon={<PlayCircleOutline />} component={RouterLink} to={`/applications/${ctx.application.id}/verifications/nouvelle`}>Nouvelle vérification</Button> : undefined} />
       <Etat loading={loading && !data} error={error}>
-        <Paper sx={{ overflowX: "auto" }}>
-          <Table size="small">
-            <TableHead><TableRow>
-              <TableCell>N°</TableCell>{!ctx && <TableCell>Application</TableCell>}<TableCell>Date et auteur</TableCell><TableCell>Branche · version</TableCell>
-              <TableCell>Statut</TableCell><TableCell>Résultats</TableCell><TableCell />
-            </TableRow></TableHead>
-            <TableBody>
-              {(data ?? []).length === 0 && <TableRow><TableCell colSpan={7}><Typography color="text.secondary">Aucune vérification.</Typography></TableCell></TableRow>}
-              {(data ?? []).map((v) => (
-                <TableRow key={v.id} hover>
-                  <TableCell>#{v.id}</TableCell>
-                  {!ctx && <TableCell>{trouver(v.application_id)?.nom ?? `#${v.application_id}`}</TableCell>}
-                  <TableCell>{dateHeure(v.debut_le)}<Typography variant="caption" display="block" color="text.secondary">{nom(v.declenchee_par)}</Typography></TableCell>
-                  <TableCell>{v.branche} · {v.commit_analyse?.slice(0, 8) ?? "—"}</TableCell>
-                  <TableCell><StatutChip groupe="statutVerification" valeur={v.statut} />{v.motif_echec && <Typography variant="caption" display="block" color="error">{v.motif_echec}</Typography>}</TableCell>
-                  <TableCell>{v.resultat_global ?? "—"}</TableCell>
-                  <TableCell align="right"><Button size="small" component={RouterLink} to={`/applications/${v.application_id}/verifications/${v.id}`}>Ouvrir</Button></TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <Paper sx={{ p: { xs: 1.5, sm: 2 }, mb: 1.5 }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
+            <Box>
+              <Typography variant="subtitle1" fontWeight={700}>{(data ?? []).length} vérification(s)</Typography>
+              <Typography variant="caption" color="text.secondary">Historique des contrôles de vos applications</Typography>
+            </Box>
+            {enCours && <Chip size="small" color="info" icon={<PlayCircleOutline />} label="Mise à jour en direct" />}
+          </Stack>
         </Paper>
+        {(data ?? []).length === 0 ? (
+          <Paper sx={{ p: 5, textAlign: "center", borderStyle: "dashed" }}>
+            <PlayCircleOutline color="disabled" sx={{ fontSize: 40, mb: 1 }} />
+            <Typography variant="h6" fontWeight={700}>Aucune vérification</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Les vérifications réalisées apparaîtront ici.</Typography>
+          </Paper>
+        ) : (
+          <Stack spacing={1.25}>
+            {(data ?? []).map((v) => {
+              const ton = v.statut === "terminee" ? "success" : v.statut === "echouee" ? "error" : v.statut === "en_cours" ? "info" : "warning";
+              const icone = v.statut === "terminee" ? <CheckCircleOutline /> : v.statut === "echouee" ? <ErrorOutlineOutlined /> : v.statut === "en_cours" ? <PlayCircleOutline /> : <ScheduleOutlined />;
+              return (
+                <Paper key={v.id} sx={{ overflow: "hidden" }}>
+                  <ListItemButton component={RouterLink} to={`/applications/${v.application_id}/verifications/${v.id}`}
+                    sx={{ p: { xs: 1.5, sm: 2 }, gap: 1.5, alignItems: "flex-start" }}>
+                    <Box sx={(theme) => ({
+                      width: 44, height: 44, borderRadius: 2, display: "grid", placeItems: "center", flexShrink: 0,
+                      color: theme.palette[ton].main,
+                      bgcolor: alpha(theme.palette[ton].main, theme.palette.mode === "light" ? 0.12 : 0.2),
+                    })}>
+                      {icone}
+                    </Box>
+                    <Stack spacing={0.75} sx={{ minWidth: 0, flex: 1 }}>
+                      <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+                        <Typography variant="subtitle2" fontWeight={700}>Vérification #{v.id}</Typography>
+                        <StatutChip groupe="statutVerification" valeur={v.statut} />
+                        {!ctx && <Chip size="small" variant="outlined" label={trouver(v.application_id)?.nom ?? `Application #${v.application_id}`} />}
+                      </Stack>
+                      <Typography variant="body2" color="text.secondary">
+                        {dateHeure(v.debut_le)} · {nom(v.declenchee_par)}
+                      </Typography>
+                      <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap>
+                        <Chip size="small" variant="outlined" label={`Branche · ${v.branche}`} />
+                        <Chip size="small" variant="outlined" label={`Commit · ${v.commit_analyse?.slice(0, 8) ?? "—"}`} />
+                        {v.resultat_global && <Chip size="small" color="secondary" label={v.resultat_global} />}
+                      </Stack>
+                      {v.motif_echec && <Typography variant="caption" color="error.main">{v.motif_echec}</Typography>}
+                    </Stack>
+                    <ArrowForwardOutlined fontSize="small" color="action" sx={{ alignSelf: "center", flexShrink: 0 }} />
+                  </ListItemButton>
+                </Paper>
+              );
+            })}
+          </Stack>
+        )}
       </Etat>
     </>
   );

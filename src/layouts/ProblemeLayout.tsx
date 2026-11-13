@@ -81,7 +81,12 @@ export default function ProblemeLayout() {
               </>
             }
           />
-          <Tabs value={segment} variant="scrollable" scrollButtons="auto" sx={{ mb: 2 }}
+          <Tabs value={segment} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile
+            sx={{
+              mb: 2, minHeight: 44, borderBottom: 1, borderColor: "divider",
+              "& .MuiTab-root": { minHeight: 44, px: { xs: 1.5, sm: 2 }, fontWeight: 600, textTransform: "none", whiteSpace: "nowrap" },
+              "& .MuiTabs-indicator": { height: 3, borderRadius: "3px 3px 0 0" },
+            }}
             onChange={(_, v: string) => navigate(v ? `${base}/${v}` : base)}>
             {ONGLETS.map((o) => <Tab key={o.seg} value={o.seg} label={o.libelle} />)}
           </Tabs>

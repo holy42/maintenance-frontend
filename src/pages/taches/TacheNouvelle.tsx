@@ -73,7 +73,7 @@ export default function TacheNouvelle() {
     <>
       <PageHeader titre="Créer des tâches à partir d'un problème" fil={[{ libelle: "Tâches", to: `/applications/${application.id}/taches` }, { libelle: "Nouvelles tâches" }]} />
       {archivee && <Alert severity="warning" sx={{ mb: 2 }}>Application archivée : création impossible.</Alert>}
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{ maxWidth: 960, width: "100%", mx: "auto" }}>
         <Paper sx={{ p: 2 }}>
           <ChampSelect label="Problème" valeur={pid} onChange={(v) => { setPid(v); setBrouillons([]); }}
             options={(candidats ?? []).filter((p) => ["confirme", "en_cours", "rouvert"].includes(p.statut)).map((p) => ({ valeur: String(p.id), libelle: `${p.code} · ${p.titre}` }))} />

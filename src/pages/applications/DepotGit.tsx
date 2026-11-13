@@ -1,8 +1,9 @@
-import { Alert, Button, Chip, List, ListItem, ListItemText, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Chip, Divider, Paper, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { commitsDepot, definirDepot, getDepot, testerDepot } from "../../api/applications";
 import { messageErreur } from "../../api/client";
 import Etat from "../../components/Etat";
+import PageHeader from "../../components/PageHeader";
 import { useApplication } from "../../context/ApplicationContext";
 import { useNotifier } from "../../context/SnackbarContext";
 import { useAsync } from "../../hooks/useAsync";
@@ -39,43 +40,90 @@ export default function DepotGit() {
 
   return (
     <Etat loading={loading} error={error}>
-      <Stack spacing={2} sx={{ maxWidth: 760 }}>
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="subtitle1" fontWeight={600} gutterBottom>Connexion au dépôt</Typography>
-          <Stack spacing={2}>
-            <TextField size="small" label="URL du dépôt" value={url} onChange={(e) => setUrl(e.target.value)} disabled={!modifiable} />
-            <TextField size="small" label="Branche par défaut" value={branche} onChange={(e) => setBranche(e.target.value)} disabled={!modifiable} />
-            <TextField size="small" label="Jeton d'accès" type="password" value={jeton} onChange={(e) => setJeton(e.target.value)} disabled={!modifiable}
-              placeholder={depot?.jeton_configure ? "•••••• (déjà configuré, laisser vide pour le conserver)" : ""}
-              helperText="Chiffré côté serveur et jamais réaffiché." />
-            <Stack direction="row" spacing={1}>
-              <Button variant="outlined" onClick={tester} disabled={!depot}>Tester la connexion</Button>
-              <Button variant="contained" onClick={enregistrer} disabled={!modifiable || !url.trim()}>Enregistrer</Button>
+      <>
+      <PageHeader titre="Dépôt Git" sousTitre="Configurez une source de code consultée en lecture seule pour cette application." />
+      <Stack spacing={2} sx={{ maxWidth: 1440, width: "100%", mx: "auto" }}>
+        <Paper sx={{ overflow: "hidden" }}>
+          <Box sx={{ p: { xs: 2, sm: 2.5 } }}>
+            <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={1}>
+              <Box>
+                <Typography variant="overline" color="secondary.main" letterSpacing={1}>CONFIGURATION</Typography>
+                <Typography variant="h6" component="h2" fontWeight={700}>Connexion au dépôt</Typography>
+              </Box>
+              <Chip
+                size="small"
+                label={depot ? "Dépôt configuré" : "Non configuré"}
+                color={depot ? "success" : "default"}
+                variant={depot ? "filled" : "outlined"}
+              />
             </Stack>
-            {depot && <Typography variant="caption" color="text.secondary">Dernière synchronisation : {dateHeure(depot.derniere_synchro_le)}</Typography>}
-          </Stack>
-          <Alert severity="info" sx={{ mt: 2 }}>Accès en lecture seule : la plateforme lit les branches et les commits mais n'écrit jamais dans le dépôt.</Alert>
+            <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr", sm: "1.5fr 1fr" }, mt: 2 }}>
+              <TextField fullWidth label="URL du dépôt" value={url} onChange={(e) => setUrl(e.target.value)} disabled={!modifiable}
+                placeholder="https://… ou git@…"
+                sx={{ gridColumn: { xs: "auto", sm: "1 / -1" } }} />
+              <TextField fullWidth label="Branche par défaut" value={branche} onChange={(e) => setBranche(e.target.value)} disabled={!modifiable}
+                helperText="Branche utilisée pour les vérifications." />
+              <TextField fullWidth label="Jeton d'accès" type="password" value={jeton} onChange={(e) => setJeton(e.target.value)} disabled={!modifiable}
+                placeholder={depot?.jeton_configure ? "Déjà configuré — laisser vide pour le conserver" : "Facultatif"}
+                helperText="Chiffré côté serveur et jamais réaffiché." />
+            </Box>
+            <Stack direction={{ xs: "column-reverse", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={1.5} sx={{ mt: 2 }}>
+              {depot
+                ? <Typography variant="caption" color="text.secondary">Dernière synchronisation : {dateHeure(depot.derniere_synchro_le)}</Typography>
+                : <Typography variant="caption" color="text.secondary">Enregistrez le dépôt pour tester la connexion et consulter ses branches.</Typography>}
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                <Button variant="outlined" onClick={tester} disabled={!depot} sx={{ width: { xs: "100%", sm: "auto" } }}>Tester la connexion</Button>
+                <Button variant="contained" onClick={enregistrer} disabled={!modifiable || !url.trim()} sx={{ width: { xs: "100%", sm: "auto" } }}>Enregistrer</Button>
+              </Stack>
+            </Stack>
+          </Box>
+          <Divider />
+          <Alert severity="info" sx={{ border: 0, borderRadius: 0 }}>
+            Accès en lecture seule : la plateforme lit les branches et les commits mais n'écrit jamais dans le dépôt.
+          </Alert>
         </Paper>
         {branches && (
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom>Branches</Typography>
+          <Paper sx={{ p: { xs: 2, sm: 2.5 } }}>
+            <Typography variant="h6" component="h2" fontWeight={700}>Branches disponibles</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>Choisissez une branche pour la définir comme branche par défaut.</Typography>
+            {branches.length === 0 && <Typography variant="body2" color="text.secondary">Aucune branche disponible.</Typography>}
             <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-              {branches.map((b) => <Chip key={b} label={b} onClick={() => setBranche(b)} color={b === branche ? "primary" : "default"} />)}
+              {branches.map((b) => (
+                <Chip key={b} label={b} onClick={() => setBranche(b)} clickable
+                  color={b === branche ? "primary" : "default"} variant={b === branche ? "filled" : "outlined"}
+                  sx={{ fontFamily: "monospace" }} />
+              ))}
             </Stack>
           </Paper>
         )}
         {depot && (
-          <Paper sx={{ p: 2 }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Typography variant="subtitle1" fontWeight={600}>Derniers commits de {branche}</Typography>
-              <Button size="small" onClick={afficherCommits}>Afficher</Button>
+          <Paper sx={{ p: { xs: 2, sm: 2.5 } }}>
+            <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={1}>
+              <Box>
+                <Typography variant="h6" component="h2" fontWeight={700}>Historique des commits</Typography>
+                <Typography variant="body2" color="text.secondary">Branche : <Box component="span" sx={{ fontFamily: "monospace", color: "text.primary" }}>{branche}</Box></Typography>
+              </Box>
+              <Button size="small" variant="outlined" onClick={afficherCommits}>Afficher les commits</Button>
             </Stack>
-            {commits && <List dense>{commits.map((c) => (
-              <ListItem key={c.commit}><ListItemText primary={`${c.commit.slice(0, 8)} · ${c.sujet}`} secondary={`${c.auteur} · ${dateHeure(c.date)}`} /></ListItem>
-            ))}</List>}
+            {commits === null
+              ? <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>Chargez les derniers commits de cette branche.</Typography>
+              : commits.length === 0
+                ? <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>Aucun commit disponible pour cette branche.</Typography>
+                : <Stack spacing={1} sx={{ mt: 2 }}>
+                  {commits.map((c) => (
+                    <Paper key={c.commit} sx={{ p: 1.5, bgcolor: "action.hover" }}>
+                      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={0.75}>
+                        <Typography variant="body2" fontWeight={600}>{c.sujet}</Typography>
+                        <Chip size="small" variant="outlined" label={c.commit.slice(0, 8)} sx={{ fontFamily: "monospace", alignSelf: { xs: "flex-start", sm: "center" } }} />
+                      </Stack>
+                      <Typography variant="caption" color="text.secondary">{c.auteur} · {dateHeure(c.date)}</Typography>
+                    </Paper>
+                  ))}
+                </Stack>}
           </Paper>
         )}
       </Stack>
+      </>
     </Etat>
   );
 }

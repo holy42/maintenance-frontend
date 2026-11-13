@@ -60,5 +60,19 @@ export function couleur(groupe: GroupeLibelle, valeur?: string | null): CouleurC
   return (valeur && COULEURS[groupe]?.[valeur]) || "default";
 }
 
+export type CouleurEvenement = "error" | "warning" | "success" | "info";
+
+export function libelleEvenement(action: string): string {
+  const texte = libelle("evenement", action);
+  return texte === action ? action.replace(/_/g, " ") : texte;
+}
+
+export function couleurEvenement(action: string): CouleurEvenement {
+  if (/(critique|non_valide|echec)/.test(action)) return "error";
+  if (/(rouvert|echeance_proche|assigne)/.test(action)) return "warning";
+  if (/(valide|terminee|cree|ajoute|enregistree)/.test(action)) return "success";
+  return "info";
+}
+
 /** Types d'événements de notification que l'utilisateur peut activer ou non. */
 export const TYPES_NOTIFICATION = Object.keys(L.evenement);

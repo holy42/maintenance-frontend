@@ -8,11 +8,16 @@ import TopBar from "./TopBar";
 export default function GlobalLayout() {
   return (
     <SidebarProvider>
-      <Box sx={{ display: "flex", minHeight: "100vh" }}>
+      <Box sx={{
+        display: "flex", minHeight: "100vh",
+        "@supports (height: 100dvh)": { minHeight: "100dvh" },
+      }}>
         <Sidebar />
-        <Box component="main" sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
+        <Box component="main" sx={{ flex: 1, minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column", bgcolor: "background.default" }}>
           <TopBar />
-          <Box sx={{ p: { xs: 2, md: 3 }, flex: 1 }}><Outlet /></Box>
+          <Box sx={{ p: { xs: 1.5, sm: 2, lg: 3 }, flex: 1, minWidth: 0, minHeight: 0, display: "flex", flexDirection: "column" }}>
+            <Outlet />
+          </Box>
         </Box>
       </Box>
     </SidebarProvider>

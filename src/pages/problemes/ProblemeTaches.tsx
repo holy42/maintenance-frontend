@@ -1,4 +1,5 @@
-import { Alert, Button, List, ListItemButton, ListItemText, Paper, Typography } from "@mui/material";
+import AddTaskOutlined from "@mui/icons-material/AddTaskOutlined";
+import { Alert, Box, Button, List, ListItemButton, ListItemText, Paper, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { tachesDuProbleme } from "../../api/taches";
 import Etat from "../../components/Etat";
@@ -19,16 +20,18 @@ export default function ProblemeTaches() {
 
   return (
     <Etat loading={loading} error={error}>
-      <Button variant="contained" sx={{ mb: 2 }} disabled={!peutCreer} component={RouterLink} to={`/applications/${application.id}/taches/nouvelle?problemeId=${probleme.id}`}>
+      <Button variant="contained" startIcon={<AddTaskOutlined />} sx={{ mb: 2 }} disabled={!peutCreer} component={RouterLink} to={`/applications/${application.id}/taches/nouvelle?problemeId=${probleme.id}`}>
         Créer des tâches
       </Button>
       {!peutCreer && <Alert severity="info" sx={{ mb: 2 }}>Les tâches se créent pour un problème confirmé, en cours ou rouvert, avec la permission « gérer les tâches ».</Alert>}
-      <Paper>
+      <Paper sx={{ maxWidth: 1120, mx: "auto", borderRadius: 2.5, overflow: "hidden", borderColor: "divider" }}>
         <List>
-          {(data ?? []).length === 0 && <Typography sx={{ p: 2 }} color="text.secondary">Aucune tâche pour ce problème.</Typography>}
+          {(data ?? []).length === 0 && <Box sx={{ p: { xs: 3, sm: 4 }, textAlign: "center" }}><Typography color="text.secondary">Aucune tâche pour ce problème.</Typography></Box>}
           {(data ?? []).map((t) => (
-            <ListItemButton key={t.id} component={RouterLink} to={`/applications/${application.id}/taches/${t.id}`}>
-              <ListItemText primary={t.titre} secondary={`${nom(t.responsable_id)} · étapes ${t.sous_taches.filter((s) => s.statut === "terminee").length}/${t.sous_taches.length}`} />
+            <ListItemButton key={t.id} component={RouterLink} to={`/applications/${application.id}/taches/${t.id}`}
+              sx={{ py: 1.75, px: { xs: 1.5, sm: 2.5 }, gap: 1.5, borderBottom: 1, borderColor: "divider", alignItems: { xs: "flex-start", sm: "center" }, flexWrap: { xs: "wrap", sm: "nowrap" } }}>
+              <ListItemText primary={t.titre} primaryTypographyProps={{ fontWeight: 650 }}
+                secondary={`${nom(t.responsable_id)} · étapes ${t.sous_taches.filter((s) => s.statut === "terminee").length}/${t.sous_taches.length}`} sx={{ minWidth: 0 }} />
               <StatutChip groupe="statutTache" valeur={t.statut} />
             </ListItemButton>
           ))}

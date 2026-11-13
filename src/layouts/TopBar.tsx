@@ -10,6 +10,7 @@ import { compteurNotifications } from "../api/suivi";
 import { useAuth } from "../context/AuthContext";
 import { useSidebar } from "../context/SidebarContext";
 import { usePolling } from "../hooks/usePolling";
+import { EVENEMENT_DONNEES_MODIFIEES } from "../utils/actualisation";
 
 export default function TopBar() {
   const theme = useTheme();
@@ -25,24 +26,29 @@ export default function TopBar() {
     compteurNotifications().then((c) => setNonLues(c.non_lues)).catch(() => undefined);
   }, []);
   useEffect(charger, [charger]);
+  useEffect(() => {
+    window.addEventListener(EVENEMENT_DONNEES_MODIFIEES, charger);
+    return () => window.removeEventListener(EVENEMENT_DONNEES_MODIFIEES, charger);
+  }, [charger]);
   usePolling(charger, true, 60000);
 
   return (
-    <AppBar position="sticky" color="inherit" elevation={0} sx={{ borderBottom: 1, borderColor: "divider" }}>
-      <Toolbar sx={{ gap: 1 }}>
-        {mobile && <IconButton onClick={() => setMobileOuvert(true)} aria-label="Ouvrir le menu"><MenuOutlined /></IconButton>}
+    <AppBar position="sticky" color="inherit" elevation={0} sx={{ borderBottom: 1, borderColor: "divider", bgcolor: "background.paper", backgroundImage: "none" }}>
+      <Toolbar sx={{ gap: { xs: 0.75, sm: 1.5 }, minHeight: { xs: 58, sm: 68 }, px: { xs: 1, sm: 2 } }}>
+        {mobile && <IconButton color="primary" onClick={() => setMobileOuvert(true)} aria-label="Ouvrir le menu"><MenuOutlined /></IconButton>}
         <TextField
-          size="small" placeholder="Rechercher un problème (code ou titre)" value={recherche} sx={{ flex: 1, maxWidth: 460 }}
+          size="small" placeholder={mobile ? "Rechercher un problème" : "Rechercher un problème (code ou titre)"} value={recherche}
+          sx={{ flex: { xs: 1, sm: "0 1 460px" }, maxWidth: 460, "& .MuiOutlinedInput-root": { bgcolor: "action.hover", borderRadius: 3 } }}
           onChange={(e) => setRecherche(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && recherche.trim()) navigate(`/problemes?recherche=${encodeURIComponent(recherche.trim())}`); }}
           InputProps={{ startAdornment: <InputAdornment position="start"><SearchOutlined fontSize="small" /></InputAdornment> }}
         />
-        <Box sx={{ flex: 1 }} />
-        <IconButton onClick={() => navigate("/notifications")} aria-label={`Notifications (${nonLues} non lues)`}>
+        <Box sx={{ flex: 1, display: { xs: "none", sm: "block" } }} />
+        <IconButton color="primary" onClick={() => navigate("/notifications")} aria-label={`Notifications (${nonLues} non lues)`}>
           <Badge badgeContent={nonLues} color="error"><NotificationsOutlined /></Badge>
         </IconButton>
-        <IconButton onClick={(e) => setAncre(e.currentTarget)} aria-label="Menu du compte">
-          <Avatar sx={{ width: 32, height: 32, fontSize: 14 }}>{(user?.identifiant ?? "?").slice(0, 2).toUpperCase()}</Avatar>
+        <IconButton onClick={(e) => setAncre(e.currentTarget)} aria-label="Menu du compte" sx={{ p: 0.5 }}>
+          <Avatar sx={{ width: 34, height: 34, fontSize: 14, bgcolor: "primary.dark", boxShadow: 1 }}>{(user?.identifiant ?? "?").slice(0, 2).toUpperCase()}</Avatar>
         </IconButton>
         <Menu anchorEl={ancre} open={Boolean(ancre)} onClose={() => setAncre(null)}>
           <MenuItem onClick={() => { setAncre(null); navigate("/compte"); }}>

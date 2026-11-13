@@ -1,4 +1,5 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import SearchOutlined from "@mui/icons-material/SearchOutlined";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate, useSearchParams } from "react-router-dom";
 import { membresApplication } from "../../api/applications";
@@ -61,37 +62,62 @@ export default function ProblemesListe() {
 
   return (
     <>
-      <PageHeader titre="Problèmes"
+      <PageHeader titre="Problèmes" sousTitre="Repérez, filtrez et priorisez les incidents à résoudre."
         actions={ctx && ctx.peut(PERM.PROBLEME_MODIFIER) && !ctx.archivee ? <Button variant="contained" onClick={() => setCreation(true)}>Nouveau problème</Button> : undefined} />
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }} flexWrap="wrap" useFlexGap>
-        <TextField size="small" label="Code ou titre" value={saisie} onChange={(e) => setSaisie(e.target.value)} />
-        <FiltreSelect label="Catégorie" valeur={categorie} onChange={setCategorie} options={options("categorie")} />
-        <FiltreSelect label="Gravité" valeur={gravite} onChange={setGravite} options={options("gravite")} largeur={140} />
-        <FiltreSelect label="Priorité" valeur={priorite} onChange={setPriorite} options={options("priorite")} largeur={140} />
-        <FiltreSelect label="Statut" valeur={statut} onChange={setStatut} options={options("statutProbleme")} largeur={150} />
-      </Stack>
+      <Paper sx={{ p: { xs: 1.5, md: 2 }, mb: 2 }}>
+        <Stack direction={{ xs: "column", md: "row" }} spacing={1.25} alignItems={{ md: "center" }} flexWrap="wrap" useFlexGap>
+          <TextField
+            size="small"
+            label="Rechercher"
+            placeholder="Code ou titre"
+            value={saisie}
+            onChange={(e) => setSaisie(e.target.value)}
+            sx={{ flex: "1 1 220px", minWidth: { md: 220 } }}
+            InputProps={{ startAdornment: <InputAdornment position="start"><SearchOutlined fontSize="small" /></InputAdornment> }}
+          />
+          <FiltreSelect label="Catégorie" valeur={categorie} onChange={setCategorie} options={options("categorie")} />
+          <FiltreSelect label="Gravité" valeur={gravite} onChange={setGravite} options={options("gravite")} largeur={140} />
+          <FiltreSelect label="Priorité" valeur={priorite} onChange={setPriorite} options={options("priorite")} largeur={140} />
+          <FiltreSelect label="Statut" valeur={statut} onChange={setStatut} options={options("statutProbleme")} largeur={150} />
+        </Stack>
+      </Paper>
       <Etat loading={loading} error={error}>
-        <Paper sx={{ overflowX: "auto" }}>
-          <Table size="small">
-            <TableHead><TableRow>
-              <TableCell>Code</TableCell><TableCell>Titre</TableCell>{!ctx && <TableCell>Application</TableCell>}
-              <TableCell>Catégorie</TableCell><TableCell>Gravité</TableCell><TableCell>Statut</TableCell><TableCell>Responsable</TableCell>
-            </TableRow></TableHead>
+        <Paper sx={{ overflow: "hidden" }}>
+          <Box sx={{ px: 2, py: 1.5, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1 }}>
+            <Typography variant="subtitle2" color="text.secondary">RÉSULTATS</Typography>
+            <Typography variant="body2" color="text.secondary">{(data ?? []).length} problème(s)</Typography>
+          </Box>
+          <Box sx={{ overflowX: "auto" }}>
+          <Table size="medium">
+            <TableHead>
+              <TableRow>
+                <TableCell>Code</TableCell><TableCell sx={{ minWidth: 220 }}>Titre</TableCell>{!ctx && <TableCell>Application</TableCell>}
+                <TableCell>Catégorie</TableCell><TableCell>Gravité</TableCell><TableCell>Statut</TableCell><TableCell>Responsable</TableCell>
+              </TableRow>
+            </TableHead>
             <TableBody>
-              {(data ?? []).length === 0 && <TableRow><TableCell colSpan={7}><Typography color="text.secondary">Aucun problème.</Typography></TableCell></TableRow>}
+              {(data ?? []).length === 0 && <TableRow><TableCell colSpan={ctx ? 6 : 7} sx={{ py: 5, textAlign: "center" }}>
+                <Typography fontWeight={600}>Aucun problème trouvé</Typography>
+                <Typography variant="body2" color="text.secondary">Essayez de modifier les filtres ou la recherche.</Typography>
+              </TableCell></TableRow>}
               {(data ?? []).map((p) => (
                 <TableRow key={p.id} hover>
-                  <TableCell>{p.code}</TableCell>
-                  <TableCell><RouterLink to={`/applications/${p.application_id}/problemes/${p.id}`}>{p.titre}</RouterLink></TableCell>
-                  {!ctx && <TableCell>{trouver(p.application_id)?.nom ?? `#${p.application_id}`}</TableCell>}
-                  <TableCell>{libelle("categorie", p.categorie)}</TableCell>
+                  <TableCell sx={{ fontWeight: 600, whiteSpace: "nowrap" }}>{p.code}</TableCell>
+                  <TableCell sx={{ maxWidth: 360 }}>
+                    <RouterLink to={`/applications/${p.application_id}/problemes/${p.id}`} style={{ color: "inherit", fontWeight: 600, textDecoration: "none" }}>
+                      {p.titre}
+                    </RouterLink>
+                  </TableCell>
+                  {!ctx && <TableCell sx={{ whiteSpace: "nowrap" }}>{trouver(p.application_id)?.nom ?? `#${p.application_id}`}</TableCell>}
+                  <TableCell sx={{ whiteSpace: "nowrap" }}>{libelle("categorie", p.categorie)}</TableCell>
                   <TableCell><StatutChip groupe="gravite" valeur={p.gravite} /></TableCell>
                   <TableCell><StatutChip groupe="statutProbleme" valeur={p.statut} /></TableCell>
-                  <TableCell>{nom(p.responsable_id)}</TableCell>
+                  <TableCell sx={{ whiteSpace: "nowrap" }}>{nom(p.responsable_id)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+          </Box>
         </Paper>
       </Etat>
 

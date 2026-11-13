@@ -1,4 +1,5 @@
 import axios from "axios";
+import { EVENEMENT_DONNEES_MODIFIEES } from "../utils/actualisation";
 
 export const TOKEN_KEY = "maintenance.jeton";
 
@@ -13,7 +14,13 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (r) => r,
+  (r) => {
+    const methode = r.config.method?.toLowerCase();
+    if (methode && ["post", "put", "patch", "delete"].includes(methode) && typeof window !== "undefined") {
+      window.dispatchEvent(new Event(EVENEMENT_DONNEES_MODIFIEES));
+    }
+    return r;
+  },
   (erreur) => {
     if (axios.isAxiosError(erreur) && erreur.response?.status === 401 && !window.location.pathname.startsWith("/connexion")) {
       localStorage.removeItem(TOKEN_KEY);

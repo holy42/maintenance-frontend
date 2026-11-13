@@ -1,4 +1,6 @@
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
+import TipsAndUpdatesOutlined from "@mui/icons-material/TipsAndUpdatesOutlined";
+import { alpha } from "@mui/material/styles";
 import { Alert, Box, Button, Chip, Paper, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { messageErreur } from "../../api/client";
@@ -31,7 +33,7 @@ function SolutionCarte({ solution, numero, peutEvaluer, fichier, ligne }: { solu
   }
 
   return (
-    <Paper sx={{ p: 2 }}>
+    <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", borderTop: 3, borderTopColor: "secondary.main" }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography variant="subtitle1" fontWeight={600}>Solution {numero}</Typography>
         <Chip size="small" color="warning" label="Proposition" />
@@ -48,8 +50,8 @@ function SolutionCarte({ solution, numero, peutEvaluer, fichier, ligne }: { solu
       {solution.fiabilite && <Box sx={{ mt: 1.5 }}><FiabiliteBadge fiabilite={solution.fiabilite} titre="Probabilité de validation au test" /></Box>}
       {solution.risques && <Typography variant="body2" sx={{ mt: 1 }}><strong>Risques :</strong> {solution.risques}</Typography>}
       {solution.tests_suggeres && <Typography variant="body2"><strong>Tests suggérés :</strong> {solution.tests_suggeres}</Typography>}
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mt: 2 }} alignItems="center">
-        <Box sx={{ minWidth: 220 }}><ChampSelect label="Votre évaluation" valeur={utilite} onChange={setUtilite} vide="Non évaluée" options={options("utilite")} disabled={!peutEvaluer} /></Box>
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mt: 2, p: { xs: 1, sm: 1.5 }, borderRadius: 2, bgcolor: "action.hover" }} alignItems="center">
+        <Box sx={{ minWidth: { xs: "100%", sm: 220 } }}><ChampSelect label="Votre évaluation" valeur={utilite} onChange={setUtilite} vide="Non évaluée" options={options("utilite")} disabled={!peutEvaluer} /></Box>
         <TextField size="small" label="Commentaire" fullWidth value={commentaire} onChange={(e) => setCommentaire(e.target.value)} disabled={!peutEvaluer} />
         <Button variant="outlined" onClick={enregistrer} disabled={!peutEvaluer || !utilite}>Enregistrer</Button>
       </Stack>
@@ -76,10 +78,10 @@ export default function ProblemeDiagnostic() {
 
   return (
     <Etat loading={loading} error={error}>
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{ maxWidth: 1120, width: "100%", mx: "auto" }}>
         <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
           {(data ?? []).length > 0 && (
-            <Box sx={{ minWidth: 320 }}>
+            <Box sx={{ minWidth: { xs: "100%", sm: 320 }, flex: "1 1 320px" }}>
               <ChampSelect label="Diagnostic" valeur={String(diagnostic?.id ?? "")} onChange={(v) => setChoix(Number(v))}
                 options={(data ?? []).map((d, i) => ({ valeur: String(d.id), libelle: `Diagnostic ${(data?.length ?? 0) - i} · ${dateHeure(d.cree_le)}${d.branche_analysee ? ` · ${d.branche_analysee}` : ""}` }))} />
             </Box>
@@ -91,9 +93,12 @@ export default function ProblemeDiagnostic() {
         {!diagnostic && <Alert severity="info">Aucun diagnostic. Les anciens diagnostics sont toujours conservés : un nouveau ne remplace jamais l'ancien.</Alert>}
         {diagnostic && (
           <>
-            <Paper sx={{ p: 2 }}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="subtitle1" fontWeight={600}>Diagnostic</Typography>
+            <Paper sx={{
+              p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", borderTop: 3, borderTopColor: "primary.main",
+              boxShadow: (theme) => `0 5px 20px ${alpha(theme.palette.primary.dark, theme.palette.mode === "light" ? 0.05 : 0.14)}`,
+            }}>
+              <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1}>
+                <Stack direction="row" spacing={1} alignItems="center"><TipsAndUpdatesOutlined color="primary" /><Typography variant="subtitle1" fontWeight={700}>Diagnostic</Typography></Stack>
                 <Chip size="small" color="warning" icon={<AutoAwesomeOutlined />} label="Hypothèse de l'IA, non vérifiée" />
               </Stack>
               <Typography variant="body2" sx={{ my: 1 }}>{diagnostic.explication}</Typography>

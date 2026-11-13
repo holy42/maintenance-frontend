@@ -1,10 +1,14 @@
-import { Box, Button, Checkbox, FormControlLabel, List, ListItemButton, ListItemText, Paper, Stack, Typography } from "@mui/material";
+import DoneAllOutlined from "@mui/icons-material/DoneAllOutlined";
+import MarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
+import MarkEmailUnreadOutlined from "@mui/icons-material/MarkEmailUnreadOutlined";
+import { Box, Button, Checkbox, Chip, FormControlLabel, IconButton, ListItemButton, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { messageErreur } from "../../api/client";
 import { marquerLue, marquerNonLue, notifications, toutLire } from "../../api/suivi";
 import type { Notification } from "../../api/types";
 import Etat from "../../components/Etat";
+import EvenementIcone from "../../components/EvenementIcone";
 import FiltreSelect from "../../components/FiltreSelect";
 import PageHeader from "../../components/PageHeader";
 import { useApplicationOptionnelle } from "../../context/ApplicationContext";
@@ -25,35 +29,78 @@ export default function Notifications() {
   const [type, setType] = useState("");
   const { data, loading, error, reload } = useAsync(() => notifications({ non_lues: nonLues || undefined, type_evenement: type || undefined, application_id: ctx?.application.id, limit: 200 }),
     [nonLues, type, ctx?.application.id]);
+  const nombreNonLues = (data ?? []).filter((n) => !n.lu).length;
 
-  async function agir(fn: () => Promise<unknown>) { try { await fn(); reload(); } catch (e) { notifier(messageErreur(e), "error"); } }
+  async function agir(fn: () => Promise<unknown>) {
+    try {
+      await fn();
+      reload();
+    } catch (e) { notifier(messageErreur(e), "error"); }
+  }
   async function ouvrir(n: Notification) {
-    if (!n.lu) await marquerLue(n.id).catch(() => undefined);
+    if (!n.lu) {
+      try {
+        await marquerLue(n.id);
+        reload();
+      } catch (e) {
+        notifier(messageErreur(e), "error");
+        return;
+      }
+    }
     const lien = lienNotification(n);
     if (lien) navigate(lien); else reload();
   }
 
   return (
     <>
-      <PageHeader titre="Notifications" actions={<Button variant="outlined" onClick={() => agir(toutLire)}>Tout marquer comme lu</Button>} />
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }} alignItems="center" flexWrap="wrap" useFlexGap>
-        <FormControlLabel label="Non lues seulement" control={<Checkbox checked={nonLues} onChange={(e) => setNonLues(e.target.checked)} />} />
-        <FiltreSelect label="Type" valeur={type} onChange={setType} options={options("evenement")} largeur={230} />
-      </Stack>
+      <PageHeader titre="Notifications"
+        sousTitre={`${(data ?? []).length} notification(s) · ${nombreNonLues} non lue(s)`}
+        actions={<Button variant="outlined" startIcon={<DoneAllOutlined />} disabled={nombreNonLues === 0} onClick={() => agir(toutLire)}>Tout marquer comme lu</Button>} />
+      <Paper sx={{ p: { xs: 1.5, sm: 2 }, mb: 2, bgcolor: "background.paper" }}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ xs: "stretch", sm: "center" }} flexWrap="wrap" useFlexGap>
+          <FormControlLabel label="Non lues seulement" control={<Checkbox checked={nonLues} onChange={(e) => setNonLues(e.target.checked)} />} />
+          <FiltreSelect label="Type" valeur={type} onChange={setType} options={options("evenement")} largeur={230} />
+          {nombreNonLues > 0 && <Chip color="secondary" label={`${nombreNonLues} à lire`} sx={{ ml: { sm: "auto" } }} />}
+        </Stack>
+      </Paper>
       <Etat loading={loading} error={error}>
-        <Paper>
-          <List disablePadding>
-            {(data ?? []).length === 0 && <Typography sx={{ p: 2 }} color="text.secondary">Aucune notification.</Typography>}
+        {(data ?? []).length === 0 ? (
+          <Paper sx={{ p: 5, textAlign: "center", borderStyle: "dashed" }}>
+            <Typography variant="h6" fontWeight={700}>Aucune notification</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Les nouvelles activités apparaîtront ici.</Typography>
+          </Paper>
+        ) : (
+          <Stack spacing={1.25}>
             {(data ?? []).map((n) => (
-              <ListItemButton key={n.id} divider onClick={() => ouvrir(n)}>
-                <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: n.lu ? "transparent" : "primary.main", mr: 1.5, flexShrink: 0 }} />
-                <ListItemText primary={n.message} primaryTypographyProps={{ fontWeight: n.lu ? 400 : 600 }}
-                  secondary={`${libelle("evenement", n.type_evenement)}${n.application_id ? ` · ${trouver(n.application_id)?.nom ?? ""}` : ""} · ${dateHeure(n.cree_le)}`} />
-                <Button size="small" onClick={(e) => { e.stopPropagation(); agir(() => (n.lu ? marquerNonLue(n.id) : marquerLue(n.id))); }}>{n.lu ? "Marquer non lue" : "Marquer lue"}</Button>
-              </ListItemButton>
+              <Paper key={n.id} sx={(theme) => ({
+                overflow: "hidden",
+                borderColor: n.lu ? theme.palette.divider : theme.palette.secondary.light,
+                bgcolor: n.lu ? "background.paper" : theme.palette.mode === "light" ? "rgba(66, 153, 224, 0.045)" : "rgba(66, 153, 224, 0.09)",
+              })}>
+                <ListItemButton onClick={() => ouvrir(n)} sx={{ p: { xs: 1.5, sm: 2 }, gap: 1.5, alignItems: "flex-start" }}>
+                  <EvenementIcone type={n.type_evenement.startsWith("session_test") ? "session_test" : n.type_evenement.split("_")[0]} action={n.type_evenement} />
+                  <Box sx={{ minWidth: 0, flex: 1 }}>
+                    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+                      <Typography variant="subtitle2" fontWeight={n.lu ? 500 : 700}>{libelle("evenement", n.type_evenement)}</Typography>
+                      {!n.lu && <Chip size="small" color="secondary" label="Nouveau" />}
+                    </Stack>
+                    <Typography variant="body2" sx={{ mt: 0.5, overflowWrap: "anywhere" }}>{n.message}</Typography>
+                    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+                      {n.application_id && <Chip size="small" variant="outlined" label={trouver(n.application_id)?.nom ?? `Application #${n.application_id}`} />}
+                      <Typography variant="caption" color="text.secondary">{dateHeure(n.cree_le)}</Typography>
+                    </Stack>
+                  </Box>
+                  <IconButton size="small" aria-label={n.lu ? "Marquer comme non lue" : "Marquer comme lue"}
+                    title={n.lu ? "Marquer comme non lue" : "Marquer comme lue"}
+                    onClick={(e) => { e.stopPropagation(); agir(() => (n.lu ? marquerNonLue(n.id) : marquerLue(n.id))); }}
+                    sx={{ flexShrink: 0, color: "secondary.main" }}>
+                    {n.lu ? <MarkEmailUnreadOutlined /> : <MarkEmailReadOutlined />}
+                  </IconButton>
+                </ListItemButton>
+              </Paper>
             ))}
-          </List>
-        </Paper>
+          </Stack>
+        )}
       </Etat>
     </>
   );

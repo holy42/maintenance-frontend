@@ -1,8 +1,7 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import PlayArrowOutlined from "@mui/icons-material/PlayArrowOutlined";
-import { Alert, Box, Button, IconButton, Menu, MenuItem, Stack, Tab, Tabs, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { Alert, Box, Button, IconButton, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { useEffect, useMemo } from "react";
 import { Link as RouterLink, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { getApplication, mesPermissions } from "../api/applications";
 import Etat from "../components/Etat";
@@ -32,6 +31,10 @@ const PLUS = [
   { seg: "membres", libelle: "Membres et permissions" },
   { seg: "parametres", libelle: "Paramètres" },
 ];
+const ONGLETS = [
+  ...PRINCIPAUX,
+  ...PLUS.map((p) => ({ valeur: p.seg, ...p })),
+];
 
 /** Niveau 2 : l'espace d'une application. Son menu est horizontal ; le menu global reste à gauche (rétractable). */
 export default function ApplicationLayout() {
@@ -43,64 +46,72 @@ export default function ApplicationLayout() {
   const { recharger: rechargerListe } = useApplications();
   const { data: application, loading, error, reload } = useAsync(() => getApplication(id), [id]);
   const { data: perms } = useAsync(() => mesPermissions(id), [id]);
-  const [ancre, setAncre] = useState<HTMLElement | null>(null);
+  const applicationActuelle = application?.id === id ? application : null;
 
   useEffect(() => { if (!Number.isNaN(id)) noterApplicationRecente(id); }, [id]);
 
   const segment = pathname.split("/")[3] ?? "";
-  const plusActif = PLUS.find((p) => p.seg === segment);
-  const valeurOnglet = plusActif ? "plus" : PRINCIPAUX.find((p) => p.seg === segment)?.valeur ?? false;
+  const valeurOnglet = ONGLETS.find((p) => p.seg === segment)?.valeur ?? false;
 
   const contexte = useMemo<ApplicationCtx | null>(() => {
-    if (!application) return null;
+    if (!applicationActuelle) return null;
     return {
-      application,
-      archivee: application.statut === "archivee",
+      application: applicationActuelle,
+      archivee: applicationActuelle.statut === "archivee",
       recharger: () => { reload(); rechargerListe(); },
       peut: (code) => Boolean(user?.est_admin) || Boolean(perms && (perms.permissions.includes("*") || perms.permissions.includes(code))),
     };
-  }, [application, perms, user, reload, rechargerListe]);
+  }, [applicationActuelle, perms, user, reload, rechargerListe]);
 
   return (
-    <Etat loading={loading} error={error}>
-      {application && contexte && (
+    <>
+      {applicationActuelle && error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      <Etat loading={loading && !applicationActuelle} error={applicationActuelle ? null : error}>
+      {applicationActuelle && contexte && (
         <ApplicationContext.Provider value={contexte}>
-          <PageHeader
-            fil={[{ libelle: "Applications", to: "/applications" }, { libelle: application.nom }]}
-            titre={
-              <Stack direction="row" spacing={1} alignItems="center">
-                <IconButton component={RouterLink} to="/applications" aria-label="Retour aux applications" size="small"><ArrowBack /></IconButton>
-                <span>{application.nom}</span>
-                <StatutChip groupe="statutApplication" valeur={application.statut} />
-              </Stack>
-            }
-            sousTitre={application.technologies.join(" · ") || undefined}
-            actions={contexte.peut(PERM.VERIFICATION_LANCER) && !contexte.archivee ? (
-              <Button variant="contained" startIcon={<PlayArrowOutlined />} component={RouterLink} to={`/applications/${id}/verifications/nouvelle`}>
-                Lancer une vérification
-              </Button>
-            ) : undefined}
-          />
-          {contexte.archivee && <Alert severity="info" sx={{ mb: 2 }}>Application archivée : consultation en lecture seule.</Alert>}
+          <Box sx={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0, minHeight: 0 }}>
+            <PageHeader
+              fil={[{ libelle: "Applications", to: "/applications" }, { libelle: applicationActuelle.nom }]}
+              titre={
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <IconButton component={RouterLink} to="/applications" aria-label="Retour aux applications" size="small"><ArrowBack /></IconButton>
+                  <span>{applicationActuelle.nom}</span>
+                  <StatutChip groupe="statutApplication" valeur={applicationActuelle.statut} />
+                </Stack>
+              }
+              sousTitre={applicationActuelle.technologies.join(" · ") || undefined}
+              actions={contexte.peut(PERM.VERIFICATION_LANCER) && !contexte.archivee ? (
+                <Button variant="contained" startIcon={<PlayArrowOutlined />} component={RouterLink} to={`/applications/${id}/verifications/nouvelle`}>
+                  Lancer une vérification
+                </Button>
+              ) : undefined}
+            />
+            {contexte.archivee && <Alert severity="info" sx={{ mb: 2 }}>Application archivée : consultation en lecture seule.</Alert>}
 
-          <Tabs value={valeurOnglet} variant="scrollable" scrollButtons="auto" sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}
-            onChange={(_, v: string) => { if (v !== "plus") navigate(`/applications/${id}/${PRINCIPAUX.find((p) => p.valeur === v)?.seg ?? ""}`); }}>
-            {PRINCIPAUX.map((p) => <Tab key={p.valeur} value={p.valeur} label={p.libelle} />)}
-            <Tab value="plus" label={<Stack direction="row" alignItems="center">{plusActif?.libelle ?? "Plus"}<ExpandMore fontSize="small" /></Stack>}
-              onClick={(e) => setAncre(e.currentTarget)} />
-          </Tabs>
-          <Menu anchorEl={ancre} open={Boolean(ancre)} onClose={() => setAncre(null)}>
-            {PLUS.map((p) => (
-              <MenuItem key={p.seg} selected={p.seg === segment} onClick={() => { setAncre(null); navigate(`/applications/${id}/${p.seg}`); }}>
-                {p.libelle}
-              </MenuItem>
-            ))}
-          </Menu>
+            <Tabs value={valeurOnglet} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile
+              sx={{
+                mb: 2, borderBottom: 1, borderColor: "divider", flexShrink: 0,
+                "& .MuiTab-root": { minHeight: 44, px: { xs: 1.5, sm: 2 }, fontWeight: 600, textTransform: "none", whiteSpace: "nowrap" },
+                "& .MuiTabs-indicator": { height: 3, borderRadius: "3px 3px 0 0" },
+              }}
+              onChange={(_, valeur: string) => {
+                const onglet = ONGLETS.find((p) => p.valeur === valeur);
+                if (onglet) navigate(`/applications/${id}/${onglet.seg}`);
+              }}>
+              {ONGLETS.map((p) => <Tab key={p.valeur} value={p.valeur} label={p.libelle} />)}
+            </Tabs>
 
-          <Box><Outlet /></Box>
+            <Box sx={{
+              display: "flex", flexDirection: "column", flex: 1, minWidth: 0, minHeight: 0,
+              "& > :last-child": { flexGrow: 1, minHeight: 0 },
+            }}>
+              <Outlet />
+            </Box>
+          </Box>
         </ApplicationContext.Provider>
       )}
-      {!loading && !error && !application && <Typography>Application introuvable.</Typography>}
-    </Etat>
+      {!loading && !error && !applicationActuelle && <Typography>Application introuvable.</Typography>}
+      </Etat>
+    </>
   );
 }

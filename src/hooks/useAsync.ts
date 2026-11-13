@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { messageErreur } from "../api/client";
+import { useActualisationDonnees } from "./useActualisationDonnees";
 
 /** Charge des données au montage et quand `deps` change. `reload()` relance l'appel. */
 export function useAsync<T>(fn: () => Promise<T>, deps: unknown[] = []) {
@@ -7,6 +8,7 @@ export function useAsync<T>(fn: () => Promise<T>, deps: unknown[] = []) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
+  const reload = useCallback(() => setTick((t) => t + 1), []);
 
   useEffect(() => {
     let annule = false;
@@ -20,6 +22,6 @@ export function useAsync<T>(fn: () => Promise<T>, deps: unknown[] = []) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...deps, tick]);
 
-  const reload = useCallback(() => setTick((t) => t + 1), []);
+  useActualisationDonnees(reload);
   return { data, loading, error, reload, setData };
 }

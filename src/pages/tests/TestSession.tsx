@@ -61,7 +61,7 @@ export default function TestSession() {
               <StatutChip groupe="statutSession" valeur={s.statut} taille="medium" />
               <Button component={RouterLink} to={`/applications/${application.id}/problemes/${data.probleme_id}`} variant="outlined">Voir le problème</Button>
             </>} />
-          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.3fr 1fr" } }}>
+          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.3fr 1fr" }, maxWidth: 1120, width: "100%", mx: "auto" }}>
             <Stack spacing={2}>
               <Paper sx={{ p: 2 }}>
                 <Typography variant="subtitle1" fontWeight={600}>Description du test</Typography>

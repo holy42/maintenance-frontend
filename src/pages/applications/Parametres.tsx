@@ -41,7 +41,7 @@ export default function Parametres() {
   }
 
   return (
-    <Stack spacing={2} sx={{ maxWidth: 760 }}>
+    <Stack spacing={2} sx={{ maxWidth: 1280, width: "100%", mx: "auto" }}>
       <Paper sx={{ p: 2 }}>
         <Typography variant="subtitle1" fontWeight={600} gutterBottom>Informations générales</Typography>
         <Stack spacing={2}>

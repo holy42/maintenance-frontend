@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { listEquipes } from "../api/administration";
 import type { Equipe } from "../api/types";
+import { useActualisationDonnees } from "../hooks/useActualisationDonnees";
 import { useAuth } from "./AuthContext";
 
 const CLE = "maintenance.equipe";
@@ -17,14 +18,18 @@ const EquipeContext = createContext<EquipeValue>({ equipes: [], equipeId: null, 
 export function EquipeProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [equipes, setEquipes] = useState<Equipe[]>([]);
+  const [tick, setTick] = useState(0);
   const [equipeId, setEquipeId] = useState<number | null>(() => {
     const v = localStorage.getItem(CLE);
     return v ? Number(v) : null;
   });
+  const recharger = useCallback(() => setTick((t) => t + 1), []);
 
   useEffect(() => {
     if (user) listEquipes().then(setEquipes).catch(() => setEquipes([]));
-  }, [user]);
+  }, [user, tick]);
+
+  useActualisationDonnees(recharger);
 
   const valeur = useMemo<EquipeValue>(
     () => ({

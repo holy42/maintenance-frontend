@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { annuaire } from "../api/auth";
 import type { Annuaire } from "../api/types";
+import { useActualisationDonnees } from "../hooks/useActualisationDonnees";
 import { useAuth } from "./AuthContext";
 
 interface AnnuaireValue {
@@ -14,11 +15,15 @@ const AnnuaireContext = createContext<AnnuaireValue>({ personnes: [], nom: () =>
 export function AnnuaireProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [personnes, setPersonnes] = useState<Annuaire[]>([]);
+  const [tick, setTick] = useState(0);
+  const recharger = useCallback(() => setTick((t) => t + 1), []);
 
   useEffect(() => {
     if (user) annuaire().then(setPersonnes).catch(() => setPersonnes([]));
     else setPersonnes([]);
-  }, [user]);
+  }, [user, tick]);
+
+  useActualisationDonnees(recharger);
 
   const valeur = useMemo<AnnuaireValue>(() => {
     const index = new Map(personnes.map((p) => [p.id, p.identifiant]));

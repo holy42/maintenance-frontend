@@ -69,7 +69,7 @@ export default function Sidebar() {
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: etroit ? "center" : "space-between", px: etroit ? 0 : 2, py: 1.5 }}>
         {!etroit && <Typography fontWeight={600} noWrap>Maintenance</Typography>}
         {!mobile && (
-          <IconButton size="small" onClick={basculer} aria-label={etroit ? "Agrandir le menu" : "Rétrécir le menu"}>
+            <IconButton size="small" onClick={basculer} aria-label={etroit ? "Agrandir le menu" : "Rétrécir le menu"} sx={{ color: "inherit" }}>
             {etroit ? <ChevronRight /> : <ChevronLeft />}
           </IconButton>
         )}
@@ -78,11 +78,21 @@ export default function Sidebar() {
       <Box sx={{ px: etroit ? 0.5 : 2, pb: 1.5, display: "flex", justifyContent: "center" }}>
         {etroit ? (
           <Tooltip title={equipes.find((e) => e.id === equipeId)?.nom ?? "Toutes les équipes"} placement="right">
-            <Avatar sx={{ width: 32, height: 32, fontSize: 14 }}>{(equipes.find((e) => e.id === equipeId)?.nom ?? "É").charAt(0)}</Avatar>
+              <Avatar sx={{ width: 32, height: 32, fontSize: 14, bgcolor: "secondary.main" }}>{(equipes.find((e) => e.id === equipeId)?.nom ?? "É").charAt(0)}</Avatar>
           </Tooltip>
         ) : (
           <TextField select size="small" fullWidth label="Équipe" value={equipeId === null ? "" : String(equipeId)}
-            onChange={(e) => choisir(e.target.value === "" ? null : Number(e.target.value))}>
+              onChange={(e) => choisir(e.target.value === "" ? null : Number(e.target.value))}
+              sx={{
+                "& .MuiInputLabel-root": { color: "#94a3b8" },
+                "& .MuiOutlinedInput-root": {
+                  color: "#e2e8f0",
+                  "& fieldset": { borderColor: "rgba(148, 163, 184, 0.35)" },
+                  "&:hover fieldset": { borderColor: "rgba(148, 163, 184, 0.7)" },
+                  "&.Mui-focused fieldset": { borderColor: "secondary.main" },
+                },
+                "& .MuiSvgIcon-root": { color: "#94a3b8" },
+              }}>
             <MenuItem value="">Toutes mes équipes</MenuItem>
             {equipes.map((e) => <MenuItem key={e.id} value={String(e.id)}>{e.nom}</MenuItem>)}
           </TextField>
@@ -97,7 +107,7 @@ export default function Sidebar() {
         {!etroit && (
           <>
             <ListItemButton onClick={() => setAppsOuvert(!appsOuvert)} sx={{ py: 0, minHeight: 28 }} aria-label="Déplier la liste des applications">
-              <ListItemText primary="Accès rapide" primaryTypographyProps={{ fontSize: 11, color: "text.secondary" }} sx={{ pl: 4.5 }} />
+              <ListItemText primary="Accès rapide" primaryTypographyProps={{ fontSize: 11, color: "#94a3b8" }} sx={{ pl: 4.5 }} />
               {appsOuvert ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
             </ListItemButton>
             <Collapse in={appsOuvert} unmountOnExit>
@@ -149,7 +159,35 @@ export default function Sidebar() {
       open={mobile ? mobileOuvert : true}
       onClose={fermer}
       ModalProps={{ keepMounted: true }}
-      sx={{ width: mobile ? 0 : largeur, flexShrink: 0, "& .MuiDrawer-paper": { width: largeur, boxSizing: "border-box", overflowX: "hidden", transition: "width .2s" } }}
+      sx={{
+        width: mobile ? 0 : largeur,
+        flexShrink: 0,
+        "& .MuiDrawer-paper": {
+          width: largeur,
+          boxSizing: "border-box",
+          overflowX: "hidden",
+          transition: "width .2s",
+          bgcolor: "#0f172a",
+          color: "#e2e8f0",
+          borderRightColor: "rgba(148, 163, 184, 0.18)",
+        },
+        "& .MuiDivider-root": { borderColor: "rgba(148, 163, 184, 0.18)" },
+        "& .MuiListItemIcon-root": { color: "inherit" },
+        "& .MuiListItemButton-root": {
+          color: "#cbd5e1",
+          borderRadius: 1.5,
+          mx: 1,
+          mb: 0.25,
+          "&:hover": { bgcolor: "rgba(148, 163, 184, 0.12)" },
+          "&.Mui-selected": {
+            color: "#fff",
+            bgcolor: "rgba(66, 153, 224, 0.2)",
+            boxShadow: "inset 3px 0 0 #4299e0",
+            "&:hover": { bgcolor: "rgba(66, 153, 224, 0.28)" },
+            "& .MuiListItemIcon-root": { color: "#63b3ed" },
+          },
+        },
+      }}
     >
       {contenu}
     </Drawer>

@@ -1,11 +1,15 @@
-import { Alert, Button, Checkbox, FormControlLabel, Paper, Stack, TextField, Typography } from "@mui/material";
-import { useEffect, useState, type FormEvent } from "react";
+import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
+import LockOutlined from "@mui/icons-material/LockOutlined";
+import NotificationsActiveOutlined from "@mui/icons-material/NotificationsActiveOutlined";
+import { Alert, Avatar, Box, Button, Checkbox, FormControlLabel, Paper, Stack, TextField, Typography } from "@mui/material";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { changerMotDePasse } from "../api/auth";
 import { messageErreur } from "../api/client";
 import { definirPreferences, preferences } from "../api/suivi";
 import PageHeader from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { useNotifier } from "../context/SnackbarContext";
+import { useActualisationDonnees } from "../hooks/useActualisationDonnees";
 import { libelle, TYPES_NOTIFICATION } from "../utils/libelles";
 
 export default function MonCompte() {
@@ -17,7 +21,7 @@ export default function MonCompte() {
   const [erreur, setErreur] = useState<string | null>(null);
   const [actives, setActives] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
+  const actualiserPreferences = useCallback(() => {
     preferences().then((liste) => {
       const etat: Record<string, boolean> = {};
       TYPES_NOTIFICATION.forEach((t) => { etat[t] = true; });          // tout est activé par défaut
@@ -25,6 +29,9 @@ export default function MonCompte() {
       setActives(etat);
     }).catch((e) => notifier(messageErreur(e), "error"));
   }, [notifier]);
+
+  useEffect(() => { actualiserPreferences(); }, [actualiserPreferences]);
+  useActualisationDonnees(actualiserPreferences);
 
   async function changerMdp(e: FormEvent) {
     e.preventDefault();
@@ -48,32 +55,49 @@ export default function MonCompte() {
   return (
     <>
       <PageHeader titre="Mon compte" />
-      <Stack spacing={2} sx={{ maxWidth: 720 }}>
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="subtitle1" fontWeight={600} gutterBottom>Profil</Typography>
-          <Typography variant="body2">Identifiant : {user?.identifiant}</Typography>
-          <Typography variant="body2" color="text.secondary">E-mail : {user?.email ?? "non renseigné"}</Typography>
-          <Typography variant="caption" color="text.secondary">Vos rôles sont attribués par l'administrateur.</Typography>
-        </Paper>
-        <Paper component="form" onSubmit={changerMdp} noValidate sx={{ p: 2 }}>
-          <Typography variant="subtitle1" fontWeight={600} gutterBottom>Mot de passe</Typography>
-          <Stack spacing={2}>
-            <TextField size="small" label="Mot de passe actuel" type="password" value={ancien} onChange={(e) => setAncien(e.target.value)} autoComplete="current-password" />
-            <TextField size="small" label="Nouveau mot de passe" type="password" value={nouveau} onChange={(e) => setNouveau(e.target.value)} autoComplete="new-password" />
-            <TextField size="small" label="Confirmer" type="password" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} autoComplete="new-password" />
-            {erreur && <Alert severity="error">{erreur}</Alert>}
-            <Button type="submit" variant="outlined" sx={{ alignSelf: "flex-start" }}>Changer le mot de passe</Button>
+      <Stack spacing={2} sx={{ maxWidth: 680, width: "100%", mx: "auto" }}>
+        <Paper sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 2 }}>
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <Avatar sx={{ width: 48, height: 48, bgcolor: "primary.main" }}><AccountCircleOutlined /></Avatar>
+            <Box>
+              <Typography variant="subtitle1" fontWeight={700}>Profil</Typography>
+              <Typography variant="body2" fontWeight={600}>{user?.identifiant}</Typography>
+            </Box>
+          </Stack>
+          <Stack spacing={0.5} sx={{ mt: 1.5, pl: { sm: 7.5 } }}>
+            <Typography variant="body2" color="text.secondary">E-mail : {user?.email ?? "non renseigné"}</Typography>
+            <Typography variant="caption" color="text.secondary">Vos rôles sont attribués par l'administrateur.</Typography>
           </Stack>
         </Paper>
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="subtitle1" fontWeight={600} gutterBottom>Notifications à recevoir</Typography>
-          <Stack>
+        <Paper component="form" onSubmit={changerMdp} noValidate sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 2 }}>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+            <LockOutlined color="primary" />
+            <Typography variant="subtitle1" fontWeight={700}>Mot de passe</Typography>
+          </Stack>
+          <Stack spacing={2}>
+            <Box sx={{ width: "100%", maxWidth: 520, mx: "auto" }}>
+              <Stack spacing={2}>
+                <TextField fullWidth size="small" label="Mot de passe actuel" type="password" value={ancien} onChange={(e) => setAncien(e.target.value)} autoComplete="current-password" />
+                <TextField fullWidth size="small" label="Nouveau mot de passe" type="password" value={nouveau} onChange={(e) => setNouveau(e.target.value)} autoComplete="new-password" />
+                <TextField fullWidth size="small" label="Confirmer" type="password" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} autoComplete="new-password" />
+              </Stack>
+            </Box>
+            {erreur && <Alert severity="error">{erreur}</Alert>}
+            <Button type="submit" variant="outlined" sx={{ alignSelf: { xs: "stretch", sm: "center" }, minWidth: { sm: 240 } }}>Changer le mot de passe</Button>
+          </Stack>
+        </Paper>
+        <Paper sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 2 }}>
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+            <NotificationsActiveOutlined color="primary" />
+            <Typography variant="subtitle1" fontWeight={700}>Notifications à recevoir</Typography>
+          </Stack>
+          <Stack sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, columnGap: 2 }}>
             {TYPES_NOTIFICATION.map((t) => (
               <FormControlLabel key={t} label={libelle("evenement", t)}
                 control={<Checkbox checked={actives[t] ?? true} onChange={(e) => setActives({ ...actives, [t]: e.target.checked })} />} />
             ))}
           </Stack>
-          <Button variant="contained" onClick={enregistrerPreferences} sx={{ mt: 1 }}>Enregistrer</Button>
+          <Button variant="contained" onClick={enregistrerPreferences} sx={{ mt: 1, display: "flex", mx: { xs: 0, sm: "auto" }, minWidth: { sm: 220 } }}>Enregistrer</Button>
         </Paper>
       </Stack>
     </>
