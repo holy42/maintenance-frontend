@@ -1,6 +1,8 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import FactCheckOutlined from "@mui/icons-material/FactCheckOutlined";
-import { Alert, Button, List, ListItemButton, ListItemText, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Alert, List, ListItemButton, ListItemText, Paper, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { messageErreur } from "../../api/client";
@@ -44,16 +46,16 @@ export default function ProblemeTest() {
   return (
     <Etat loading={loading} error={error}>
       <Stack spacing={2} sx={{ maxWidth: 1000, width: "100%", mx: "auto" }}>
-        <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", borderTop: 3, borderTopColor: "secondary.main" }}>
+        <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "white" }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-            <FactCheckOutlined color="primary" /><Typography variant="subtitle1" fontWeight={700}>Description du test</Typography>
+            <Typography variant="subtitle1" fontWeight={700}>Description du test</Typography>
           </Stack>
-          <TextField multiline minRows={4} fullWidth size="small" value={description} onChange={(e) => setDescription(e.target.value)} disabled={!modifiable}
+          <ChampTexte multiline minRows={4} fullWidth size="small" value={description} onChange={(e) => setDescription(e.target.value)} disabled={!modifiable}
             placeholder="Étapes à suivre et résultat attendu" sx={{ "& .MuiOutlinedInput-root": { bgcolor: "background.default" } }} />
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
-            <Button variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={proposer} disabled={!modifiable || attente}>{attente ? "L'IA rédige…" : "Proposer avec l'IA"}</Button>
-            <Button variant="outlined" onClick={sauvegarder} disabled={!modifiable || !description.trim()}>Enregistrer la description</Button>
-            <Button variant="contained" onClick={demander} disabled={!modifiable || probleme.statut !== "en_cours"}>Demander le test</Button>
+            <BoutonAction variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={proposer} disabled={!modifiable || attente}>{attente ? "L'IA rédige…" : "Proposer avec l'IA"}</BoutonAction>
+            <BoutonAction variant="outlined" onClick={sauvegarder} disabled={!modifiable || !description.trim()}>Enregistrer la description</BoutonAction>
+            <BoutonAction variant="contained" onClick={demander} disabled={!modifiable || probleme.statut !== "en_cours"}>Demander le test</BoutonAction>
           </Stack>
           <Alert severity="info" sx={{ mt: 2 }}>
             Le test ne peut être demandé que si le problème est « en cours », qu'une décision de correction est enregistrée et que toutes ses tâches sont terminées (les tâches arrêtées ne bloquent pas).
@@ -62,7 +64,7 @@ export default function ProblemeTest() {
         </Paper>
         <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", overflow: "hidden" }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-            <FactCheckOutlined color="primary" /><Typography variant="subtitle1" fontWeight={700}>Passages de test</Typography>
+            <Typography variant="subtitle1" fontWeight={700}>Passages de test</Typography>
           </Stack>
           <List>
             {(data?.sessions ?? []).length === 0 && <Typography color="text.secondary" variant="body2" sx={{ py: 2 }}>Aucun passage.</Typography>}

@@ -1,5 +1,7 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import SearchOutlined from "@mui/icons-material/SearchOutlined";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate, useSearchParams } from "react-router-dom";
 import { membresApplication } from "../../api/applications";
@@ -63,10 +65,10 @@ export default function ProblemesListe() {
   return (
     <>
       <PageHeader titre="Problèmes" sousTitre="Repérez, filtrez et priorisez les incidents à résoudre."
-        actions={ctx && ctx.peut(PERM.PROBLEME_MODIFIER) && !ctx.archivee ? <Button variant="contained" onClick={() => setCreation(true)}>Nouveau problème</Button> : undefined} />
-      <Paper sx={{ p: { xs: 1.5, md: 2 }, mb: 2 }}>
+        actions={ctx && ctx.peut(PERM.PROBLEME_MODIFIER) && !ctx.archivee ? <BoutonAction variant="contained" onClick={() => setCreation(true)}>Nouveau problème</BoutonAction> : undefined} />
+      <Box sx={{ p: { xs: 1.5, md: 2 }, mb: 2 }}>
         <Stack direction={{ xs: "column", md: "row" }} spacing={1.25} alignItems={{ md: "center" }} flexWrap="wrap" useFlexGap>
-          <TextField
+          <ChampTexte
             size="small"
             label="Rechercher"
             placeholder="Code ou titre"
@@ -80,7 +82,7 @@ export default function ProblemesListe() {
           <FiltreSelect label="Priorité" valeur={priorite} onChange={setPriorite} options={options("priorite")} largeur={140} />
           <FiltreSelect label="Statut" valeur={statut} onChange={setStatut} options={options("statutProbleme")} largeur={150} />
         </Stack>
-      </Paper>
+      </Box>
       <Etat loading={loading} error={error}>
         <Paper sx={{ overflow: "hidden" }}>
           <Box sx={{ px: 2, py: 1.5, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1 }}>
@@ -125,23 +127,23 @@ export default function ProblemesListe() {
         <DialogTitle>Nouveau problème</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
-            <TextField size="small" label="Titre" value={form.titre} onChange={(e) => setForm({ ...form, titre: e.target.value })} error={Boolean(erreur)} helperText={erreur ?? undefined} />
+            <ChampTexte size="small" label="Titre" value={form.titre} onChange={(e) => setForm({ ...form, titre: e.target.value })} error={Boolean(erreur)} helperText={erreur ?? undefined} />
             <Stack direction="row" spacing={1}>
               <ChampSelect label="Catégorie" valeur={form.categorie} onChange={(v) => setForm({ ...form, categorie: v })} options={options("categorie")} />
               <ChampSelect label="Gravité" valeur={form.gravite} onChange={(v) => setForm({ ...form, gravite: v })} vide="—" options={options("gravite")} />
               <ChampSelect label="Priorité" valeur={form.priorite} onChange={(v) => setForm({ ...form, priorite: v })} vide="—" options={options("priorite")} />
             </Stack>
-            <TextField size="small" label="Description" multiline minRows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-            <TextField size="small" label="Comportement attendu" value={form.attendu} onChange={(e) => setForm({ ...form, attendu: e.target.value })} />
-            <TextField size="small" label="Comportement observé" value={form.observe} onChange={(e) => setForm({ ...form, observe: e.target.value })} />
+            <ChampTexte size="small" label="Description" multiline minRows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+            <ChampTexte size="small" label="Comportement attendu" value={form.attendu} onChange={(e) => setForm({ ...form, attendu: e.target.value })} />
+            <ChampTexte size="small" label="Comportement observé" value={form.observe} onChange={(e) => setForm({ ...form, observe: e.target.value })} />
             <Stack direction="row" spacing={1}>
               <ChampSelect label="Responsable" valeur={form.responsable} onChange={(v) => setForm({ ...form, responsable: v })} vide="Aucun" options={(membres ?? []).map((m) => ({ valeur: String(m.utilisateur_id), libelle: m.identifiant }))} />
-              <TextField size="small" type="date" label="Échéance" InputLabelProps={{ shrink: true }} fullWidth value={form.echeance} onChange={(e) => setForm({ ...form, echeance: e.target.value })} />
+              <ChampTexte size="small" type="date" label="Échéance" InputLabelProps={{ shrink: true }} fullWidth value={form.echeance} onChange={(e) => setForm({ ...form, echeance: e.target.value })} />
             </Stack>
             <Typography variant="caption" color="text.secondary">Création manuelle : le problème a la source « humain » et aucun résultat d'analyse d'origine.</Typography>
           </Stack>
         </DialogContent>
-        <DialogActions><Button onClick={() => setCreation(false)}>Annuler</Button><Button variant="contained" onClick={creer}>Créer</Button></DialogActions>
+        <DialogActions><BoutonAction onClick={() => setCreation(false)}>Annuler</BoutonAction><BoutonAction variant="contained" onClick={creer}>Créer</BoutonAction></DialogActions>
       </Dialog>
     </>
   );

@@ -1,7 +1,9 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import TipsAndUpdatesOutlined from "@mui/icons-material/TipsAndUpdatesOutlined";
 import { alpha } from "@mui/material/styles";
-import { Alert, Box, Button, Chip, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { messageErreur } from "../../api/client";
 import { demanderDiagnostic, listDiagnostics, retourSolution } from "../../api/problemes";
@@ -33,7 +35,7 @@ function SolutionCarte({ solution, numero, peutEvaluer, fichier, ligne }: { solu
   }
 
   return (
-    <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", borderTop: 3, borderTopColor: "secondary.main" }}>
+    <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "white" }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography variant="subtitle1" fontWeight={600}>Solution {numero}</Typography>
         <Chip size="small" color="warning" label="Proposition" />
@@ -45,15 +47,15 @@ function SolutionCarte({ solution, numero, peutEvaluer, fichier, ligne }: { solu
       })()}
       {solution.extrait_code && (solution.format_code === "diff" ? <DiffBlock diff={solution.extrait_code} /> : <CodeBlock code={solution.extrait_code} />)}
       {solution.extrait_code && (
-        <Button size="small" sx={{ mt: 1 }} onClick={() => navigator.clipboard.writeText(solution.format_code === "diff" ? codeACopier(solution.extrait_code ?? "") : solution.extrait_code ?? "").then(() => notifier("Code corrigé copié."))}>Copier le code corrigé</Button>
+        <BoutonAction size="small" sx={{ mt: 1 }} onClick={() => navigator.clipboard.writeText(solution.format_code === "diff" ? codeACopier(solution.extrait_code ?? "") : solution.extrait_code ?? "").then(() => notifier("Code corrigé copié."))}>Copier le code corrigé</BoutonAction>
       )}
       {solution.fiabilite && <Box sx={{ mt: 1.5 }}><FiabiliteBadge fiabilite={solution.fiabilite} titre="Probabilité de validation au test" /></Box>}
       {solution.risques && <Typography variant="body2" sx={{ mt: 1 }}><strong>Risques :</strong> {solution.risques}</Typography>}
       {solution.tests_suggeres && <Typography variant="body2"><strong>Tests suggérés :</strong> {solution.tests_suggeres}</Typography>}
       <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mt: 2, p: { xs: 1, sm: 1.5 }, borderRadius: 2, bgcolor: "action.hover" }} alignItems="center">
         <Box sx={{ minWidth: { xs: "100%", sm: 220 } }}><ChampSelect label="Votre évaluation" valeur={utilite} onChange={setUtilite} vide="Non évaluée" options={options("utilite")} disabled={!peutEvaluer} /></Box>
-        <TextField size="small" label="Commentaire" fullWidth value={commentaire} onChange={(e) => setCommentaire(e.target.value)} disabled={!peutEvaluer} />
-        <Button variant="outlined" onClick={enregistrer} disabled={!peutEvaluer || !utilite}>Enregistrer</Button>
+        <ChampTexte size="small" label="Commentaire" fullWidth value={commentaire} onChange={(e) => setCommentaire(e.target.value)} disabled={!peutEvaluer} />
+        <BoutonAction variant="outlined" onClick={enregistrer} disabled={!peutEvaluer || !utilite}>Enregistrer</BoutonAction>
       </Stack>
     </Paper>
   );
@@ -86,9 +88,9 @@ export default function ProblemeDiagnostic() {
                 options={(data ?? []).map((d, i) => ({ valeur: String(d.id), libelle: `Diagnostic ${(data?.length ?? 0) - i} · ${dateHeure(d.cree_le)}${d.branche_analysee ? ` · ${d.branche_analysee}` : ""}` }))} />
             </Box>
           )}
-          <Button variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={demander} disabled={attente || !peut(PERM.PROBLEME_MODIFIER) || archivee}>
+          <BoutonAction variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={demander} disabled={attente || !peut(PERM.PROBLEME_MODIFIER) || archivee}>
             {attente ? "L'IA analyse…" : "Demander un nouveau diagnostic"}
-          </Button>
+          </BoutonAction>
         </Stack>
         {!diagnostic && <Alert severity="info">Aucun diagnostic. Les anciens diagnostics sont toujours conservés : un nouveau ne remplace jamais l'ancien.</Alert>}
         {diagnostic && (

@@ -1,11 +1,13 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import ReplyOutlined from "@mui/icons-material/ReplyOutlined";
 import ForumOutlined from "@mui/icons-material/ForumOutlined";
 import { alpha } from "@mui/material/styles";
 import {
-  Badge, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, List, ListItemButton, ListItemText, ListSubheader, Paper,
-  Stack, TextField, Typography,
+  Badge, Box, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, List, ListItemButton, ListItemText, ListSubheader, Paper,
+  Stack, Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
@@ -83,7 +85,7 @@ export default function Discussions() {
           <List dense subheader={<ListSubheader>Salons des problèmes</ListSubheader>}>{problemes.map((s) => <Entree key={s.id} s={s} />)}</List>
           {archives.length > 0 && <List dense subheader={<ListSubheader>Archivés (lecture seule)</ListSubheader>}>{archives.map((s) => <Entree key={s.id} s={s} />)}</List>}
           <Box sx={{ p: 1.25, position: "sticky", bottom: 0, bgcolor: "background.paper", borderTop: 1, borderColor: "divider" }}>
-            <Button fullWidth size="small" variant="outlined" startIcon={<ForumOutlined />} onClick={() => setNouveau(true)} disabled={!peutEcrire}>Nouveau salon</Button>
+            <BoutonAction fullWidth size="small" variant="outlined" startIcon={<ForumOutlined />} onClick={() => setNouveau(true)} disabled={!peutEcrire}>Nouveau salon</BoutonAction>
           </Box>
         </Paper>
 
@@ -93,32 +95,38 @@ export default function Discussions() {
               <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "stretch", sm: "center" }} spacing={1} sx={{ mb: 1.25, pb: 1.25, borderBottom: 1, borderColor: "divider" }}>
                 <Box sx={{ minWidth: 0 }}>
                   <Stack direction="row" spacing={1} alignItems="center"><ForumOutlined color="primary" fontSize="small" /><Typography variant="subtitle1" fontWeight={700} sx={{ overflowWrap: "anywhere" }}>{courant.titre}</Typography></Stack>
-                  <Typography variant="caption" color="text.secondary">{courant.type === "probleme" ? "Salon créé automatiquement avec le problème · accessible à toute l'équipe" : "Salon général"}{courant.archive ? " · archivé (problème terminé)" : ""}</Typography>
+                  <Typography variant="caption" color="text.secondary">{courant.type === "probleme" ? "" : "Salon général"}{courant.archive ? " · archivé (problème terminé)" : ""}</Typography>
                 </Box>
                 <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
-                  {courant.probleme_id && <Button size="small" variant="outlined" component={RouterLink} to={`/applications/${application.id}/problemes/${courant.probleme_id}`}>Ouvrir le problème</Button>}
-                  {peut(PERM.SALON_SUPPRIMER) && <Button size="small" color="error" onClick={() => setSuppression(true)}>Supprimer</Button>}
+                  {courant.probleme_id && <BoutonAction size="small" variant="outlined" component={RouterLink} to={`/applications/${application.id}/problemes/${courant.probleme_id}`}>Ouvrir le problème</BoutonAction>}
+                  {peut(PERM.SALON_SUPPRIMER) && <BoutonAction size="small" color="error" onClick={() => setSuppression(true)}>Supprimer</BoutonAction>}
                 </Stack>
               </Stack>
               <Stack spacing={1.25} sx={{ flex: 1, overflowY: "auto", minHeight: 220, py: 1, px: 0.25 }}>
                 {(messages ?? []).filter((m) => !m.supprime_le).map((m) => m.type === "systeme" ? (
-                  <Typography key={m.id} variant="caption" color="text.secondary" textAlign="center">⚡ {m.contenu} · {dateHeure(m.cree_le)}</Typography>
+                  <Box key={m.id} sx={{ pb: 1.25, borderBottom: 1, borderColor: "divider", "&:last-child": { borderBottom: 0 } }}>
+                    <Typography variant="caption" color="text.secondary" display="block" textAlign="center">
+                      ⚡ {m.contenu} · {dateHeure(m.cree_le)}
+                    </Typography>
+                  </Box>
                 ) : (
                   <Box key={m.id} sx={{
                     ml: { xs: m.parent_id ? 1.5 : 0, sm: m.parent_id ? 4 : 0 }, pl: m.parent_id ? 1 : 0,
-                    borderLeft: m.parent_id ? 2 : 0, borderColor: "divider",
+                    borderLeft: m.parent_id ? 2 : 0, borderBottom: 1, borderColor: "divider",
+                    pb: 1.25,
+                    "&:last-child": { borderBottom: 0 },
                     "& .message-content": {
-                      display: "inline-block", maxWidth: "min(100%, 720px)", px: 1.5, py: 1, mt: 0.35, borderRadius: 2,
-                      bgcolor: m.auteur_id === user?.id ? "action.selected" : "action.hover",
-                      border: 1, borderColor: (theme) => alpha(theme.palette.secondary.main, theme.palette.mode === "light" ? 0.18 : 0.3),
+                      display: "block", width: "fit-content", maxWidth: "min(100%, 720px)", px: 1.5, py: 1, mt: 0.5, borderRadius: 0,
                       overflowWrap: "anywhere",
                     },
                   }}>
-                    <Typography variant="caption" color="text.secondary">{nom(m.auteur_id)} · {dateHeure(m.cree_le)}{m.modifie_le ? " · modifié" : ""}</Typography>
+                    <Typography variant="caption" color="text.secondary" display="block">
+                      {nom(m.auteur_id)} · {dateHeure(m.cree_le)}{m.modifie_le ? " · modifié" : ""}
+                    </Typography>
                     {edition?.id === m.id ? (
                       <Stack direction="row" spacing={1}>
-                        <TextField size="small" fullWidth value={edition.texte} onChange={(e) => setEdition({ id: m.id, texte: e.target.value })} />
-                        <Button size="small" variant="contained" onClick={() => agir(async () => { await modifierMessage(m.id, edition.texte); setEdition(null); })}>OK</Button>
+                        <ChampTexte size="small" fullWidth value={edition.texte} onChange={(e) => setEdition({ id: m.id, texte: e.target.value })} />
+                        <BoutonAction size="small" variant="contained" onClick={() => agir(async () => { await modifierMessage(m.id, edition.texte); setEdition(null); })}>OK</BoutonAction>
                       </Stack>
                     ) : <Typography className="message-content" variant="body2" sx={{ whiteSpace: "pre-wrap" }}>{m.contenu}</Typography>}
                     <Stack direction="row">
@@ -133,9 +141,9 @@ export default function Discussions() {
               </Stack>
               {reponse && <Typography variant="caption" color="text.secondary">En réponse au message n°{reponse} · <a href="#annuler" onClick={(e) => { e.preventDefault(); setReponse(null); }}>annuler</a></Typography>}
               <Stack direction="row" spacing={1} alignItems="flex-end" sx={{ mt: 1.25, pt: 1.25, borderTop: 1, borderColor: "divider" }}>
-                <TextField size="small" fullWidth multiline maxRows={5} placeholder="Écrire un message (@identifiant pour mentionner)" value={texte} onChange={(e) => setTexte(e.target.value)} disabled={!peutEcrire} />
-                <Button variant="contained" disabled={!peutEcrire || !texte.trim()}
-                  onClick={() => agir(async () => { await publierMessage(courant.id, { contenu: texte.trim(), parent_id: reponse }); setTexte(""); setReponse(null); })}>Envoyer</Button>
+                <ChampTexte size="small" fullWidth multiline maxRows={5} placeholder="Écrire un message (@identifiant pour mentionner)" value={texte} onChange={(e) => setTexte(e.target.value)} disabled={!peutEcrire} />
+                <BoutonAction variant="contained" disabled={!peutEcrire || !texte.trim()}
+                  onClick={() => agir(async () => { await publierMessage(courant.id, { contenu: texte.trim(), parent_id: reponse }); setTexte(""); setReponse(null); })}>Envoyer</BoutonAction>
               </Stack>
             </>
           )}
@@ -144,10 +152,10 @@ export default function Discussions() {
 
       <Dialog open={nouveau} onClose={() => setNouveau(false)} fullWidth maxWidth="xs">
         <DialogTitle>Nouveau salon</DialogTitle>
-        <DialogContent><TextField sx={{ mt: 1 }} fullWidth size="small" label="Titre" value={titre} onChange={(e) => setTitre(e.target.value)} /></DialogContent>
+        <DialogContent><ChampTexte sx={{ mt: 1 }} fullWidth size="small" label="Titre" value={titre} onChange={(e) => setTitre(e.target.value)} /></DialogContent>
         <DialogActions>
-          <Button onClick={() => setNouveau(false)}>Annuler</Button>
-          <Button variant="contained" disabled={!titre.trim()} onClick={async () => { try { const s = await creerSalon(application.id, titre.trim()); setNouveau(false); setTitre(""); navigate(`${base}/${s.id}`); } catch (e) { notifier(messageErreur(e), "error"); } }}>Créer</Button>
+          <BoutonAction onClick={() => setNouveau(false)}>Annuler</BoutonAction>
+          <BoutonAction variant="contained" disabled={!titre.trim()} onClick={async () => { try { const s = await creerSalon(application.id, titre.trim()); setNouveau(false); setTitre(""); navigate(`${base}/${s.id}`); } catch (e) { notifier(messageErreur(e), "error"); } }}>Créer</BoutonAction>
         </DialogActions>
       </Dialog>
       <ConfirmDialog ouvert={suppression} titre="Supprimer ce salon ?" texte="Suppression logique, réservée au chef de projet : le salon disparaît de la liste mais reste tracé dans l'historique." confirmer="Supprimer"

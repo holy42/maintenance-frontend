@@ -1,4 +1,6 @@
-import { Button, Paper, Stack, Switch, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
+import { Paper, Stack, Switch, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { activerCritere, desactiverCritere, listCriteres, validerCritere } from "../../api/criteres";
@@ -34,9 +36,9 @@ export default function CriteresListe() {
   return (
     <>
       <PageHeader titre="Critères de vérification" sousTitre="Un critère personnalisé doit être validé avant d'être activé ; un brouillon n'est jamais appliqué."
-        actions={gerer ? <Button variant="contained" component={RouterLink} to={`/applications/${application.id}/criteres/nouveau`}>Nouveau critère</Button> : undefined} />
+        actions={gerer ? <BoutonAction variant="contained" component={RouterLink} to={`/applications/${application.id}/criteres/nouveau`}>Nouveau critère</BoutonAction> : undefined} />
       <Stack direction="row" spacing={1} sx={{ mb: 2 }} flexWrap="wrap" useFlexGap>
-        <TextField size="small" label="Rechercher" value={recherche} onChange={(e) => setRecherche(e.target.value)} />
+        <ChampTexte size="small" label="Rechercher" value={recherche} onChange={(e) => setRecherche(e.target.value)} />
         <FiltreSelect label="Catégorie" valeur={categorie} onChange={setCategorie} options={options("categorie")} />
         <FiltreSelect label="Origine" valeur={origine} onChange={setOrigine} options={[{ valeur: "standard", libelle: "Standard" }, { valeur: "personnalisee", libelle: "Personnalisée" }]} />
       </Stack>
@@ -55,7 +57,7 @@ export default function CriteresListe() {
                   <TableCell><StatutChip groupe="statutCritere" valeur={c.statut} /></TableCell>
                   <TableCell align="right">
                     {c.statut === "brouillon" && c.origine === "personnalisee" ? (
-                      <Button size="small" disabled={!gerer} onClick={() => agir(() => validerCritere(c.id, false))}>Valider</Button>
+                      <BoutonAction size="small" disabled={!gerer} onClick={() => agir(() => validerCritere(c.id, false))}>Valider</BoutonAction>
                     ) : (
                       <Switch checked={c.statut === "actif"} disabled={!gerer} inputProps={{ "aria-label": `Activer ${c.nom}` }}
                         onChange={(e) => agir(() => (e.target.checked ? activerCritere(c.id) : desactiverCritere(c.id)))} />

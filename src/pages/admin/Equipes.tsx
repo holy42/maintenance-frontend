@@ -1,9 +1,11 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import PersonRemoveOutlined from "@mui/icons-material/PersonRemoveOutlined";
 import GroupsOutlined from "@mui/icons-material/GroupsOutlined";
 import GroupAddOutlined from "@mui/icons-material/GroupAddOutlined";
 import {
-  Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, List, ListItemButton, ListItemText, Paper, Stack, Table,
-  TableBody, TableCell, TableHead, TableRow, TextField, Typography,
+  Avatar, Box, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, List, ListItemButton, ListItemText, Paper, Stack, Table,
+  TableBody, TableCell, TableHead, TableRow, Tooltip, Typography,
 } from "@mui/material";
 import { useState } from "react";
 import { attribuerRole, creerEquipe, listEquipes, listRoles, listUtilisateurs, membresEquipe, retirerMembre } from "../../api/administration";
@@ -38,7 +40,7 @@ export default function Equipes() {
 
   return (
     <>
-      <PageHeader titre="Équipes" fil={[{ libelle: "Administration" }, { libelle: "Équipes" }]} actions={<Button variant="contained" startIcon={<GroupAddOutlined />} onClick={() => setNouvelle(true)}>Nouvelle équipe</Button>} />
+      <PageHeader titre="Équipes" fil={[{ libelle: "Administration" }, { libelle: "Équipes" }]} actions={<BoutonAction variant="contained" startIcon={<GroupAddOutlined />} onClick={() => setNouvelle(true)}>Nouvelle équipe</BoutonAction>} />
       <Etat loading={loading} error={error}>
         <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1fr 2.2fr" } }}>
           <Paper sx={{ overflow: "hidden", borderRadius: 2 }}>
@@ -57,38 +59,56 @@ export default function Equipes() {
           <Paper sx={{ p: { xs: 1.5, sm: 2 }, borderRadius: 2, minWidth: 0 }}>
             <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "stretch", sm: "center" }} spacing={1.25} sx={{ mb: 1.5 }}>
               <Box>
-                <Typography variant="subtitle1" fontWeight={700}>Membres</Typography>
-                <Typography variant="caption" color="text.secondary">{(membres ?? []).length} membre{(membres ?? []).length === 1 ? "" : "s"} dans l’équipe sélectionnée</Typography>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Typography variant="subtitle1" fontWeight={700}>Membres</Typography>
+                  <Chip size="small" color="primary" variant="outlined" label={(membres ?? []).length} />
+                </Stack>
+                <Typography variant="caption" color="text.secondary">Comptes et rôles de l’équipe sélectionnée</Typography>
               </Box>
-              <Button variant="outlined" startIcon={<GroupAddOutlined />} onClick={() => setAjout(true)} disabled={!equipeId}>Ajouter un membre</Button>
+              <BoutonAction variant="outlined" startIcon={<GroupAddOutlined />} onClick={() => setAjout(true)} disabled={!equipeId}>Ajouter un membre</BoutonAction>
             </Stack>
             <Box sx={{ overflowX: "auto", display: { xs: "none", sm: "block" } }}>
             <Table size="small">
-              <TableHead><TableRow><TableCell>Membre</TableCell><TableCell>Rôle dans l'équipe</TableCell><TableCell align="right" /></TableRow></TableHead>
+              <TableHead><TableRow><TableCell>Membre</TableCell><TableCell>Accès à l’équipe</TableCell><TableCell align="right">Actions</TableCell></TableRow></TableHead>
               <TableBody>
                 {(membres ?? []).map((m) => (
-                  <TableRow key={m.utilisateur_id}>
-                    <TableCell>{m.identifiant}</TableCell>
-                    <TableCell sx={{ width: 220 }}>
-                      <ChampSelect label="Rôle" valeur={String(m.role_id)} options={options}
+                  <TableRow key={m.utilisateur_id} hover>
+                    <TableCell>
+                      <Stack direction="row" spacing={1.25} alignItems="center">
+                        <Avatar sx={{ width: 36, height: 36, bgcolor: "primary.main", fontSize: 14, fontWeight: 700 }}>{m.identifiant.slice(0, 1).toUpperCase()}</Avatar>
+                        <Typography variant="body2" fontWeight={600}>{m.identifiant}</Typography>
+                      </Stack>
+                    </TableCell>
+                    <TableCell sx={{ width: 260 }}>
+                      <ChampSelect label="Rôle dans l’équipe" valeur={String(m.role_id)} options={options}
                         onChange={(v) => equipeId && agir(() => attribuerRole(equipeId, m.utilisateur_id, Number(v)), "Rôle modifié.")} />
                     </TableCell>
                     <TableCell align="right">
-                      <IconButton aria-label="Retirer de l'équipe" onClick={() => equipeId && agir(() => retirerMembre(equipeId, m.utilisateur_id), "Membre retiré.")}><PersonRemoveOutlined /></IconButton>
+                      <Tooltip title="Retirer de l’équipe">
+                        <IconButton color="error" aria-label="Retirer de l'équipe" onClick={() => equipeId && agir(() => retirerMembre(equipeId, m.utilisateur_id), "Membre retiré.")}><PersonRemoveOutlined /></IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))}
-                {(membres ?? []).length === 0 && <TableRow><TableCell colSpan={3}><Typography variant="body2" color="text.secondary" sx={{ py: 1 }}>Aucun membre dans cette équipe.</Typography></TableCell></TableRow>}
+                {(membres ?? []).length === 0 && <TableRow><TableCell colSpan={3} sx={{ py: 4, textAlign: "center" }}>
+                  <Typography variant="body2" color="text.secondary">Aucun membre dans cette équipe.</Typography>
+                  <BoutonAction size="small" startIcon={<GroupAddOutlined />} onClick={() => setAjout(true)} disabled={!equipeId} sx={{ mt: 0.75 }}>Ajouter un membre</BoutonAction>
+                </TableCell></TableRow>}
               </TableBody>
             </Table>
             </Box>
             <Stack spacing={1} sx={{ display: { xs: "flex", sm: "none" } }}>
               {(membres ?? []).map((m) => (
-                <Paper key={m.utilisateur_id} sx={{ p: 1.25, borderRadius: 1.5, bgcolor: "background.default" }}>
+                <Paper key={m.utilisateur_id} sx={{ p: 1.5, borderRadius: 1.75, bgcolor: "background.default" }}>
                   <Stack direction="row" spacing={1} alignItems="center">
-                    <Avatar sx={{ width: 34, height: 34, bgcolor: "secondary.main" }}>{m.identifiant.slice(0, 1).toUpperCase()}</Avatar>
-                    <Typography variant="body2" fontWeight={600} sx={{ flex: 1, overflowWrap: "anywhere" }}>{m.identifiant}</Typography>
-                    <IconButton size="small" aria-label="Retirer de l'équipe" onClick={() => equipeId && agir(() => retirerMembre(equipeId, m.utilisateur_id), "Membre retiré.")}><PersonRemoveOutlined /></IconButton>
+                    <Avatar sx={{ width: 38, height: 38, bgcolor: "primary.main", fontWeight: 700 }}>{m.identifiant.slice(0, 1).toUpperCase()}</Avatar>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography variant="body2" fontWeight={650} sx={{ overflowWrap: "anywhere" }}>{m.identifiant}</Typography>
+                      <Typography variant="caption" color="text.secondary">Membre de l’équipe</Typography>
+                    </Box>
+                    <Tooltip title="Retirer de l’équipe">
+                      <IconButton size="small" color="error" aria-label="Retirer de l'équipe" onClick={() => equipeId && agir(() => retirerMembre(equipeId, m.utilisateur_id), "Membre retiré.")}><PersonRemoveOutlined /></IconButton>
+                    </Tooltip>
                   </Stack>
                   <Box sx={{ mt: 1 }}>
                     <ChampSelect label="Rôle dans l'équipe" valeur={String(m.role_id)} options={options}
@@ -105,27 +125,35 @@ export default function Equipes() {
 
       <Dialog open={nouvelle} onClose={() => setNouvelle(false)} fullWidth maxWidth="xs">
         <DialogTitle>Nouvelle équipe</DialogTitle>
-        <DialogContent><Box sx={{ maxWidth: 440, mx: "auto" }}><TextField sx={{ mt: 1 }} fullWidth size="small" label="Nom" value={nom} onChange={(e) => setNom(e.target.value)} /></Box></DialogContent>
+        <DialogContent><Box sx={{ maxWidth: 440, mx: "auto" }}><ChampTexte sx={{ mt: 1 }} fullWidth size="small" label="Nom" value={nom} onChange={(e) => setNom(e.target.value)} /></Box></DialogContent>
         <DialogActions>
-          <Button onClick={() => setNouvelle(false)}>Annuler</Button>
-          <Button variant="contained" disabled={!nom.trim()}
-            onClick={async () => { try { await creerEquipe({ nom: nom.trim() }); setNom(""); setNouvelle(false); notifier("Équipe créée."); reload(); } catch (e) { notifier(messageErreur(e), "error"); } }}>Créer</Button>
+          <BoutonAction onClick={() => setNouvelle(false)}>Annuler</BoutonAction>
+          <BoutonAction variant="contained" disabled={!nom.trim()}
+            onClick={async () => { try { await creerEquipe({ nom: nom.trim() }); setNom(""); setNouvelle(false); notifier("Équipe créée."); reload(); } catch (e) { notifier(messageErreur(e), "error"); } }}>Créer</BoutonAction>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={ajout} onClose={() => setAjout(false)} fullWidth maxWidth="xs">
-        <DialogTitle>Ajouter un membre</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1, maxWidth: 440, mx: "auto" }}>
+      <Dialog open={ajout} onClose={() => setAjout(false)} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ pb: 1 }}>
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <Avatar sx={{ width: 44, height: 44, bgcolor: "primary.main" }}><GroupAddOutlined /></Avatar>
+            <Box>
+              <Typography variant="h6" fontWeight={700}>Ajouter un membre</Typography>
+              <Typography variant="body2" color="text.secondary">Choisissez un compte actif et son rôle dans l’équipe.</Typography>
+            </Box>
+          </Stack>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 2 }}>
+          <Stack spacing={2} sx={{ mt: 1 }}>
             <ChampSelect label="Utilisateur" valeur={utilisateurId} onChange={setUtilisateurId}
               options={(utilisateurs ?? []).filter((u) => u.actif && !dejaMembres.has(u.id)).map((u) => ({ valeur: String(u.id), libelle: u.identifiant }))} />
             <ChampSelect label="Rôle" valeur={roleId} onChange={setRoleId} options={options} />
           </Stack>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setAjout(false)}>Annuler</Button>
-          <Button variant="contained" disabled={!utilisateurId || !roleId || !equipeId}
-            onClick={() => equipeId && agir(() => attribuerRole(equipeId, Number(utilisateurId), Number(roleId)), "Membre ajouté.").then(() => { setAjout(false); setUtilisateurId(""); })}>Ajouter</Button>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <BoutonAction onClick={() => setAjout(false)}>Annuler</BoutonAction>
+          <BoutonAction variant="contained" disabled={!utilisateurId || !roleId || !equipeId}
+            onClick={() => equipeId && agir(() => attribuerRole(equipeId, Number(utilisateurId), Number(roleId)), "Membre ajouté.").then(() => { setAjout(false); setUtilisateurId(""); })}>Ajouter</BoutonAction>
         </DialogActions>
       </Dialog>
     </>

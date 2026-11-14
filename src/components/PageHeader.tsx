@@ -9,8 +9,7 @@ export default function PageHeader({ titre, sousTitre, actions, fil }: {
 }) {
   return (
     <Box sx={{
-      mb: 2.5, p: { xs: 1.5, sm: 2 }, borderRadius: 2.5,
-      bgcolor: "background.paper", border: 1, borderColor: "divider",
+      mb: 2.5, p: { xs: 1.5, sm: 2 }, borderRadius: 2.5, borderColor: "divider",
     }}>
       {fil && fil.length > 0 && (
         <Breadcrumbs sx={{ mb: 0.75, fontSize: 12.5, "& .MuiBreadcrumbs-separator": { color: "text.disabled" } }}>

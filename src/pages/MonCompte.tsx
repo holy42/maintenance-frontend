@@ -1,7 +1,9 @@
+import BoutonAction from "../components/BoutonAction";
+import ChampTexte from "../components/ChampTexte";
 import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
 import LockOutlined from "@mui/icons-material/LockOutlined";
 import NotificationsActiveOutlined from "@mui/icons-material/NotificationsActiveOutlined";
-import { Alert, Avatar, Box, Button, Checkbox, FormControlLabel, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Avatar, Box, Checkbox, FormControlLabel, Paper, Stack, Typography } from "@mui/material";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { changerMotDePasse } from "../api/auth";
 import { messageErreur } from "../api/client";
@@ -97,13 +99,13 @@ export default function MonCompte() {
           <Stack spacing={2}>
             <Box sx={{ width: "100%", maxWidth: 520, mx: "auto" }}>
               <Stack spacing={2}>
-                <TextField fullWidth size="small" label="Mot de passe actuel" type="password" value={ancien} onChange={(e) => setAncien(e.target.value)} autoComplete="current-password" />
-                <TextField fullWidth size="small" label="Nouveau mot de passe" type="password" value={nouveau} onChange={(e) => setNouveau(e.target.value)} autoComplete="new-password" />
-                <TextField fullWidth size="small" label="Confirmer" type="password" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} autoComplete="new-password" />
+                <ChampTexte fullWidth size="small" label="Mot de passe actuel" type="password" value={ancien} onChange={(e) => setAncien(e.target.value)} autoComplete="current-password" />
+                <ChampTexte fullWidth size="small" label="Nouveau mot de passe" type="password" value={nouveau} onChange={(e) => setNouveau(e.target.value)} autoComplete="new-password" />
+                <ChampTexte fullWidth size="small" label="Confirmer" type="password" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} autoComplete="new-password" />
               </Stack>
             </Box>
             {erreur && <Alert severity="error">{erreur}</Alert>}
-            <Button type="submit" variant="outlined" sx={{ alignSelf: { xs: "stretch", sm: "center" }, minWidth: { sm: 240 } }}>Changer le mot de passe</Button>
+            <BoutonAction type="submit" variant="outlined" sx={{ alignSelf: { xs: "stretch", sm: "center" }, minWidth: { sm: 240 } }}>Changer le mot de passe</BoutonAction>
           </Stack>
         </Paper>
         <Paper sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 2 }}>
@@ -125,9 +127,9 @@ export default function MonCompte() {
               control={<Checkbox checked={canaux.navigateur} onChange={(e) => setCanaux({ ...canaux, navigateur: e.target.checked })} />} />
           </Stack>
           {canaux.navigateur && permissionNavigateur === "default" && (
-            <Button size="small" variant="outlined" onClick={autoriserNotificationsNavigateur} sx={{ mt: 0.5 }}>
+            <BoutonAction size="small" variant="outlined" onClick={autoriserNotificationsNavigateur} sx={{ mt: 0.5 }}>
               Autoriser les notifications du navigateur
-            </Button>
+            </BoutonAction>
           )}
           {canaux.navigateur && permissionNavigateur === "denied" && (
             <Alert severity="warning" sx={{ mt: 1 }}>Les notifications sont bloquées par le navigateur. Autorisez-les dans les paramètres du site.</Alert>
@@ -135,7 +137,7 @@ export default function MonCompte() {
           {canaux.navigateur && permissionNavigateur === "indisponible" && (
             <Alert severity="info" sx={{ mt: 1 }}>Ce navigateur ne prend pas en charge les notifications système.</Alert>
           )}
-          <Button variant="contained" onClick={enregistrerPreferences} sx={{ mt: 1, display: "flex", mx: { xs: 0, sm: "auto" }, minWidth: { sm: 220 } }}>Enregistrer</Button>
+          <BoutonAction variant="contained" onClick={enregistrerPreferences} sx={{ mt: 1, display: "flex", mx: { xs: 0, sm: "auto" }, minWidth: { sm: 220 } }}>Enregistrer</BoutonAction>
         </Paper>
       </Stack>
     </>

@@ -1,9 +1,10 @@
+import ChampTexte from "../components/ChampTexte";
 import LogoutOutlined from "@mui/icons-material/LogoutOutlined";
 import MenuOutlined from "@mui/icons-material/MenuOutlined";
 import NotificationsOutlined from "@mui/icons-material/NotificationsOutlined";
 import PersonOutline from "@mui/icons-material/PersonOutline";
 import SearchOutlined from "@mui/icons-material/SearchOutlined";
-import { AppBar, Avatar, Badge, Box, IconButton, InputAdornment, ListItemIcon, Menu, MenuItem, TextField, Toolbar, useMediaQuery, useTheme } from "@mui/material";
+import { AppBar, Avatar, Badge, Box, IconButton, InputAdornment, ListItemIcon, Menu, MenuItem, Toolbar, useMediaQuery, useTheme } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { messageErreur } from "../api/client";
@@ -101,7 +102,7 @@ export default function TopBar() {
     <AppBar position="sticky" color="inherit" elevation={0} sx={{ borderBottom: 1, borderColor: "divider", bgcolor: "background.paper", backgroundImage: "none" }}>
       <Toolbar sx={{ gap: { xs: 0.75, sm: 1.5 }, minHeight: { xs: 58, sm: 68 }, px: { xs: 1, sm: 2 } }}>
         {mobile && <IconButton color="primary" onClick={() => setMobileOuvert(true)} aria-label="Ouvrir le menu"><MenuOutlined /></IconButton>}
-        <TextField
+        <ChampTexte
           size="small" placeholder={mobile ? "Rechercher un problème" : "Rechercher un problème (code ou titre)"} value={recherche}
           sx={{ flex: { xs: 1, sm: "0 1 460px" }, maxWidth: 460, "& .MuiOutlinedInput-root": { bgcolor: "action.hover", borderRadius: 3 } }}
           onChange={(e) => setRecherche(e.target.value)}

@@ -1,4 +1,6 @@
-import { Alert, Box, Button, Chip, Paper, Stack, TextField, Typography } from "@mui/material";
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
+import { Alert, Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 import { listCriteres } from "../../api/criteres";
@@ -49,8 +51,8 @@ export default function ResultatDetail() {
           <PageHeader titre={r.message}
             fil={[{ libelle: "Vérifications", to: `/applications/${application.id}/verifications` }, { libelle: `n°${vid}`, to: base }, { libelle: "Résultat" }]}
             actions={<>
-              <Button disabled={!precedent} component={RouterLink} to={`${base}/resultats/${precedent?.id ?? rid}`}>Précédent</Button>
-              <Button disabled={!suivant} component={RouterLink} to={`${base}/resultats/${suivant?.id ?? rid}`}>Suivant</Button>
+              <BoutonAction disabled={!precedent} component={RouterLink} to={`${base}/resultats/${precedent?.id ?? rid}`}>Précédent</BoutonAction>
+              <BoutonAction disabled={!suivant} component={RouterLink} to={`${base}/resultats/${suivant?.id ?? rid}`}>Suivant</BoutonAction>
             </>}
             sousTitre={<Stack direction="row" spacing={1} sx={{ mt: 0.5 }} flexWrap="wrap" useFlexGap>
               <StatutChip groupe="gravite" valeur={r.gravite} /><Chip size="small" variant="outlined" label={libelle("categorie", r.categorie)} />
@@ -92,9 +94,9 @@ export default function ResultatDetail() {
                   <Typography variant="body2" color="text.secondary">Décision déjà prise{r.motif_decision ? ` : ${r.motif_decision}` : "."}</Typography>
                 ) : (
                   <Stack spacing={1}>
-                    <TextField size="small" multiline minRows={2} label="Motif (facultatif)" value={motif} onChange={(e) => setMotif(e.target.value)} disabled={!peutDecider} />
-                    <Button variant="contained" onClick={confirmer} disabled={!peutDecider}>Confirmer et créer le problème</Button>
-                    <Button variant="outlined" onClick={ecarter} disabled={!peutDecider}>Écarter comme faux positif</Button>
+                    <ChampTexte size="small" multiline minRows={2} label="Motif (facultatif)" value={motif} onChange={(e) => setMotif(e.target.value)} disabled={!peutDecider} />
+                    <BoutonAction variant="contained" onClick={confirmer} disabled={!peutDecider}>Confirmer et créer le problème</BoutonAction>
+                    <BoutonAction variant="outlined" onClick={ecarter} disabled={!peutDecider}>Écarter comme faux positif</BoutonAction>
                   </Stack>
                 )}
               </Paper>

@@ -1,5 +1,7 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
-import { Alert, Box, Button, Checkbox, Chip, FormControlLabel, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Checkbox, Chip, FormControlLabel, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { creerCritere, structurerCritere, validerCritere } from "../../api/criteres";
@@ -54,11 +56,11 @@ export default function CritereNouveau() {
       <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1fr 1.3fr" }, maxWidth: 1100, width: "100%", mx: "auto" }}>
         <Paper sx={{ p: 2 }}>
           <Typography variant="subtitle1" fontWeight={600} gutterBottom>1. Votre critère, en langage naturel</Typography>
-          <TextField multiline minRows={5} fullWidth value={texte} onChange={(e) => setTexte(e.target.value)}
+          <ChampTexte multiline minRows={5} fullWidth value={texte} onChange={(e) => setTexte(e.target.value)}
             placeholder="Ex. Un utilisateur ne doit pas pouvoir consulter les messages d'un autre utilisateur sans autorisation." />
-          <Button sx={{ mt: 1 }} fullWidth variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={structurer} disabled={attente}>
+          <BoutonAction sx={{ mt: 1 }} fullWidth variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={structurer} disabled={attente}>
             {attente ? "L'IA structure votre critère…" : "Demander à l'IA de le structurer"}
-          </Button>
+          </BoutonAction>
           <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
             L'IA reformule et classe votre critère. Elle ne le vérifie pas et ne l'active pas : c'est vous qui validez.
           </Typography>
@@ -72,10 +74,10 @@ export default function CritereNouveau() {
           {!proposition && <Typography color="text.secondary" variant="body2" sx={{ mt: 1 }}>La proposition s'affichera ici. Tous les champs restent modifiables.</Typography>}
           {proposition && (
             <Stack spacing={2} sx={{ mt: 1 }}>
-              <TextField size="small" label="Nom" value={proposition.nom} onChange={(e) => maj("nom", e.target.value)} />
-              <TextField size="small" label="Condition" multiline value={proposition.formulation.condition} onChange={(e) => maj("formulation", { ...proposition.formulation, condition: e.target.value })} />
-              <TextField size="small" label="Résultat attendu" multiline value={proposition.formulation.attendu} onChange={(e) => maj("formulation", { ...proposition.formulation, attendu: e.target.value })} />
-              <TextField size="small" label="Portée" value={proposition.formulation.portee ?? ""} onChange={(e) => maj("formulation", { ...proposition.formulation, portee: e.target.value })} />
+              <ChampTexte size="small" label="Nom" value={proposition.nom} onChange={(e) => maj("nom", e.target.value)} />
+              <ChampTexte size="small" label="Condition" multiline value={proposition.formulation.condition} onChange={(e) => maj("formulation", { ...proposition.formulation, condition: e.target.value })} />
+              <ChampTexte size="small" label="Résultat attendu" multiline value={proposition.formulation.attendu} onChange={(e) => maj("formulation", { ...proposition.formulation, attendu: e.target.value })} />
+              <ChampTexte size="small" label="Portée" value={proposition.formulation.portee ?? ""} onChange={(e) => maj("formulation", { ...proposition.formulation, portee: e.target.value })} />
               <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
                 <ChampSelect label="Catégorie" valeur={proposition.categorie} onChange={(v) => maj("categorie", v as Categorie)} options={options("categorie")} />
                 <ChampSelect label="Vérifiabilité" valeur={proposition.automatisabilite} onChange={(v) => maj("automatisabilite", v as PropositionCritere["automatisabilite"])}
@@ -90,8 +92,8 @@ export default function CritereNouveau() {
               )}
               <FormControlLabel label="Activer le critère après validation" control={<Checkbox checked={activer} onChange={(e) => setActiver(e.target.checked)} />} />
               <Stack direction="row" spacing={1}>
-                <Button variant="outlined" onClick={() => enregistrer(false)}>Enregistrer en brouillon</Button>
-                <Button variant="contained" onClick={() => enregistrer(true)}>Valider le critère</Button>
+                <BoutonAction variant="outlined" onClick={() => enregistrer(false)}>Enregistrer en brouillon</BoutonAction>
+                <BoutonAction variant="contained" onClick={() => enregistrer(true)}>Valider le critère</BoutonAction>
               </Stack>
             </Stack>
           )}

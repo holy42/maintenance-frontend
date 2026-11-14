@@ -1,4 +1,5 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import BoutonAction from "./BoutonAction";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 export default function ConfirmDialog({ ouvert, titre, texte, confirmer = "Confirmer", onConfirm, onClose }: {
   ouvert: boolean; titre: string; texte: string; confirmer?: string; onConfirm: () => void; onClose: () => void;
@@ -8,8 +9,8 @@ export default function ConfirmDialog({ ouvert, titre, texte, confirmer = "Confi
       <DialogTitle>{titre}</DialogTitle>
       <DialogContent><DialogContentText>{texte}</DialogContentText></DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Annuler</Button>
-        <Button variant="contained" onClick={() => { onConfirm(); onClose(); }}>{confirmer}</Button>
+        <BoutonAction onClick={onClose}>Annuler</BoutonAction>
+        <BoutonAction variant="contained" onClick={() => { onConfirm(); onClose(); }}>{confirmer}</BoutonAction>
       </DialogActions>
     </Dialog>
   );

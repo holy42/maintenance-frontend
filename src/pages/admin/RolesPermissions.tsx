@@ -1,5 +1,6 @@
+import BoutonAction from "../../components/BoutonAction";
 import LockOutlined from "@mui/icons-material/LockOutlined";
-import { Alert, Button, Checkbox, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Alert, Checkbox, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { definirPermissions, listPermissions, listRoles, permissionsDuRole } from "../../api/administration";
 import { messageErreur } from "../../api/client";
@@ -40,8 +41,7 @@ export default function RolesPermissions() {
   return (
     <>
       <PageHeader titre="Rôles et permissions" fil={[{ libelle: "Administration" }, { libelle: "Rôles et permissions" }]}
-        actions={<Button variant="contained" onClick={enregistrer} disabled={modifies.size === 0}>Enregistrer</Button>} />
-      <Alert severity="info" sx={{ mb: 2 }}>Les permissions sont appliquées par le serveur à chaque requête, selon le rôle de la personne dans l'équipe de l'application.</Alert>
+        actions={<BoutonAction variant="contained" onClick={enregistrer} disabled={modifies.size === 0}>Enregistrer</BoutonAction>} />
       <Etat loading={loading} error={error}>
         <Paper sx={{ overflowX: "auto" }}>
           <Table size="small">

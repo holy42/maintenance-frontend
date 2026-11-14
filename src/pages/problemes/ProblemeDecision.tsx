@@ -1,6 +1,8 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import GavelOutlined from "@mui/icons-material/GavelOutlined";
 import HistoryOutlined from "@mui/icons-material/HistoryOutlined";
-import { Alert, Button, Checkbox, FormControlLabel, Paper, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Checkbox, FormControlLabel, Paper, Radio, RadioGroup, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { messageErreur } from "../../api/client";
 import { creerDecision, listDecisions, listDiagnostics } from "../../api/problemes";
@@ -65,9 +67,9 @@ export default function ProblemeDecision() {
     <Etat loading={loading} error={error}>
       <Stack spacing={2} sx={{ maxWidth: 960, width: "100%", mx: "auto" }}>
         {!statutOk && <Alert severity="info">La décision se prend pour un problème confirmé, en cours ou rouvert (statut actuel : {libelle("statutProbleme", probleme.statut)}).</Alert>}
-        <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", borderTop: 3, borderTopColor: "secondary.main" }}>
+        <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "white" }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-            <GavelOutlined color="primary" /><Typography variant="subtitle1" fontWeight={700}>Quelle correction retenez-vous ?</Typography>
+            <Typography variant="subtitle1" fontWeight={700}>Quelle correction retenez-vous ?</Typography>
           </Stack>
           <RadioGroup value={type} onChange={(e) => setType(e.target.value as TypeDecision)}>
             {CHOIX.map((c) => (
@@ -92,24 +94,24 @@ export default function ProblemeDecision() {
               </Stack>
             )}
             {(type === "ia_adaptee" || !avecIA) && (
-              <TextField multiline minRows={3} size="small" disabled={!modifiable}
+              <ChampTexte multiline minRows={3} size="small" disabled={!modifiable}
                 label={type === "ia_adaptee" ? "Vos adaptations" : "Décrivez votre solution (obligatoire)"} value={description} onChange={(e) => setDescription(e.target.value)} />
             )}
-            {!avecIA && <TextField multiline minRows={3} size="small" label="Code de votre solution (facultatif)" value={code} onChange={(e) => setCode(e.target.value)} disabled={!modifiable} />}
+            {!avecIA && <ChampTexte multiline minRows={3} size="small" label="Code de votre solution (facultatif)" value={code} onChange={(e) => setCode(e.target.value)} disabled={!modifiable} />}
             {!avecIA && <ChampSelect label="Motif (facultatif)" valeur={motif} onChange={setMotif} vide="—" options={options("motifNonUtilisation")} disabled={!modifiable} />}
-            <TextField multiline minRows={2} size="small" label="Justification (facultative)" value={justification} onChange={(e) => setJustification(e.target.value)} disabled={!modifiable} />
+            <ChampTexte multiline minRows={2} size="small" label="Justification (facultative)" value={justification} onChange={(e) => setJustification(e.target.value)} disabled={!modifiable} />
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-              <TextField size="small" label="Commit associé" fullWidth value={commit} onChange={(e) => setCommit(e.target.value)} disabled={!modifiable} />
-              <TextField size="small" label="Pull request" fullWidth value={pr} onChange={(e) => setPr(e.target.value)} disabled={!modifiable} />
+              <ChampTexte size="small" label="Commit associé" fullWidth value={commit} onChange={(e) => setCommit(e.target.value)} disabled={!modifiable} />
+              <ChampTexte size="small" label="Pull request" fullWidth value={pr} onChange={(e) => setPr(e.target.value)} disabled={!modifiable} />
             </Stack>
             {erreur && <Alert severity="error">{erreur}</Alert>}
-            <Button variant="contained" sx={{ alignSelf: "flex-start" }} onClick={enregistrer} disabled={!modifiable}>Enregistrer la décision</Button>
+            <BoutonAction variant="contained" sx={{ alignSelf: "flex-start" }} onClick={enregistrer} disabled={!modifiable}>Enregistrer la décision</BoutonAction>
             <Typography variant="caption" color="text.secondary">La demande de test se fait depuis l'onglet « Tests », quand toutes les tâches sont terminées.</Typography>
           </Stack>
         </Paper>
         <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider" }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-            <HistoryOutlined color="primary" /><Typography variant="subtitle1" fontWeight={700}>Décisions précédentes</Typography>
+            <Typography variant="subtitle1" fontWeight={700}>Décisions précédentes</Typography>
           </Stack>
           {(decisions ?? []).length === 0 && <Typography color="text.secondary" variant="body2">Aucune décision.</Typography>}
           <Stack spacing={1}>

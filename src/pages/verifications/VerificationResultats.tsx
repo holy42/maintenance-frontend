@@ -1,4 +1,5 @@
-import { Alert, Box, Button, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import BoutonAction from "../../components/BoutonAction";
+import { Alert, Box, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
 import { criteresManuels, getVerification, resultatsVerification } from "../../api/verifications";
@@ -69,7 +70,7 @@ export default function VerificationResultats() {
                     <TableCell>{r.message}<Typography variant="caption" display="block" color="text.secondary" sx={{ fontFamily: "monospace" }}>{r.fichier}{r.ligne_debut ? `:${r.ligne_debut}` : ""}</Typography></TableCell>
                     <TableCell><FiabiliteChip fiabilite={r.fiabilite} /></TableCell>
                     <TableCell><StatutChip groupe="validation" valeur={r.statut_validation} /></TableCell>
-                    <TableCell align="right"><Button size="small" component={RouterLink} to={`${base}/resultats/${r.id}`}>Examiner</Button></TableCell>
+                    <TableCell align="right"><BoutonAction size="small" component={RouterLink} to={`${base}/resultats/${r.id}`}>Examiner</BoutonAction></TableCell>
                   </TableRow>
                 ))}
               </TableBody>

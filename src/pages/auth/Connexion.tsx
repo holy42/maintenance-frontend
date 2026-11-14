@@ -1,7 +1,9 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import LoginOutlined from "@mui/icons-material/LoginOutlined";
 import LockOutlined from "@mui/icons-material/LockOutlined";
 import PersonOutline from "@mui/icons-material/PersonOutline";
-import { Alert, Button, InputAdornment, Link, Stack, TextField, Typography } from "@mui/material";
+import { Alert, InputAdornment, Link, Stack, Typography } from "@mui/material";
 import { useState, type FormEvent } from "react";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { messageErreur } from "../../api/client";
@@ -39,19 +41,19 @@ export default function Connexion() {
     <form onSubmit={soumettre} noValidate>
       <Stack spacing={2.25}>
         <BoxIntro />
-        <TextField label="Identifiant" value={identifiant} onChange={(e) => setIdentifiant(e.target.value)} autoFocus autoComplete="username" fullWidth
+        <ChampTexte label="Identifiant" value={identifiant} onChange={(e) => setIdentifiant(e.target.value)} autoFocus autoComplete="username" fullWidth
           InputProps={{ startAdornment: <InputAdornment position="start"><PersonOutline fontSize="small" color="action" /></InputAdornment> }} />
-        <TextField label="Mot de passe" type="password" value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} autoComplete="current-password" fullWidth
+        <ChampTexte label="Mot de passe" type="password" value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} autoComplete="current-password" fullWidth
           InputProps={{ startAdornment: <InputAdornment position="start"><LockOutlined fontSize="small" color="action" /></InputAdornment> }} />
         {erreur && <Alert severity="error">{erreur}</Alert>}
-        <Button type="submit" variant="contained" size="large" fullWidth startIcon={<LoginOutlined />} disabled={envoi}
+        <BoutonAction type="submit" variant="contained" size="large" fullWidth startIcon={<LoginOutlined />} disabled={envoi}
           sx={{
             mt: 0.5, py: 1.25, borderRadius: 2,
             background: "linear-gradient(90deg, #3182ce, #4299e0)",
             "&:hover": { background: "linear-gradient(90deg, #2b6cb0, #3182ce)" },
           }}>
           {envoi ? "Connexion en cours…" : "Se connecter"}
-        </Button>
+        </BoutonAction>
         <Link component={RouterLink} to="/mot-de-passe-oublie" textAlign="center" fontSize={13} fontWeight={600} underline="hover">
           Mot de passe oublié ?
         </Link>
@@ -63,8 +65,8 @@ export default function Connexion() {
 function BoxIntro() {
   return (
     <Stack spacing={0.75} alignItems="center" sx={{ mb: 0.75 }}>
-      <Typography variant="h5" component="h1" textAlign="center" fontWeight={800}>Heureux de vous revoir</Typography>
-      <Typography variant="body2" color="text.secondary" textAlign="center">Connectez-vous pour accéder à votre espace.</Typography>
+      <Typography variant="h5" component="h1" textAlign="center" fontWeight={800}>Connectez-vous</Typography>
+      <Typography variant="body2" color="text.secondary" textAlign="center">Accéder à votre espace.</Typography>
     </Stack>
   );
 }

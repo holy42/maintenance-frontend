@@ -1,4 +1,5 @@
-import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import BoutonAction from "../../components/BoutonAction";
+import { Box, Paper, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { vueEnsemble } from "../../api/applications";
 import Etat from "../../components/Etat";
@@ -43,7 +44,7 @@ export default function VueEnsemble() {
                   <Typography variant="body2">{data.derniere_verification.resultat_global ?? "—"}</Typography>
                   <Stack direction="row" spacing={1} alignItems="center">
                     <StatutChip groupe="statutVerification" valeur={data.derniere_verification.statut} />
-                    <Button component={RouterLink} to={`${base}/verifications/${data.derniere_verification.id}`} size="small">Voir le détail</Button>
+                    <BoutonAction component={RouterLink} to={`${base}/verifications/${data.derniere_verification.id}`} size="small">Voir le détail</BoutonAction>
                   </Stack>
                 </Stack>
               ) : <Typography color="text.secondary" variant="body2" sx={{ mt: 1 }}>Aucune vérification pour l'instant.</Typography>}
@@ -51,7 +52,7 @@ export default function VueEnsemble() {
             <Paper sx={{ p: 2 }}>
               <Typography variant="subtitle1" fontWeight={600}>Corrections en attente de test</Typography>
               <Typography variant="h4" component="p" sx={{ mt: 1 }}>{data.corrections_en_attente_de_test}</Typography>
-              <Button component={RouterLink} to={`${base}/tests`} size="small">Voir les tests</Button>
+              <BoutonAction component={RouterLink} to={`${base}/tests`} size="small">Voir les tests</BoutonAction>
             </Paper>
           </Box>
         </Stack>

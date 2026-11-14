@@ -1,5 +1,7 @@
+import BoutonAction from "./BoutonAction";
+import ChampTexte from "./ChampTexte";
 import SendOutlined from "@mui/icons-material/SendOutlined";
-import { Alert, Box, Button, Chip, Divider, Drawer, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Chip, Divider, Drawer, IconButton, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { messageErreur } from "../api/client";
 import { messagesIA, partagerDansSalon, poserQuestion, proposerSolution } from "../api/collaboration";
@@ -84,13 +86,13 @@ export default function AssistantIAPanel({ ouvert, onClose, problemeId, peutUtil
                       <Typography variant="caption" color="text.secondary">Réponse générée par une IA : à vérifier.</Typography>
                       <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                         {Boolean(m.contexte_utilise?.["solution_proposee"]) && !m.solution_id && peutProposer && (
-                          <Button size="small" variant="outlined" onClick={() => agir(() => proposerSolution(problemeId, m.id), "Solution ajoutée au problème.")}>
+                          <BoutonAction size="small" variant="outlined" onClick={() => agir(() => proposerSolution(problemeId, m.id), "Solution ajoutée au problème.")}>
                             Proposer comme solution
-                          </Button>
+                          </BoutonAction>
                         )}
-                        <Button size="small" variant="outlined" onClick={() => agir(() => partagerDansSalon(problemeId, m.id), "Partagé dans le salon.")}>
+                        <BoutonAction size="small" variant="outlined" onClick={() => agir(() => partagerDansSalon(problemeId, m.id), "Partagé dans le salon.")}>
                           Partager dans le salon
-                        </Button>
+                        </BoutonAction>
                       </Stack>
                     </Stack>
                   )}
@@ -105,7 +107,7 @@ export default function AssistantIAPanel({ ouvert, onClose, problemeId, peutUtil
             <Alert severity="warning">Vous n'avez pas la permission d'utiliser l'assistant.</Alert>
           ) : (
             <Stack direction="row" spacing={1} alignItems="flex-end">
-              <TextField multiline minRows={2} maxRows={6} fullWidth size="small" placeholder="Posez une question sur ce problème"
+              <ChampTexte multiline minRows={2} maxRows={6} fullWidth size="small" placeholder="Posez une question sur ce problème"
                 value={question} onChange={(e) => setQuestion(e.target.value)} />
               <IconButton color="primary" onClick={envoyer} disabled={envoi || !question.trim()} aria-label="Envoyer"><SendOutlined /></IconButton>
             </Stack>

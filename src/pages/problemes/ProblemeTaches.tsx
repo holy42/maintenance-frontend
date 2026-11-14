@@ -1,5 +1,6 @@
+import BoutonAction from "../../components/BoutonAction";
 import AddTaskOutlined from "@mui/icons-material/AddTaskOutlined";
-import { Alert, Box, Button, List, ListItemButton, ListItemText, Paper, Typography } from "@mui/material";
+import { Alert, Box, List, ListItemButton, ListItemText, Paper, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { tachesDuProbleme } from "../../api/taches";
 import Etat from "../../components/Etat";
@@ -20,10 +21,9 @@ export default function ProblemeTaches() {
 
   return (
     <Etat loading={loading} error={error}>
-      <Button variant="contained" startIcon={<AddTaskOutlined />} sx={{ mb: 2 }} disabled={!peutCreer} component={RouterLink} to={`/applications/${application.id}/taches/nouvelle?problemeId=${probleme.id}`}>
+      <BoutonAction variant="contained" startIcon={<AddTaskOutlined />} sx={{ mb: 2 }} disabled={!peutCreer} component={RouterLink} to={`/applications/${application.id}/taches/nouvelle?problemeId=${probleme.id}`}>
         Créer des tâches
-      </Button>
-      {!peutCreer && <Alert severity="info" sx={{ mb: 2 }}>Les tâches se créent pour un problème confirmé, en cours ou rouvert, avec la permission « gérer les tâches ».</Alert>}
+      </BoutonAction>
       <Paper sx={{ maxWidth: 1120, mx: "auto", borderRadius: 2.5, overflow: "hidden", borderColor: "divider" }}>
         <List>
           {(data ?? []).length === 0 && <Box sx={{ p: { xs: 3, sm: 4 }, textAlign: "center" }}><Typography color="text.secondary">Aucune tâche pour ce problème.</Typography></Box>}

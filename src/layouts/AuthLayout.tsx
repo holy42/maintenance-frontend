@@ -35,12 +35,12 @@ export default function AuthLayout() {
             }}>
               <HandymanOutlined fontSize="large" />
             </Box>
-            <Box>
+            {/* <Box>
               <Typography variant="subtitle1" textAlign="center" fontWeight={800}>Plateforme de maintenance</Typography>
               <Typography variant="caption" display="block" textAlign="center" color="text.secondary" sx={{ letterSpacing: "0.12em", textTransform: "uppercase" }}>
                 Fiabilité · Suivi · Qualité
               </Typography>
-            </Box>
+            </Box> */}
           </Stack>
           <Box sx={{ mt: 3.5 }}><Outlet /></Box>
         </Paper>

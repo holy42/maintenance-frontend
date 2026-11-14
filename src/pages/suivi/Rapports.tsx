@@ -1,10 +1,12 @@
-import { Alert, Box, Button, LinearProgress, Paper, Stack, Tab, Table, TableBody, TableCell, TableHead, TableRow, Tabs, Typography, useTheme } from "@mui/material";
+import BoutonAction from "../../components/BoutonAction";
+import { Alert, Box, LinearProgress, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useState } from "react";
 import { messageErreur } from "../../api/client";
 import { enregistrerRapport, rapportIaTests, rapportProblemesTaches } from "../../api/suivi";
 import Etat from "../../components/Etat";
 import FiltreSelect from "../../components/FiltreSelect";
+import OngletsHorizontaux from "../../components/OngletsHorizontaux";
 import PageHeader from "../../components/PageHeader";
 import { useApplicationOptionnelle } from "../../context/ApplicationContext";
 import { useApplications } from "../../context/ApplicationsContext";
@@ -12,6 +14,11 @@ import { useNotifier } from "../../context/SnackbarContext";
 import { useAsync } from "../../hooks/useAsync";
 import { dureeEnJours } from "../../utils/format";
 import { libelle } from "../../utils/libelles";
+
+const ONGLETS_RAPPORT = [
+  { valeur: "pt", libelle: "Problèmes et tâches" },
+  { valeur: "ia", libelle: "IA et tests" },
+] as const;
 
 function Indicateur({ titre, valeur, detail }: { titre: string; valeur: string | number; detail?: string }) {
   return <Paper sx={{ p: 1.5 }}><Typography variant="caption" color="text.secondary">{titre}</Typography><Typography variant="h5" component="p">{valeur}</Typography>{detail && <Typography variant="caption" color="text.secondary">{detail}</Typography>}</Paper>;
@@ -490,11 +497,17 @@ export default function Rapports() {
 
   return (
     <>
-      <PageHeader titre="Rapports" actions={<><Button variant="outlined" onClick={exporter}>Exporter</Button><Button variant="contained" onClick={enregistrer}>Enregistrer le rapport</Button></>} />
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }} flexWrap="wrap" useFlexGap>
-        <Tabs value={onglet} onChange={(_, v: "pt" | "ia") => setOnglet(v)}><Tab value="pt" label="Problèmes et tâches" /><Tab value="ia" label="IA et tests" /></Tabs>
-        {onglet === "pt" && <FiltreSelect label="Période" valeur={jours} onChange={(v) => setJours(v || "30")} options={[{ valeur: "7", libelle: "7 jours" }, { valeur: "30", libelle: "30 jours" }, { valeur: "90", libelle: "90 jours" }, { valeur: "365", libelle: "1 an" }]} largeur={150} />}
-      </Stack>
+      <PageHeader titre="Rapports" actions={<><BoutonAction variant="outlined" onClick={exporter}>Exporter</BoutonAction><BoutonAction variant="contained" onClick={enregistrer}>Enregistrer le rapport</BoutonAction></>} />
+      <Box sx={{
+        display: "flex", flexDirection: "column", flex: 1, minWidth: 0, minHeight: 0,
+        bgcolor: "background.paper", borderRadius: 2, overflow: "hidden",
+      }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center"
+          sx={{ px: { xs: 1.5, sm: 2 }, py: 1.5, flexShrink: 0 }} flexWrap="wrap" useFlexGap>
+          <OngletsHorizontaux valeur={onglet} onglets={ONGLETS_RAPPORT} onChange={setOnglet} />
+          {onglet === "pt" && <FiltreSelect label="Période" valeur={jours} onChange={(v) => setJours(v || "30")} options={[{ valeur: "7", libelle: "7 jours" }, { valeur: "30", libelle: "30 jours" }, { valeur: "90", libelle: "90 jours" }, { valeur: "365", libelle: "1 an" }]} largeur={150} />}
+        </Stack>
+        <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", p: { xs: 1.5, sm: 2 }, pt: 0 }}>
 
       {onglet === "pt" && (
         <Etat loading={pt.loading} error={pt.error}>
@@ -610,11 +623,12 @@ export default function Rapports() {
                 <Table size="small"><TableHead><TableRow>{!ctx && <TableCell>Application</TableCell>}<TableCell>Catégorie</TableCell><TableCell>Problèmes</TableCell><TableCell>Faux positifs</TableCell><TableCell>Taux</TableCell></TableRow></TableHead>
                   <TableBody>{r.faux_positifs.map((x, i) => <TableRow key={i}>{!ctx && <TableCell>{nomApp(x.application_id)}</TableCell>}<TableCell>{libelle("categorie", x.categorie)}</TableCell><TableCell>{x.nb_total}</TableCell><TableCell>{x.nb_faux_positifs}</TableCell><TableCell>{x.taux_pct} %</TableCell></TableRow>)}</TableBody></Table>
               </Paper>
-              <Alert severity="info"><strong>Comment lire ces indicateurs :</strong> {r.avertissement}</Alert>
             </Stack>
           )}
         </Etat>
       )}
+        </Box>
+      </Box>
     </>
   );
 }

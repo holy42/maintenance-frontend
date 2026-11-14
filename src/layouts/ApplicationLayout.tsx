@@ -1,10 +1,12 @@
+import BoutonAction from "../components/BoutonAction";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import PlayArrowOutlined from "@mui/icons-material/PlayArrowOutlined";
-import { Alert, Box, Button, IconButton, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Alert, Box, IconButton, Stack, Typography } from "@mui/material";
 import { useEffect, useMemo } from "react";
 import { Link as RouterLink, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { getApplication, mesPermissions } from "../api/applications";
 import Etat from "../components/Etat";
+import OngletsHorizontaux from "../components/OngletsHorizontaux";
 import PageHeader from "../components/PageHeader";
 import StatutChip from "../components/StatutChip";
 import { ApplicationContext, type ApplicationCtx } from "../context/ApplicationContext";
@@ -81,31 +83,32 @@ export default function ApplicationLayout() {
               }
               sousTitre={applicationActuelle.technologies.join(" · ") || undefined}
               actions={contexte.peut(PERM.VERIFICATION_LANCER) && !contexte.archivee ? (
-                <Button variant="contained" startIcon={<PlayArrowOutlined />} component={RouterLink} to={`/applications/${id}/verifications/nouvelle`}>
+                <BoutonAction variant="contained" startIcon={<PlayArrowOutlined />} component={RouterLink} to={`/applications/${id}/verifications/nouvelle`}>
                   Lancer une vérification
-                </Button>
+                </BoutonAction>
               ) : undefined}
             />
             {contexte.archivee && <Alert severity="info" sx={{ mb: 2 }}>Application archivée : consultation en lecture seule.</Alert>}
 
-            <Tabs value={valeurOnglet} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile
-              sx={{
-                mb: 2, borderBottom: 1, borderColor: "divider", flexShrink: 0,
-                "& .MuiTab-root": { minHeight: 44, px: { xs: 1.5, sm: 2 }, fontWeight: 600, textTransform: "none", whiteSpace: "nowrap" },
-                "& .MuiTabs-indicator": { height: 3, borderRadius: "3px 3px 0 0" },
-              }}
-              onChange={(_, valeur: string) => {
-                const onglet = ONGLETS.find((p) => p.valeur === valeur);
-                if (onglet) navigate(`/applications/${id}/${onglet.seg}`);
-              }}>
-              {ONGLETS.map((p) => <Tab key={p.valeur} value={p.valeur} label={p.libelle} />)}
-            </Tabs>
-
             <Box sx={{
               display: "flex", flexDirection: "column", flex: 1, minWidth: 0, minHeight: 0,
-              "& > :last-child": { flexGrow: 1, minHeight: 0 },
+              bgcolor: "background.paper", borderRadius: 2, overflow: "hidden",
             }}>
-              <Outlet />
+              <OngletsHorizontaux
+                valeur={valeurOnglet}
+                onglets={ONGLETS.map(({ valeur, libelle }) => ({ valeur, libelle }))}
+                onChange={(valeur) => {
+                  const onglet = ONGLETS.find((p) => p.valeur === valeur);
+                  if (onglet) navigate(`/applications/${id}/${onglet.seg}`);
+                }}
+              />
+
+              <Box sx={{
+                display: "flex", flexDirection: "column", flex: 1, minWidth: 0, minHeight: 0,
+                p: { xs: 1.5, sm: 2 }, "& > :last-child": { flexGrow: 1, minHeight: 0 },
+              }}>
+                <Outlet />
+              </Box>
             </Box>
           </Box>
         </ApplicationContext.Provider>

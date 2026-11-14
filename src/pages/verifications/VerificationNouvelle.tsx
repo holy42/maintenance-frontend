@@ -1,5 +1,7 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import PlayArrowOutlined from "@mui/icons-material/PlayArrowOutlined";
-import { Alert, Box, Button, Checkbox, FormControlLabel, Paper, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Checkbox, FormControlLabel, Paper, Radio, RadioGroup, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getDepot } from "../../api/applications";
@@ -61,14 +63,14 @@ export default function VerificationNouvelle() {
           <Paper sx={{ p: 2 }}>
             <Typography variant="subtitle1" fontWeight={600} gutterBottom>Code à analyser</Typography>
             <Stack spacing={2}>
-              <TextField size="small" label="Branche" value={branche} onChange={(e) => setBranche(e.target.value)}
+              <ChampTexte size="small" label="Branche" value={branche} onChange={(e) => setBranche(e.target.value)}
                 helperText="develop par défaut ; pour un problème rouvert, la branche porte le code du problème (ex. PB-1029)." />
               <RadioGroup value={perimetre} onChange={(e) => setPerimetre(e.target.value as "defaut" | "dossiers")}>
                 <FormControlLabel value="defaut" control={<Radio />} label="Toute l'application (hors exclusions)" />
                 <FormControlLabel value="dossiers" control={<Radio />} label="Choisir des dossiers" />
               </RadioGroup>
-              {perimetre === "dossiers" && <TextField size="small" label="Dossiers (séparés par des virgules)" value={dossiers} onChange={(e) => setDossiers(e.target.value)} />}
-              <TextField size="small" label="Dossiers exclus" value={exclusions} onChange={(e) => setExclusions(e.target.value)} />
+              {perimetre === "dossiers" && <ChampTexte size="small" label="Dossiers (séparés par des virgules)" value={dossiers} onChange={(e) => setDossiers(e.target.value)} />}
+              <ChampTexte size="small" label="Dossiers exclus" value={exclusions} onChange={(e) => setExclusions(e.target.value)} />
             </Stack>
             <Typography variant="subtitle1" fontWeight={600} sx={{ mt: 3 }} gutterBottom>Critères à appliquer</Typography>
             {actifs.length === 0 && <Alert severity="info">Aucun critère actif. Activez des critères dans la rubrique « Critères ».</Alert>}
@@ -88,7 +90,7 @@ export default function VerificationNouvelle() {
               <Typography variant="body2">À vérifier à la main : {selection.length - auto}</Typography>
               <FormControlLabel sx={{ mt: 1 }} label="Faire interpréter les résultats par l'IA" control={<Checkbox checked={avecIA} onChange={(e) => setAvecIA(e.target.checked)} />} />
               {erreur && <Alert severity="error" sx={{ my: 1 }}>{erreur}</Alert>}
-              <Button fullWidth variant="contained" startIcon={<PlayArrowOutlined />} onClick={lancer} disabled={envoi || archivee}>Lancer la vérification</Button>
+              <BoutonAction fullWidth variant="contained" startIcon={<PlayArrowOutlined />} onClick={lancer} disabled={envoi || archivee}>Lancer la vérification</BoutonAction>
             </Paper>
             <Paper sx={{ p: 2, bgcolor: "action.hover" }}>
               <Typography variant="caption" color="text.secondary" display="block">

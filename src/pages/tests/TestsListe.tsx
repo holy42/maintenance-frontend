@@ -1,4 +1,5 @@
-import { Button, Checkbox, FormControlLabel, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import BoutonAction from "../../components/BoutonAction";
+import { Checkbox, FormControlLabel, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useState, type ReactNode } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { messageErreur } from "../../api/client";
@@ -35,7 +36,7 @@ function Bloc({ titre, lignes, action }: { titre: string; lignes: Session[]; act
               <TableCell>{s.testeur_id ? nom(s.testeur_id) : "—"}</TableCell>
               <TableCell><StatutChip groupe="statutSession" valeur={s.statut} /></TableCell>
               <TableCell>{dateHeure(s.demande_le)}</TableCell>
-              <TableCell align="right">{action?.(s) ?? <Button size="small" component={RouterLink} to={`/applications/${s.application_id}/tests/${s.id}`}>Ouvrir</Button>}</TableCell>
+              <TableCell align="right">{action?.(s) ?? <BoutonAction size="small" component={RouterLink} to={`/applications/${s.application_id}/tests/${s.id}`}>Ouvrir</BoutonAction>}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -70,9 +71,9 @@ export default function TestsListe() {
       <Stack direction="row" sx={{ mb: 1 }}><FormControlLabel label="Mes tests uniquement" control={<Checkbox checked={mes} onChange={(e) => setMes(e.target.checked)} />} /></Stack>
       <Etat loading={loading} error={error}>
         <Bloc titre="À tester" lignes={tous.filter((s) => s.statut === "a_tester")}
-          action={(s) => (peutTester ? <Button size="small" variant="contained" onClick={() => prendre(s)}>Prendre en charge</Button> : null)} />
+          action={(s) => (peutTester ? <BoutonAction size="small" variant="contained" onClick={() => prendre(s)}>Prendre en charge</BoutonAction> : null)} />
         <Bloc titre="En cours" lignes={tous.filter((s) => s.statut === "en_cours")}
-          action={(s) => (s.testeur_id === user?.id ? <Button size="small" variant="outlined" component={RouterLink} to={`/applications/${s.application_id}/tests/${s.id}`}>Reprendre</Button> : null)} />
+          action={(s) => (s.testeur_id === user?.id ? <BoutonAction size="small" variant="outlined" component={RouterLink} to={`/applications/${s.application_id}/tests/${s.id}`}>Reprendre</BoutonAction> : null)} />
         <Bloc titre="Terminés" lignes={tous.filter((s) => s.statut === "valide" || s.statut === "non_valide")} />
       </Etat>
     </>

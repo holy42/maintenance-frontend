@@ -1,7 +1,8 @@
+import BoutonAction from "../../components/BoutonAction";
 import DoneAllOutlined from "@mui/icons-material/DoneAllOutlined";
 import MarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
 import MarkEmailUnreadOutlined from "@mui/icons-material/MarkEmailUnreadOutlined";
-import { Box, Button, Checkbox, Chip, FormControlLabel, IconButton, ListItemButton, Paper, Stack, Typography } from "@mui/material";
+import { Box, Checkbox, Chip, FormControlLabel, IconButton, ListItemButton, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { messageErreur } from "../../api/client";
@@ -55,14 +56,14 @@ export default function Notifications() {
     <>
       <PageHeader titre="Notifications"
         sousTitre={`${(data ?? []).length} notification(s) · ${nombreNonLues} non lue(s)`}
-        actions={<Button variant="outlined" startIcon={<DoneAllOutlined />} disabled={nombreNonLues === 0} onClick={() => agir(toutLire)}>Tout marquer comme lu</Button>} />
-      <Paper sx={{ p: { xs: 1.5, sm: 2 }, mb: 2, bgcolor: "background.paper" }}>
+        actions={<BoutonAction variant="outlined" startIcon={<DoneAllOutlined />} disabled={nombreNonLues === 0} onClick={() => agir(toutLire)}>Tout marquer comme lu</BoutonAction>} />
+      <Box sx={{ p: { xs: 1.5, sm: 2 }, mb: 2 }}>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ xs: "stretch", sm: "center" }} flexWrap="wrap" useFlexGap>
           <FormControlLabel label="Non lues seulement" control={<Checkbox checked={nonLues} onChange={(e) => setNonLues(e.target.checked)} />} />
           <FiltreSelect label="Type" valeur={type} onChange={setType} options={options("evenement")} largeur={230} />
           {nombreNonLues > 0 && <Chip color="secondary" label={`${nombreNonLues} à lire`} sx={{ ml: { sm: "auto" } }} />}
         </Stack>
-      </Paper>
+      </Box>
       <Etat loading={loading} error={error}>
         {(data ?? []).length === 0 ? (
           <Paper sx={{ p: 5, textAlign: "center", borderStyle: "dashed" }}>

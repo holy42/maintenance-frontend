@@ -1,6 +1,8 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
-import { Alert, Box, Button, Checkbox, FormControlLabel, IconButton, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Checkbox, FormControlLabel, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { membresApplication } from "../../api/applications";
@@ -90,8 +92,8 @@ export default function TacheNouvelle() {
         {pid && (
           <>
             <Stack direction="row" spacing={1}>
-              <Button variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={proposer} disabled={attente}>{attente ? "L'IA propose…" : "Demander des propositions à l'IA"}</Button>
-              <Button variant="outlined" onClick={() => setBrouillons([...brouillons, vide()])}>Ajouter une tâche</Button>
+              <BoutonAction variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={proposer} disabled={attente}>{attente ? "L'IA propose…" : "Demander des propositions à l'IA"}</BoutonAction>
+              <BoutonAction variant="outlined" onClick={() => setBrouillons([...brouillons, vide()])}>Ajouter une tâche</BoutonAction>
             </Stack>
             {brouillons.map((b) => (
               <Paper key={b.cle} sx={{ p: 2, opacity: b.retenue ? 1 : 0.6 }}>
@@ -100,12 +102,12 @@ export default function TacheNouvelle() {
                     <FormControlLabel label={b.origine === "ia" ? "Retenir cette tâche (proposée par l'IA)" : "Retenir cette tâche"} control={<Checkbox checked={b.retenue} onChange={(e) => maj(b.cle, (x) => ({ ...x, retenue: e.target.checked }))} />} />
                     <IconButton aria-label="Retirer le brouillon" onClick={() => setBrouillons(brouillons.filter((x) => x.cle !== b.cle))}><DeleteOutline /></IconButton>
                   </Stack>
-                  <TextField size="small" label="Titre" value={b.titre} onChange={(e) => maj(b.cle, (x) => ({ ...x, titre: e.target.value }))} />
-                  <TextField size="small" label="Description" multiline value={b.description} onChange={(e) => maj(b.cle, (x) => ({ ...x, description: e.target.value }))} />
+                  <ChampTexte size="small" label="Titre" value={b.titre} onChange={(e) => maj(b.cle, (x) => ({ ...x, titre: e.target.value }))} />
+                  <ChampTexte size="small" label="Description" multiline value={b.description} onChange={(e) => maj(b.cle, (x) => ({ ...x, description: e.target.value }))} />
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
                     <ChampSelect label="Responsable" valeur={b.responsable} onChange={(v) => maj(b.cle, (x) => ({ ...x, responsable: v }))} vide="Aucun" options={(membres ?? []).map((m) => ({ valeur: String(m.utilisateur_id), libelle: m.identifiant }))} />
-                    <TextField size="small" type="date" label="Échéance" InputLabelProps={{ shrink: true }} fullWidth value={b.echeance} onChange={(e) => maj(b.cle, (x) => ({ ...x, echeance: e.target.value }))} />
-                    <TextField size="small" label="Durée estimée (h)" fullWidth value={b.duree} onChange={(e) => maj(b.cle, (x) => ({ ...x, duree: e.target.value }))} helperText="Indication, modifiable" />
+                    <ChampTexte size="small" type="date" label="Échéance" InputLabelProps={{ shrink: true }} fullWidth value={b.echeance} onChange={(e) => maj(b.cle, (x) => ({ ...x, echeance: e.target.value }))} />
+                    <ChampTexte size="small" label="Durée estimée (h)" fullWidth value={b.duree} onChange={(e) => maj(b.cle, (x) => ({ ...x, duree: e.target.value }))} helperText="Indication, modifiable" />
                   </Stack>
                   {solutions.length > 0 && (
                     <Stack>
@@ -120,25 +122,25 @@ export default function TacheNouvelle() {
                   {b.sous.map((s, i) => (
                     <Stack key={i} direction="row" spacing={1} alignItems="center">
                       <Checkbox checked={s.retenue} onChange={(e) => maj(b.cle, (x) => ({ ...x, sous: x.sous.map((y, j) => (j === i ? { ...y, retenue: e.target.checked } : y)) }))} inputProps={{ "aria-label": "Retenir" }} />
-                      <TextField size="small" fullWidth value={s.titre} onChange={(e) => maj(b.cle, (x) => ({ ...x, sous: x.sous.map((y, j) => (j === i ? { ...y, titre: e.target.value } : y)) }))} />
+                      <ChampTexte size="small" fullWidth value={s.titre} onChange={(e) => maj(b.cle, (x) => ({ ...x, sous: x.sous.map((y, j) => (j === i ? { ...y, titre: e.target.value } : y)) }))} />
                     </Stack>
                   ))}
-                  <Button size="small" sx={{ alignSelf: "flex-start" }} onClick={() => maj(b.cle, (x) => ({ ...x, sous: [...x.sous, { titre: "", retenue: true, origine: "utilisateur" }] }))}>Ajouter une sous-tâche</Button>
+                  <BoutonAction size="small" sx={{ alignSelf: "flex-start" }} onClick={() => maj(b.cle, (x) => ({ ...x, sous: [...x.sous, { titre: "", retenue: true, origine: "utilisateur" }] }))}>Ajouter une sous-tâche</BoutonAction>
                   <Typography variant="subtitle2">Critères d'acceptation</Typography>
                   {b.criteres.map((c, i) => (
                     <Stack key={i} direction="row" spacing={1} alignItems="center">
                       <Checkbox checked={c.retenu} onChange={(e) => maj(b.cle, (x) => ({ ...x, criteres: x.criteres.map((y, j) => (j === i ? { ...y, retenu: e.target.checked } : y)) }))} inputProps={{ "aria-label": "Retenir" }} />
-                      <TextField size="small" fullWidth value={c.texte} onChange={(e) => maj(b.cle, (x) => ({ ...x, criteres: x.criteres.map((y, j) => (j === i ? { ...y, texte: e.target.value } : y)) }))} />
+                      <ChampTexte size="small" fullWidth value={c.texte} onChange={(e) => maj(b.cle, (x) => ({ ...x, criteres: x.criteres.map((y, j) => (j === i ? { ...y, texte: e.target.value } : y)) }))} />
                     </Stack>
                   ))}
-                  <Button size="small" sx={{ alignSelf: "flex-start" }} onClick={() => maj(b.cle, (x) => ({ ...x, criteres: [...x.criteres, { texte: "", retenu: true, origine: "utilisateur" }] }))}>Ajouter un critère</Button>
+                  <BoutonAction size="small" sx={{ alignSelf: "flex-start" }} onClick={() => maj(b.cle, (x) => ({ ...x, criteres: [...x.criteres, { texte: "", retenu: true, origine: "utilisateur" }] }))}>Ajouter un critère</BoutonAction>
                 </Stack>
               </Paper>
             ))}
             {erreur && <Alert severity="error">{erreur}</Alert>}
             <Stack direction="row" spacing={1} alignItems="center">
               <Typography variant="caption" color="text.secondary" sx={{ flex: 1 }}>Rien n'est créé tant que vous n'avez pas validé. Les éléments non retenus ne sont jamais enregistrés.</Typography>
-              <Button variant="contained" onClick={creer} disabled={brouillons.length === 0 || archivee}>Créer les tâches retenues</Button>
+              <BoutonAction variant="contained" onClick={creer} disabled={brouillons.length === 0 || archivee}>Créer les tâches retenues</BoutonAction>
             </Stack>
           </>
         )}

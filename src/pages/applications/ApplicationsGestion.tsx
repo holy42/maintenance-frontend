@@ -1,10 +1,11 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import ArchiveOutlined from "@mui/icons-material/ArchiveOutlined";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import OpenInNewOutlined from "@mui/icons-material/OpenInNewOutlined";
 import UnarchiveOutlined from "@mui/icons-material/UnarchiveOutlined";
-import {
-  Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Paper, Stack, Table, TableBody, TableCell, TableHead,
-  TableRow, TextField, Tooltip, Typography,
+import { Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Paper, Stack, Table, TableBody, TableCell, TableHead,
+  TableRow, Tooltip, Typography,
 } from "@mui/material";
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -59,9 +60,9 @@ export default function ApplicationsGestion() {
   return (
     <>
       <PageHeader titre="Gestion des applications" fil={[{ libelle: "Applications" }, { libelle: "Gestion des applications" }]}
-        actions={<Button variant="contained" onClick={() => ouvrir(null)}>Nouvelle application</Button>} />
+        actions={<BoutonAction variant="contained" onClick={() => ouvrir(null)}>Nouvelle application</BoutonAction>} />
       <Stack direction="row" spacing={1} sx={{ mb: 2 }} flexWrap="wrap" useFlexGap>
-        <TextField size="small" label="Rechercher" value={recherche} onChange={(e) => setRecherche(e.target.value)} />
+        <ChampTexte size="small" label="Rechercher" value={recherche} onChange={(e) => setRecherche(e.target.value)} />
         <FiltreSelect label="Statut" valeur={statut} onChange={setStatut} options={options("statutApplication")} />
       </Stack>
       <Paper sx={{ overflowX: "auto" }}>
@@ -94,15 +95,15 @@ export default function ApplicationsGestion() {
         <DialogTitle>{dialogue?.edition ? "Modifier l'application" : "Nouvelle application"}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
-            <TextField size="small" label="Nom" value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} />
-            <TextField size="small" label="Description" multiline minRows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+            <ChampTexte size="small" label="Nom" value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} />
+            <ChampTexte size="small" label="Description" multiline minRows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
             {!dialogue?.edition && <ChampSelect label="Équipe propriétaire" valeur={form.equipe} onChange={(v) => setForm({ ...form, equipe: v })} options={equipes.map((e) => ({ valeur: String(e.id), libelle: e.nom }))} />}
-            <TextField size="small" label="Technologies (séparées par des virgules)" helperText="Elles déterminent les outils d'analyse utilisables, ex. php" value={form.technologies} onChange={(e) => setForm({ ...form, technologies: e.target.value })} />
+            <ChampTexte size="small" label="Technologies (séparées par des virgules)" helperText="Elles déterminent les outils d'analyse utilisables, ex. php" value={form.technologies} onChange={(e) => setForm({ ...form, technologies: e.target.value })} />
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogue(null)}>Annuler</Button>
-          <Button variant="contained" disabled={!form.nom.trim() || (!dialogue?.edition && !form.equipe)} onClick={enregistrer}>Enregistrer</Button>
+          <BoutonAction onClick={() => setDialogue(null)}>Annuler</BoutonAction>
+          <BoutonAction variant="contained" disabled={!form.nom.trim() || (!dialogue?.edition && !form.equipe)} onClick={enregistrer}>Enregistrer</BoutonAction>
         </DialogActions>
       </Dialog>
     </>

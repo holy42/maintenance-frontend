@@ -1,8 +1,10 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import StickyNote2Outlined from "@mui/icons-material/StickyNote2Outlined";
 import { alpha } from "@mui/material/styles";
-import { Button, Chip, IconButton, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Chip, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { messageErreur } from "../../api/client";
 import { ajouterNoteProbleme, modifierNote, notesProbleme, supprimerNote } from "../../api/collaboration";
@@ -38,15 +40,15 @@ export default function ProblemeNotes() {
   return (
     <Etat loading={loading} error={error}>
       <Stack spacing={1.5} sx={{ maxWidth: 960, width: "100%", mx: "auto" }}>
-        <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "divider", borderTop: 3, borderTopColor: "secondary.main" }}>
+        <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "white", }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-            <StickyNote2Outlined color="primary" /><Typography variant="subtitle1" fontWeight={700}>Ajouter une note</Typography>
+            <Typography variant="subtitle1" fontWeight={700}>Ajouter une note</Typography>
           </Stack>
-          <TextField multiline minRows={3} fullWidth size="small" placeholder="Votre note" value={contenu} onChange={(e) => setContenu(e.target.value)} disabled={!peutEcrire} />
+          <ChampTexte multiline minRows={3} fullWidth size="small" placeholder="Votre note" value={contenu} onChange={(e) => setContenu(e.target.value)} disabled={!peutEcrire} />
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ xs: "stretch", sm: "center" }} justifyContent="space-between" sx={{ mt: 1.25 }}>
             <ChampSelect fullWidth label="Type" valeur={type} onChange={setType} options={options("typeNote")} disabled={!peutEcrire} />
-            <Button variant="contained" sx={{ flexShrink: 0 }} disabled={!peutEcrire || !contenu.trim()}
-              onClick={() => agir(async () => { await ajouterNoteProbleme(probleme.id, contenu.trim(), type); setContenu(""); })}>Ajouter la note</Button>
+            <BoutonAction variant="contained" sx={{ flexShrink: 0 }} disabled={!peutEcrire || !contenu.trim()}
+              onClick={() => agir(async () => { await ajouterNoteProbleme(probleme.id, contenu.trim(), type); setContenu(""); })}>Ajouter la note</BoutonAction>
           </Stack>
         </Paper>
         {(data ?? []).slice().reverse().map((n) => (
@@ -62,10 +64,10 @@ export default function ProblemeNotes() {
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>Note supprimée par son auteur le {dateHeure(n.supprime_le)} (son contenu reste conservé dans l'historique).</Typography>
             ) : edition?.id === n.id ? (
               <Stack spacing={1} sx={{ mt: 1 }}>
-                <TextField multiline size="small" value={edition.texte} onChange={(e) => setEdition({ id: n.id, texte: e.target.value })} />
+                <ChampTexte multiline size="small" value={edition.texte} onChange={(e) => setEdition({ id: n.id, texte: e.target.value })} />
                 <Stack direction="row" spacing={1}>
-                  <Button size="small" variant="contained" onClick={() => agir(async () => { await modifierNote(n.id, edition.texte); setEdition(null); })}>Enregistrer</Button>
-                  <Button size="small" onClick={() => setEdition(null)}>Annuler</Button>
+                  <BoutonAction size="small" variant="contained" onClick={() => agir(async () => { await modifierNote(n.id, edition.texte); setEdition(null); })}>Enregistrer</BoutonAction>
+                  <BoutonAction size="small" onClick={() => setEdition(null)}>Annuler</BoutonAction>
                 </Stack>
               </Stack>
             ) : (

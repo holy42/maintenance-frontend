@@ -1,4 +1,6 @@
-import { Box, Button, Paper, Stack, TextField, Typography } from "@mui/material";
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
+import { Box, Paper, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { archiverApplication, membresApplication, modifierApplication } from "../../api/applications";
@@ -42,16 +44,16 @@ export default function Parametres() {
 
   return (
     <Stack spacing={2} sx={{ maxWidth: 1280, width: "100%", mx: "auto" }}>
-      <Paper sx={{ p: 2 }}>
+      <Paper sx={{ p: 2, borderColor : "white" }}>
         <Typography variant="subtitle1" fontWeight={600} gutterBottom>Informations générales</Typography>
         <Stack spacing={2}>
-          <TextField size="small" label="Nom" value={nom} onChange={(e) => setNom(e.target.value)} disabled={!modifiable} />
-          <TextField size="small" label="Description" multiline minRows={2} value={description} onChange={(e) => setDescription(e.target.value)} disabled={!modifiable} />
+          <ChampTexte size="small" label="Nom" value={nom} onChange={(e) => setNom(e.target.value)} disabled={!modifiable} />
+          <ChampTexte size="small" label="Description" multiline minRows={2} value={description} onChange={(e) => setDescription(e.target.value)} disabled={!modifiable} />
           <ChampSelect label="Responsable" valeur={responsable} onChange={setResponsable} vide="Aucun" disabled={!modifiable}
             options={(membres ?? []).map((m) => ({ valeur: String(m.utilisateur_id), libelle: m.identifiant }))} />
-          <TextField size="small" label="Technologies (séparées par des virgules)" value={technologies} onChange={(e) => setTechnologies(e.target.value)} disabled={!modifiable}
+          <ChampTexte size="small" label="Technologies (séparées par des virgules)" value={technologies} onChange={(e) => setTechnologies(e.target.value)} disabled={!modifiable}
             helperText="Elles déterminent les outils d'analyse utilisables (ex. php)." />
-          <Box><Button variant="contained" onClick={enregistrer} disabled={!modifiable || !nom.trim()}>Enregistrer les paramètres</Button></Box>
+          <Box><BoutonAction variant="contained" onClick={enregistrer} disabled={!modifiable || !nom.trim()}>Enregistrer les paramètres</BoutonAction></Box>
         </Stack>
       </Paper>
       <Paper sx={{ p: 2, borderColor: "error.main" }}>
@@ -59,7 +61,7 @@ export default function Parametres() {
         <Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
           Archiver rend l'application consultable en lecture seule. L'historique est conservé et ne peut pas être supprimé : il n'existe pas de suppression d'application.
         </Typography>
-        <Button color="error" variant="outlined" disabled={!modifiable} onClick={() => setConfirmation(true)}>Archiver l'application</Button>
+        <BoutonAction color="error" variant="outlined" disabled={!modifiable} onClick={() => setConfirmation(true)}>Archiver l'application</BoutonAction>
       </Paper>
       <ConfirmDialog ouvert={confirmation} titre="Archiver l'application ?" texte="Elle passera en lecture seule. Vous pourrez la restaurer depuis la gestion des applications." confirmer="Archiver" onConfirm={archiver} onClose={() => setConfirmation(false)} />
     </Stack>

@@ -1,6 +1,7 @@
+import BoutonAction from "../components/BoutonAction";
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import ForumOutlined from "@mui/icons-material/ForumOutlined";
-import { Button, Chip, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Chip, Stack, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { messageErreur } from "../api/client";
@@ -8,6 +9,7 @@ import { listSalons } from "../api/collaboration";
 import { getProbleme } from "../api/problemes";
 import AssistantIAPanel from "../components/AssistantIAPanel";
 import Etat from "../components/Etat";
+import OngletsHorizontaux from "../components/OngletsHorizontaux";
 import PageHeader from "../components/PageHeader";
 import SourceBadge from "../components/SourceBadge";
 import StatutChip from "../components/StatutChip";
@@ -76,20 +78,16 @@ export default function ProblemeLayout() {
             }
             actions={
               <>
-                <Button startIcon={<ForumOutlined />} variant="outlined" onClick={ouvrirSalon}>Salon</Button>
-                <Button startIcon={<AutoAwesomeOutlined />} variant="outlined" onClick={() => setAssistantOuvert(true)}>Assistant IA</Button>
+                <BoutonAction startIcon={<ForumOutlined />} variant="outlined" onClick={ouvrirSalon}>Salon</BoutonAction>
+                <BoutonAction startIcon={<AutoAwesomeOutlined />} variant="outlined" onClick={() => setAssistantOuvert(true)}>Assistant IA</BoutonAction>
               </>
             }
           />
-          <Tabs value={segment} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile
-            sx={{
-              mb: 2, minHeight: 44, borderBottom: 1, borderColor: "divider",
-              "& .MuiTab-root": { minHeight: 44, px: { xs: 1.5, sm: 2 }, fontWeight: 600, textTransform: "none", whiteSpace: "nowrap" },
-              "& .MuiTabs-indicator": { height: 3, borderRadius: "3px 3px 0 0" },
-            }}
-            onChange={(_, v: string) => navigate(v ? `${base}/${v}` : base)}>
-            {ONGLETS.map((o) => <Tab key={o.seg} value={o.seg} label={o.libelle} />)}
-          </Tabs>
+          <OngletsHorizontaux
+            valeur={segment}
+            onglets={ONGLETS.map(({ seg, libelle }) => ({ valeur: seg, libelle }))}
+            onChange={(v) => navigate(v ? `${base}/${v}` : base)}
+          />
           <Outlet />
           <AssistantIAPanel
             ouvert={assistantOuvert} onClose={fermerAssistant} problemeId={id} questionInitiale={questionInitiale}

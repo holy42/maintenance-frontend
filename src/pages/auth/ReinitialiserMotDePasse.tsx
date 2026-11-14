@@ -1,4 +1,6 @@
-import { Alert, Button, Link, Stack, TextField, Typography } from "@mui/material";
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
+import { Alert, Link, Stack, Typography } from "@mui/material";
 import { useState, type FormEvent } from "react";
 import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import { messageErreur } from "../../api/client";
@@ -27,10 +29,10 @@ export default function ReinitialiserMotDePasse() {
     <form onSubmit={soumettre} noValidate>
       <Stack spacing={2}>
         <Typography variant="h5" component="h1" textAlign="center">Nouveau mot de passe</Typography>
-        <TextField label="Nouveau mot de passe" type="password" value={mdp} onChange={(e) => setMdp(e.target.value)} autoComplete="new-password" />
-        <TextField label="Confirmer" type="password" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} autoComplete="new-password" />
+        <ChampTexte label="Nouveau mot de passe" type="password" value={mdp} onChange={(e) => setMdp(e.target.value)} autoComplete="new-password" />
+        <ChampTexte label="Confirmer" type="password" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} autoComplete="new-password" />
         {erreur && <Alert severity="error">{erreur}</Alert>}
-        <Button type="submit" variant="contained">Enregistrer</Button>
+        <BoutonAction type="submit" variant="contained">Enregistrer</BoutonAction>
       </Stack>
     </form>
   );

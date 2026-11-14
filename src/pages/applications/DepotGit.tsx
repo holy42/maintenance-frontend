@@ -1,4 +1,6 @@
-import { Alert, Box, Button, Chip, Divider, Paper, Stack, TextField, Typography } from "@mui/material";
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
+import { Alert, Box, Chip, Divider, Paper, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { commitsDepot, definirDepot, getDepot, testerDepot } from "../../api/applications";
 import { messageErreur } from "../../api/client";
@@ -43,7 +45,7 @@ export default function DepotGit() {
       <>
       <PageHeader titre="Dépôt Git" sousTitre="Configurez une source de code consultée en lecture seule pour cette application." />
       <Stack spacing={2} sx={{ maxWidth: 1440, width: "100%", mx: "auto" }}>
-        <Paper sx={{ overflow: "hidden" }}>
+        <Paper sx={{ overflow: "hidden", borderColor: "white" }}>
           <Box sx={{ p: { xs: 2, sm: 2.5 } }}>
             <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={1}>
               <Box>
@@ -58,12 +60,12 @@ export default function DepotGit() {
               />
             </Stack>
             <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr", sm: "1.5fr 1fr" }, mt: 2 }}>
-              <TextField fullWidth label="URL du dépôt" value={url} onChange={(e) => setUrl(e.target.value)} disabled={!modifiable}
+              <ChampTexte fullWidth label="URL du dépôt" value={url} onChange={(e) => setUrl(e.target.value)} disabled={!modifiable}
                 placeholder="https://… ou git@…"
                 sx={{ gridColumn: { xs: "auto", sm: "1 / -1" } }} />
-              <TextField fullWidth label="Branche par défaut" value={branche} onChange={(e) => setBranche(e.target.value)} disabled={!modifiable}
+              <ChampTexte fullWidth label="Branche par défaut" value={branche} onChange={(e) => setBranche(e.target.value)} disabled={!modifiable}
                 helperText="Branche utilisée pour les vérifications." />
-              <TextField fullWidth label="Jeton d'accès" type="password" value={jeton} onChange={(e) => setJeton(e.target.value)} disabled={!modifiable}
+              <ChampTexte fullWidth label="Jeton d'accès" type="password" value={jeton} onChange={(e) => setJeton(e.target.value)} disabled={!modifiable}
                 placeholder={depot?.jeton_configure ? "Déjà configuré — laisser vide pour le conserver" : "Facultatif"}
                 helperText="Chiffré côté serveur et jamais réaffiché." />
             </Box>
@@ -72,15 +74,12 @@ export default function DepotGit() {
                 ? <Typography variant="caption" color="text.secondary">Dernière synchronisation : {dateHeure(depot.derniere_synchro_le)}</Typography>
                 : <Typography variant="caption" color="text.secondary">Enregistrez le dépôt pour tester la connexion et consulter ses branches.</Typography>}
               <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-                <Button variant="outlined" onClick={tester} disabled={!depot} sx={{ width: { xs: "100%", sm: "auto" } }}>Tester la connexion</Button>
-                <Button variant="contained" onClick={enregistrer} disabled={!modifiable || !url.trim()} sx={{ width: { xs: "100%", sm: "auto" } }}>Enregistrer</Button>
+                <BoutonAction variant="outlined" onClick={tester} disabled={!depot} sx={{ width: { xs: "100%", sm: "auto" } }}>Tester la connexion</BoutonAction>
+                <BoutonAction variant="contained" onClick={enregistrer} disabled={!modifiable || !url.trim()} sx={{ width: { xs: "100%", sm: "auto" } }}>Enregistrer</BoutonAction>
               </Stack>
             </Stack>
           </Box>
           <Divider />
-          <Alert severity="info" sx={{ border: 0, borderRadius: 0 }}>
-            Accès en lecture seule : la plateforme lit les branches et les commits mais n'écrit jamais dans le dépôt.
-          </Alert>
         </Paper>
         {branches && (
           <Paper sx={{ p: { xs: 2, sm: 2.5 } }}>
@@ -103,7 +102,7 @@ export default function DepotGit() {
                 <Typography variant="h6" component="h2" fontWeight={700}>Historique des commits</Typography>
                 <Typography variant="body2" color="text.secondary">Branche : <Box component="span" sx={{ fontFamily: "monospace", color: "text.primary" }}>{branche}</Box></Typography>
               </Box>
-              <Button size="small" variant="outlined" onClick={afficherCommits}>Afficher les commits</Button>
+              <BoutonAction size="small" variant="outlined" onClick={afficherCommits}>Afficher les commits</BoutonAction>
             </Stack>
             {commits === null
               ? <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>Chargez les derniers commits de cette branche.</Typography>

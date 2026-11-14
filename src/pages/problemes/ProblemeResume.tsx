@@ -1,7 +1,9 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import AssignmentOutlined from "@mui/icons-material/AssignmentOutlined";
 import TuneOutlined from "@mui/icons-material/TuneOutlined";
 import { alpha, type Theme } from "@mui/material/styles";
-import { Box, Button, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Box, Paper, Stack, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 import FiabiliteBadge from "../../components/FiabiliteBadge";
 import { useEffect, useState } from "react";
@@ -83,10 +85,10 @@ export default function ProblemeResume() {
         <Paper sx={carte}>
           <Typography variant="subtitle1" fontWeight={600}>Origine</Typography>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.5 }}>
-            <SourceBadge source={p.source} />
+            <SourceBadge source={p.verification_id ? p.source : "Utilisateur"} />
             {p.verification_id
               ? <Typography variant="body2">Résultat de la <RouterLink to={`/applications/${application.id}/verifications/${p.verification_id}`}>vérification n°{p.verification_id}</RouterLink></Typography>
-              : <Typography variant="body2" color="text.secondary">Saisi manuellement, sans résultat d'analyse d'origine.</Typography>}
+              : <Typography variant="body2" color="text.secondary">Saisi manuellement.</Typography>}
           </Stack>
         </Paper>
       </Stack>
@@ -97,15 +99,15 @@ export default function ProblemeResume() {
           <Typography variant="caption" color="text.secondary" sx={{ p: 1, borderRadius: 1.5, bgcolor: "action.hover" }}>{p.code} · créé le {dateHeure(p.cree_le)} (non modifiables)</Typography>
           <ChampSelect label="Statut" valeur={p.statut} onChange={statut} disabled={!modifiable || suivants.length === 0}
             options={[p.statut, ...suivants].map((s) => ({ valeur: s, libelle: libelle("statutProbleme", s) }))} />
-          <Typography variant="caption" color="text.secondary" sx={{ mt: "-8px !important" }}>
+          {/* <Typography variant="caption" color="text.secondary" sx={{ mt: "-8px !important" }}>
             Seules les transitions autorisées sont proposées ; « à tester », « testé » et « rouvert » passent par la demande de test et le retour du testeur.
-          </Typography>
+          </Typography> */}
           <ChampSelect label="Gravité" valeur={gravite} onChange={setGravite} vide="—" options={options("gravite")} disabled={!modifiable} />
           <ChampSelect label="Priorité" valeur={priorite} onChange={setPriorite} vide="—" options={options("priorite")} disabled={!modifiable} />
           <ChampSelect label="Responsable" valeur={responsable} onChange={setResponsable} vide="Aucun" disabled={!modifiable}
             options={(membres ?? []).map((m) => ({ valeur: String(m.utilisateur_id), libelle: m.identifiant }))} />
-          <TextField size="small" type="date" label="Échéance" InputLabelProps={{ shrink: true }} value={echeance} onChange={(e) => setEcheance(e.target.value)} disabled={!modifiable} />
-          <Button variant="contained" onClick={enregistrer} disabled={!modifiable}>Enregistrer</Button>
+          <ChampTexte size="small" type="date" label="Échéance" InputLabelProps={{ shrink: true }} value={echeance} onChange={(e) => setEcheance(e.target.value)} disabled={!modifiable} />
+          <BoutonAction variant="contained" onClick={enregistrer} disabled={!modifiable}>Enregistrer</BoutonAction>
         </Stack>
       </Paper>
     </Box>

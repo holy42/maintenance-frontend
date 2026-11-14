@@ -1,4 +1,6 @@
-import { Alert, Box, Button, Checkbox, FormControlLabel, Paper, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material";
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
+import { Alert, Box, Checkbox, FormControlLabel, Paper, Radio, RadioGroup, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
 import { messageErreur } from "../../api/client";
@@ -59,7 +61,7 @@ export default function TestSession() {
             sousTitre={`Branche à tester : ${s.branche_testee}${s.testeur_id ? ` · testeur : ${nom(s.testeur_id)}` : ""}`}
             actions={<>
               <StatutChip groupe="statutSession" valeur={s.statut} taille="medium" />
-              <Button component={RouterLink} to={`/applications/${application.id}/problemes/${data.probleme_id}`} variant="outlined">Voir le problème</Button>
+              <BoutonAction component={RouterLink} to={`/applications/${application.id}/problemes/${data.probleme_id}`} variant="outlined">Voir le problème</BoutonAction>
             </>} />
           <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.3fr 1fr" }, maxWidth: 1120, width: "100%", mx: "auto" }}>
             <Stack spacing={2}>
@@ -78,7 +80,7 @@ export default function TestSession() {
             </Stack>
             <Paper sx={{ p: 2, alignSelf: "start" }}>
               <Typography variant="subtitle1" fontWeight={600} gutterBottom>Votre retour</Typography>
-              {s.statut === "a_tester" && <Button variant="contained" disabled={!peutTester} onClick={prendre}>Prendre en charge</Button>}
+              {s.statut === "a_tester" && <BoutonAction variant="contained" disabled={!peutTester} onClick={prendre}>Prendre en charge</BoutonAction>}
               {s.statut === "a_tester" && <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>Vous ne pouvez pas tester une correction dont vous êtes l'auteur.</Typography>}
               {monTest && (
                 <Stack spacing={1.5}>
@@ -86,11 +88,11 @@ export default function TestSession() {
                     <FormControlLabel value="valide" control={<Radio />} label="Validé : la correction fonctionne" />
                     <FormControlLabel value="non_valide" control={<Radio />} label="Non validé : retour au développeur (problème rouvert)" />
                   </RadioGroup>
-                  <TextField size="small" label="Environnement testé" value={environnement} onChange={(e) => setEnvironnement(e.target.value)} />
-                  <TextField size="small" multiline minRows={3} label={decision === "non_valide" ? "Commentaire (obligatoire)" : "Commentaire"} value={commentaire} onChange={(e) => setCommentaire(e.target.value)} />
-                  <TextField size="small" multiline minRows={3} label="Étapes et résultat observé (facultatif)" value={preuve} onChange={(e) => setPreuve(e.target.value)} />
+                  <ChampTexte size="small" label="Environnement testé" value={environnement} onChange={(e) => setEnvironnement(e.target.value)} />
+                  <ChampTexte size="small" multiline minRows={3} label={decision === "non_valide" ? "Commentaire (obligatoire)" : "Commentaire"} value={commentaire} onChange={(e) => setCommentaire(e.target.value)} />
+                  <ChampTexte size="small" multiline minRows={3} label="Étapes et résultat observé (facultatif)" value={preuve} onChange={(e) => setPreuve(e.target.value)} />
                   {erreur && <Alert severity="error">{erreur}</Alert>}
-                  <Button variant="contained" onClick={envoyer}>Envoyer le retour</Button>
+                  <BoutonAction variant="contained" onClick={envoyer}>Envoyer le retour</BoutonAction>
                 </Stack>
               )}
               {(s.statut === "valide" || s.statut === "non_valide") && (

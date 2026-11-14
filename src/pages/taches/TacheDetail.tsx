@@ -1,6 +1,8 @@
+import BoutonAction from "../../components/BoutonAction";
+import ChampTexte from "../../components/ChampTexte";
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
-import { Alert, Box, Button, Chip, IconButton, Paper, Stack, TextField, Tooltip, Typography } from "@mui/material";
+import { Alert, Box, Chip, IconButton, Paper, Stack, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 import { messageErreur } from "../../api/client";
@@ -60,12 +62,12 @@ export default function TacheDetail() {
             sousTitre={<Stack direction="row" spacing={1} sx={{ mt: 0.5 }}><StatutChip groupe="statutTache" valeur={t.statut} />
               <Chip size="small" variant="outlined" component={RouterLink} to={`/applications/${application.id}/problemes/${t.probleme_id}`} clickable label={`Problème n°${t.probleme_id}`} /></Stack>}
             actions={<>
-              {(t.statut === "a_faire" || t.statut === "en_pause") && <Button variant="contained" disabled={!peutAgir} onClick={() => lancer("demarrer", "Tâche démarrée.")}>Démarrer</Button>}
-              {t.statut === "en_cours" && <Button variant="outlined" disabled={!peutAgir} onClick={() => lancer("pause", "Tâche mise en pause.")}>Mettre en pause</Button>}
-              {(t.statut === "en_cours" || t.statut === "en_pause") && <Button variant="outlined" disabled={!peutAgir} onClick={() => lancer("arreter", "Tâche arrêtée.")}>Arrêter</Button>}
+              {(t.statut === "a_faire" || t.statut === "en_pause") && <BoutonAction variant="contained" disabled={!peutAgir} onClick={() => lancer("demarrer", "Tâche démarrée.")}>Démarrer</BoutonAction>}
+              {t.statut === "en_cours" && <BoutonAction variant="outlined" disabled={!peutAgir} onClick={() => lancer("pause", "Tâche mise en pause.")}>Mettre en pause</BoutonAction>}
+              {(t.statut === "en_cours" || t.statut === "en_pause") && <BoutonAction variant="outlined" disabled={!peutAgir} onClick={() => lancer("arreter", "Tâche arrêtée.")}>Arrêter</BoutonAction>}
               {t.statut === "en_cours" && (
                 <Tooltip title={sousOuvertes > 0 ? "Toutes les sous-tâches doivent être terminées (les arrêtées ne bloquent pas)." : ""}>
-                  <span><Button variant="contained" color="success" disabled={!peutAgir || sousOuvertes > 0} onClick={() => lancer("terminer", "Tâche terminée.")}>Terminer</Button></span>
+                  <span><BoutonAction variant="contained" color="success" disabled={!peutAgir || sousOuvertes > 0} onClick={() => lancer("terminer", "Tâche terminée.")}>Terminer</BoutonAction></span>
                 </Tooltip>
               )}
             </>} />
@@ -84,15 +86,15 @@ export default function TacheDetail() {
                           options={[s.statut, ...(TRANSITIONS_TACHE[s.statut] ?? [])].map((v) => ({ valeur: v, libelle: libelle("statutTache", v) }))}
                           onChange={(v) => agir(() => statutSousTache(t.id, s.id, v))} />
                       </Box>
-                      <Button size="small" startIcon={<AutoAwesomeOutlined />} onClick={() => aide(s.id, s.titre)}>Aide</Button>
+                      <BoutonAction size="small" startIcon={<AutoAwesomeOutlined />} onClick={() => aide(s.id, s.titre)}>Aide</BoutonAction>
                       {gerer && <IconButton size="small" aria-label="Retirer" onClick={() => agir(() => retirerSousTache(t.id, s.id))}><DeleteOutline fontSize="small" /></IconButton>}
                     </Stack>
                   ))}
                 </Stack>
                 {gerer && (
                   <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                    <TextField size="small" fullWidth placeholder="Nouvelle sous-tâche" value={nouvelleSous} onChange={(e) => setNouvelleSous(e.target.value)} />
-                    <Button variant="outlined" disabled={!nouvelleSous.trim()} onClick={() => agir(async () => { await ajouterSousTache(t.id, nouvelleSous.trim()); setNouvelleSous(""); })}>Ajouter</Button>
+                    <ChampTexte size="small" fullWidth placeholder="Nouvelle sous-tâche" value={nouvelleSous} onChange={(e) => setNouvelleSous(e.target.value)} />
+                    <BoutonAction variant="outlined" disabled={!nouvelleSous.trim()} onClick={() => agir(async () => { await ajouterSousTache(t.id, nouvelleSous.trim()); setNouvelleSous(""); })}>Ajouter</BoutonAction>
                   </Stack>
                 )}
                 <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>« Aide » ouvre l'assistant IA du problème avec cette étape comme contexte.</Typography>
@@ -103,8 +105,8 @@ export default function TacheDetail() {
                 {t.criteres_acceptation.map((c) => <Typography key={c.id} variant="body2">• {c.texte}</Typography>)}
                 {gerer && (
                   <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                    <TextField size="small" fullWidth placeholder="Nouveau critère d'acceptation" value={nouveauCritere} onChange={(e) => setNouveauCritere(e.target.value)} />
-                    <Button variant="outlined" disabled={!nouveauCritere.trim()} onClick={() => agir(async () => { await ajouterCritereAcceptation(t.id, nouveauCritere.trim()); setNouveauCritere(""); })}>Ajouter</Button>
+                    <ChampTexte size="small" fullWidth placeholder="Nouveau critère d'acceptation" value={nouveauCritere} onChange={(e) => setNouveauCritere(e.target.value)} />
+                    <BoutonAction variant="outlined" disabled={!nouveauCritere.trim()} onClick={() => agir(async () => { await ajouterCritereAcceptation(t.id, nouveauCritere.trim()); setNouveauCritere(""); })}>Ajouter</BoutonAction>
                   </Stack>
                 )}
               </Paper>
@@ -113,8 +115,8 @@ export default function TacheDetail() {
                 {(notes ?? []).filter((n) => !n.supprime_le).map((n) => <Typography key={n.id} variant="body2" sx={{ mb: 0.5 }}><strong>{nom(n.auteur_id)}</strong> · {dateHeure(n.cree_le)} : {n.contenu}</Typography>)}
                 {peut(PERM.DISCUSSION_PARTICIPER) && !archivee && (
                   <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                    <TextField size="small" fullWidth placeholder="Ajouter une note" value={note} onChange={(e) => setNote(e.target.value)} />
-                    <Button variant="outlined" disabled={!note.trim()} onClick={async () => { try { await ajouterNoteTache(t.id, note.trim(), "note_interne"); setNote(""); rechargerNotes(); } catch (e) { notifier(messageErreur(e), "error"); } }}>Ajouter</Button>
+                    <ChampTexte size="small" fullWidth placeholder="Ajouter une note" value={note} onChange={(e) => setNote(e.target.value)} />
+                    <BoutonAction variant="outlined" disabled={!note.trim()} onClick={async () => { try { await ajouterNoteTache(t.id, note.trim(), "note_interne"); setNote(""); rechargerNotes(); } catch (e) { notifier(messageErreur(e), "error"); } }}>Ajouter</BoutonAction>
                   </Stack>
                 )}
               </Paper>

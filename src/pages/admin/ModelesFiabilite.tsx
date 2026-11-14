@@ -1,4 +1,5 @@
-import { Alert, Box, Button, Chip, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import BoutonAction from "../../components/BoutonAction";
+import { Alert, Box, Chip, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useState } from "react";
 import { activerModeleFiabilite, apercuFiabilite, entrainerModeleFiabilite, listModelesFiabilite, telechargerJeuDonnees } from "../../api/fiabilite";
 import { messageErreur } from "../../api/client";
@@ -82,8 +83,8 @@ function Etape({ etape, titre, question, apercu, versions, recharger }: {
 
       <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mt: 1.5 }} alignItems={{ sm: "center" }}>
         <Box sx={{ minWidth: 320 }}><ChampSelect label="Algorithme" valeur={algo} onChange={(v) => setAlgo(v as typeof algo)} options={ALGOS.map((a) => ({ valeur: a.valeur, libelle: a.libelle }))} /></Box>
-        <Button variant="contained" onClick={entrainer} disabled={attente || !suffisant}>{attente ? "Entraînement…" : "Entraîner une nouvelle version"}</Button>
-        <Button variant="outlined" onClick={() => telechargerJeuDonnees(etape).catch((e) => notifier(messageErreur(e), "error"))}>Exporter le jeu de données (CSV)</Button>
+        <BoutonAction variant="contained" onClick={entrainer} disabled={attente || !suffisant}>{attente ? "Entraînement…" : "Entraîner une nouvelle version"}</BoutonAction>
+        <BoutonAction variant="outlined" onClick={() => telechargerJeuDonnees(etape).catch((e) => notifier(messageErreur(e), "error"))}>Exporter le jeu de données (CSV)</BoutonAction>
       </Stack>
 
       {versions.length > 0 && (
@@ -100,7 +101,7 @@ function Etape({ etape, titre, question, apercu, versions, recharger }: {
                   <TableCell align="right">{n3(m?.auc)}</TableCell>
                   <TableCell align="right">{n3(m?.brier)}</TableCell>
                   <TableCell>{dateHeure(v.entraine_le)}</TableCell>
-                  <TableCell align="right">{!v.actif && <Button size="small" onClick={(e) => { e.stopPropagation(); activer(v.id); }}>Activer</Button>}</TableCell>
+                  <TableCell align="right">{!v.actif && <BoutonAction size="small" onClick={(e) => { e.stopPropagation(); activer(v.id); }}>Activer</BoutonAction>}</TableCell>
                 </TableRow>
               );
             })}
@@ -130,10 +131,6 @@ export default function ModelesFiabilite() {
   return (
     <>
       <PageHeader titre="Modèle de fiabilité" fil={[{ libelle: "Administration" }, { libelle: "Modèle de fiabilité" }]} />
-      <Alert severity="info" sx={{ mb: 2 }}>
-        Ce modèle ne détecte ni ne diagnostique rien : il estime seulement la fiabilité des réponses des autres outils (analyse de code, Gemini).
-        Tant qu'aucune version n'est active, un score de départ par règles fixées à la main est utilisé (affiché comme « non appris »).
-      </Alert>
       <Etat loading={apercus.loading || modeles.loading} error={apercus.error ?? modeles.error}>
         <Stack spacing={2}>
           {ETAPES.map((e) => (

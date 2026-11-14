@@ -1,9 +1,10 @@
+import BoutonAction from "../../components/BoutonAction";
 import ArrowForwardOutlined from "@mui/icons-material/ArrowForwardOutlined";
 import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineOutlined from "@mui/icons-material/ErrorOutlineOutlined";
 import PlayCircleOutline from "@mui/icons-material/PlayCircleOutline";
 import ScheduleOutlined from "@mui/icons-material/ScheduleOutlined";
-import { Box, Button, Chip, ListItemButton, Paper, Stack, Typography } from "@mui/material";
+import { Box, Chip, ListItemButton, Paper, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useCallback } from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -38,7 +39,7 @@ export default function VerificationsListe() {
     <>
       <PageHeader titre="Vérifications" sousTitre={enCours ? "Une vérification est en cours : la liste se met à jour toute seule." : undefined}
         actions={ctx && ctx.peut(PERM.VERIFICATION_LANCER) && !ctx.archivee
-          ? <Button variant="contained" startIcon={<PlayCircleOutline />} component={RouterLink} to={`/applications/${ctx.application.id}/verifications/nouvelle`}>Nouvelle vérification</Button> : undefined} />
+          ? <BoutonAction variant="contained" startIcon={<PlayCircleOutline />} component={RouterLink} to={`/applications/${ctx.application.id}/verifications/nouvelle`}>Nouvelle vérification</BoutonAction> : undefined} />
       <Etat loading={loading && !data} error={error}>
         <Paper sx={{ p: { xs: 1.5, sm: 2 }, mb: 1.5 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>

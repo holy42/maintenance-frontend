@@ -1,4 +1,5 @@
-import { Alert, Box, Chip, Collapse, ListItemButton, Paper, Stack, TextField, Typography } from "@mui/material";
+import ChampTexte from "../../components/ChampTexte";
+import { Alert, Box, Chip, Collapse, ListItemButton, Paper, Stack, Typography } from "@mui/material";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import HistoryOutlined from "@mui/icons-material/HistoryOutlined";
 import { useState } from "react";
@@ -34,15 +35,14 @@ export default function Historique() {
   return (
     <>
       <PageHeader titre="Historique" sousTitre="Journal en ajout seul : toutes les activités de l'application, quel que soit l'auteur." />
-      <Alert severity="info" sx={{ mb: 2 }}>Aucune ligne ne peut être modifiée ni supprimée. Le contenu des notes et messages supprimés y reste conservé.</Alert>
-      <Paper sx={{ p: { xs: 1.5, md: 2 }, mb: 2 }}>
+      <Box sx={{ p: { xs: 1.5, md: 2 }, mb: 2 }}>
         <Stack direction={{ xs: "column", md: "row" }} spacing={1.25} alignItems={{ md: "center" }} flexWrap="wrap" useFlexGap>
           <FiltreSelect label="Élément" valeur={type} onChange={setType} options={TYPES.map((t) => ({ valeur: t, libelle: t.replace(/_/g, " ") }))} />
           <FiltreSelect label="Auteur" valeur={auteur} onChange={setAuteur} options={personnes.map((p) => ({ valeur: String(p.id), libelle: p.identifiant }))} />
-          <TextField label="Action" value={action} onChange={(e) => setAction(e.target.value.trim())} sx={{ flex: "1 1 180px" }} />
+          <ChampTexte label="Action" value={action} onChange={(e) => setAction(e.target.value.trim())} sx={{ flex: "1 1 180px" }} />
           <FiltreSelect label="Période" valeur={jours} onChange={setJours} options={[{ valeur: "7", libelle: "7 jours" }, { valeur: "30", libelle: "30 jours" }, { valeur: "90", libelle: "90 jours" }, { valeur: "365", libelle: "1 an" }]} largeur={140} />
         </Stack>
-      </Paper>
+      </Box>
       <Etat loading={loading} error={error}>
         <Stack spacing={1.25}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">

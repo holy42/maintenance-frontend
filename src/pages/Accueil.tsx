@@ -1,9 +1,10 @@
+import BoutonAction from "../components/BoutonAction";
 import AppsOutlined from "@mui/icons-material/AppsOutlined";
 import ArrowForwardOutlined from "@mui/icons-material/ArrowForwardOutlined";
 import BugReportOutlined from "@mui/icons-material/BugReportOutlined";
 import ChecklistOutlined from "@mui/icons-material/ChecklistOutlined";
 import ScienceOutlined from "@mui/icons-material/ScienceOutlined";
-import { Box, Button, Chip, List, ListItemButton, ListItemText, Paper, Stack, Typography } from "@mui/material";
+import { Box, Chip, List, ListItemButton, ListItemText, Paper, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import type { ReactNode } from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -85,10 +86,10 @@ export default function Accueil() {
               {applications.length} application(s) accessible(s) · {critiques.length} problème(s) critique(s) ouvert(s)
             </Typography>
           </Box>
-          <Button component={RouterLink} to="/problemes" variant="contained" endIcon={<ArrowForwardOutlined />}
+          <BoutonAction component={RouterLink} to="/problemes" variant="contained" endIcon={<ArrowForwardOutlined />}
             sx={{ whiteSpace: "nowrap" }}>
             Voir les problèmes
-          </Button>
+          </BoutonAction>
         </Paper>
         <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr 1fr", sm: "repeat(2, 1fr)", xl: "repeat(4, 1fr)" }, mb: 2 }}>
           <Indicateur accent="info" icone={<AppsOutlined />} titre="Applications actives" valeur={applications.filter((a) => a.statut === "active").length} />
@@ -120,9 +121,9 @@ export default function Accueil() {
                 </ListItemButton>
               ))}
             </List>
-            <Button component={RouterLink} to="/problemes" size="small" endIcon={<ArrowForwardOutlined />} sx={{ mt: 0.5 }}>
+            <BoutonAction component={RouterLink} to="/problemes" size="small" endIcon={<ArrowForwardOutlined />} sx={{ mt: 0.5 }}>
               Tous les problèmes
-            </Button>
+            </BoutonAction>
           </Paper>
           <Paper sx={{ p: { xs: 2, md: 2.5 } }}>
             <Typography variant="h6" component="h2" fontWeight={700}>Activité récente</Typography>

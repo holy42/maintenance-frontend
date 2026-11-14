@@ -1,9 +1,10 @@
+import BoutonAction from "../../components/BoutonAction";
 import ArrowForwardOutlined from "@mui/icons-material/ArrowForwardOutlined";
 import ChecklistOutlined from "@mui/icons-material/ChecklistOutlined";
 import CalendarTodayOutlined from "@mui/icons-material/CalendarTodayOutlined";
 import ViewKanbanOutlined from "@mui/icons-material/ViewKanbanOutlined";
 import { alpha } from "@mui/material/styles";
-import { Box, Button, Checkbox, Chip, FormControlLabel, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Box, Checkbox, Chip, FormControlLabel, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { listTaches } from "../../api/taches";
@@ -38,8 +39,8 @@ export default function TachesListe() {
   return (
     <>
       <PageHeader titre="Tâches" sousTitre="Une tâche se crée à partir d'un problème (onglet « Tâches » de sa fiche)."
-        actions={ctx ? <Button variant="outlined" component={RouterLink} to={`/applications/${ctx.application.id}/problemes`}>Choisir un problème</Button> : undefined} />
-      <Paper sx={{ p: { xs: 1, sm: 1.5 }, mb: 2, borderColor: "divider" }}>
+        actions={ctx ? <BoutonAction variant="outlined" component={RouterLink} to={`/applications/${ctx.application.id}/problemes`}>Choisir un problème</BoutonAction> : undefined} />
+      <Box sx={{ p: { xs: 1, sm: 1.5 }, mb: 2 }}>
         <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap" useFlexGap>
           <ToggleButtonGroup exclusive size="small" value={vue} aria-label="Mode d’affichage des tâches" onChange={(_, v: "liste" | "kanban" | null) => v && setVue(v)}
             sx={{ "& .MuiToggleButton-root": { px: 1.5, fontWeight: 600 } }}>
@@ -50,7 +51,7 @@ export default function TachesListe() {
           <FormControlLabel label="Mes tâches" control={<Checkbox checked={mes} onChange={(e) => setMes(e.target.checked)} />} />
           <FormControlLabel label="En retard" control={<Checkbox checked={retard} onChange={(e) => setRetard(e.target.checked)} />} />
         </Stack>
-      </Paper>
+      </Box>
       <Etat loading={loading} error={error}>
         {vue === "liste" ? (
           <Paper sx={{ overflowX: "auto", borderRadius: 2 }}>
@@ -61,8 +62,8 @@ export default function TachesListe() {
                 {(data ?? []).map((t) => (
                   <TableRow key={t.id} hover>
                     <TableCell sx={{ minWidth: 250 }}>
-                      <Button component={RouterLink} to={lien(t)} color="inherit" variant="text"
-                        startIcon={<ChecklistOutlined fontSize="small" />} endIcon={<ArrowForwardOutlined fontSize="small" />}
+                      <BoutonAction component={RouterLink} to={lien(t)} color="inherit" variant="text"
+                        startIcon={<ChecklistOutlined fontSize="small" />}
                         sx={{
                           width: "100%", justifyContent: "flex-start", textAlign: "left", color: "text.primary",
                           px: 1, py: 0.5, minHeight: 38,
@@ -70,7 +71,7 @@ export default function TachesListe() {
                           "&:hover": { bgcolor: "rgba(66, 153, 224, 0.08)", color: "primary.main" },
                         }}>
                         <Typography component="span" variant="body2" fontWeight={600} noWrap sx={{ flex: 1, minWidth: 0 }}>{t.titre}</Typography>
-                      </Button>
+                      </BoutonAction>
                     </TableCell>
                     {!ctx && <TableCell>{trouver(t.application_id)?.nom ?? `#${t.application_id}`}</TableCell>}
                     <TableCell>{nom(t.responsable_id)}</TableCell>
@@ -105,11 +106,11 @@ export default function TachesListe() {
                         boxShadow: 1, transition: "transform .15s, box-shadow .15s",
                         "&:hover": { transform: "translateY(-2px)", boxShadow: 3 },
                       }}>
-                        <Button component={RouterLink} to={lien(t)} color="inherit" variant="text"
+                        <BoutonAction component={RouterLink} to={lien(t)} color="inherit" variant="text"
                           endIcon={<ArrowForwardOutlined fontSize="small" />}
                           sx={{ width: "100%", justifyContent: "space-between", textAlign: "left", color: "text.primary", p: 0, minHeight: 32, mb: 1, "&:hover": { color: "primary.main", bgcolor: "transparent" } }}>
                           <Typography component="span" variant="body2" fontWeight={700}>{t.titre}</Typography>
-                        </Button>
+                        </BoutonAction>
                         {!ctx && <Typography variant="caption" display="block" color="text.secondary" sx={{ mb: 0.75 }}>{trouver(t.application_id)?.nom ?? `Application #${t.application_id}`}</Typography>}
                         <Stack spacing={0.75}>
                           <Typography variant="caption" color="text.secondary">{nom(t.responsable_id)}</Typography>
