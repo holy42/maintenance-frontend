@@ -78,8 +78,8 @@ export default function ProblemeLayout() {
             }
             actions={
               <>
-                <BoutonAction startIcon={<ForumOutlined />} variant="outlined" onClick={ouvrirSalon}>Salon</BoutonAction>
-                <BoutonAction startIcon={<AutoAwesomeOutlined />} variant="outlined" onClick={() => setAssistantOuvert(true)}>Assistant IA</BoutonAction>
+                <BoutonAction variant="outlined" onClick={ouvrirSalon}>Salon</BoutonAction>
+                <BoutonAction variant="outlined" onClick={() => setAssistantOuvert(true)}>Assistant IA</BoutonAction>
               </>
             }
           />

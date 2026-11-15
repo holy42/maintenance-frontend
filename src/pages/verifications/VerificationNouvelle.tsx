@@ -60,8 +60,10 @@ export default function VerificationNouvelle() {
       {archivee && <Alert severity="warning" sx={{ mb: 2 }}>Application archivée : impossible de lancer une vérification.</Alert>}
       <Etat loading={loading} error={error}>
         <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.6fr 1fr" }, maxWidth: 1100, width: "100%", mx: "auto" }}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom>Code à analyser</Typography>
+          <Paper sx={{ p: 2, borderColor: "white" }}>
+            <Typography variant="subtitle1" fontWeight={600} gutterBottom mb={2}>
+              Code à analyser
+            </Typography>
             <Stack spacing={2}>
               <ChampTexte size="small" label="Branche" value={branche} onChange={(e) => setBranche(e.target.value)}
                 helperText="develop par défaut ; pour un problème rouvert, la branche porte le code du problème (ex. PB-1029)." />

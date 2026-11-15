@@ -31,6 +31,7 @@ export default function TopBar() {
   const canauxCourants = useRef(canaux);
   const dernierIdNotification = useRef<number | null>(null);
   const erreurPollingSignalee = useRef(false);
+  const erreurNotificationSignalee = useRef(false);
   const chargementEnCours = useRef(false);
 
   const charger = useCallback(async () => {
@@ -54,12 +55,20 @@ export default function TopBar() {
           dernierIdNotification.current = n.id;
           if (canauxCourants.current.son) emettreSonNotification();
           if (canauxCourants.current.navigateur && typeof Notification !== "undefined" && Notification.permission === "granted") {
-            const alerte = new Notification("Maintenance des applications", { body: n.message, tag: `notification-${n.id}` });
-            alerte.onclick = () => {
-              window.focus();
-              navigate("/notifications");
-              alerte.close();
-            };
+            try {
+              const alerte = new Notification("Maintenance des applications", { body: n.message, tag: `notification-${n.id}` });
+              alerte.onclick = () => {
+                window.focus();
+                navigate("/notifications");
+                alerte.close();
+              };
+              erreurNotificationSignalee.current = false;
+            } catch (e) {
+              if (!erreurNotificationSignalee.current) {
+                notifier(`Impossible d'afficher la notification navigateur : ${messageErreur(e)}`, "error");
+              }
+              erreurNotificationSignalee.current = true;
+            }
           }
         }
       }

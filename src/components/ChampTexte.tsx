@@ -10,8 +10,10 @@ import LockOutlined from "@mui/icons-material/LockOutlined";
 import NumbersOutlined from "@mui/icons-material/NumbersOutlined";
 import PersonOutline from "@mui/icons-material/PersonOutline";
 import SearchOutlined from "@mui/icons-material/SearchOutlined";
-import { InputAdornment, TextField as MuiTextField, type TextFieldProps } from "@mui/material";
-import type { ReactNode } from "react";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { IconButton, InputAdornment, TextField as MuiTextField, type TextFieldProps } from "@mui/material";
+import { useState, type ReactNode } from "react";
 
 function iconePourChamp(props: TextFieldProps): ReactNode {
   const libelle = [props.label, props.placeholder]
@@ -36,10 +38,34 @@ function iconePourChamp(props: TextFieldProps): ReactNode {
 }
 
 export default function ChampTexte(props: TextFieldProps) {
+  const [motDePasseVisible, setMotDePasseVisible] = useState(false);
   const inputProps = props.InputProps ?? {};
   const startAdornment = inputProps.startAdornment ?? (
     <InputAdornment position="start">{iconePourChamp(props)}</InputAdornment>
   );
+  const endAdornment = props.type === "password" ? (
+    <>
+      {inputProps.endAdornment}
+      <InputAdornment position="end">
+        <IconButton
+          aria-label={motDePasseVisible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+          aria-pressed={motDePasseVisible}
+          edge="end"
+          onClick={() => setMotDePasseVisible((visible) => !visible)}
+          onMouseDown={(event) => event.preventDefault()}
+          type="button"
+        >
+          {motDePasseVisible ? <VisibilityOff /> : <Visibility />}
+        </IconButton>
+      </InputAdornment>
+    </>
+  ) : inputProps.endAdornment;
 
-  return <MuiTextField {...props} InputProps={{ ...inputProps }} />;
+  return (
+    <MuiTextField
+      {...props}
+      type={props.type === "password" && motDePasseVisible ? "text" : props.type}
+      InputProps={{ ...inputProps, startAdornment, endAdornment }}
+    />
+  );
 }

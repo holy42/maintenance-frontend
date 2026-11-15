@@ -59,8 +59,8 @@ export default function ResultatDetail() {
               <SourceBadge source={r.source} /><StatutChip groupe="validation" valeur={r.statut_validation} />
             </Stack>} />
           {r.source === "ia" && <Alert severity="warning" sx={{ mb: 2 }}>Hypothèse de l'IA, non vérifiée : elle n'a de valeur qu'après examen par une personne.</Alert>}
-          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.5fr 1fr" }, maxWidth: 1200, width: "100%", mx: "auto" }}>
-            <Stack spacing={2}>
+          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(0, 1.5fr) minmax(0, 1fr)" }, maxWidth: 1200, width: "100%", mx: "auto" }}>
+            <Stack spacing={2} sx={{ minWidth: 0 }}>
               <Paper sx={{ p: 2 }}>
                 <Typography variant="subtitle1" fontWeight={600}>Localisation</Typography>
                 <Typography variant="body2" sx={{ fontFamily: "monospace" }}>{r.fichier ?? "—"}{r.ligne_debut ? ` · ligne ${r.ligne_debut}` : ""}{r.fonction ? ` · ${r.fonction}()` : ""}</Typography>
@@ -73,7 +73,7 @@ export default function ResultatDetail() {
                 </Paper>
               )}
             </Stack>
-            <Stack spacing={2}>
+            <Stack spacing={2} sx={{ minWidth: 0 }}>
               <Paper sx={{ p: 2 }}>
                 <Typography variant="subtitle1" fontWeight={600}>Critère déclencheur</Typography>
                 <Typography variant="body2">{(criteres ?? []).find((c) => c.id === r.critere_id)?.nom ?? "—"}</Typography>

@@ -12,8 +12,8 @@ import { useAsync } from "../../hooks/useAsync";
 import { dateHeure } from "../../utils/format";
 
 const ETAPES: { etape: 3 | 6; titre: string; question: string }[] = [
-  { etape: 3, titre: "Étape 3 : preuves de l'analyse de code", question: "L'anomalie détectée est-elle réelle ? (vérité : décision humaine)" },
-  { etape: 6, titre: "Étape 6 : solutions de Gemini", question: "La solution sera-t-elle validée au test ? (vérité : retour du testeur)" },
+  { etape: 3, titre: "Étape 3 : Preuves de l'analyse de code", question: "L'anomalie détectée est-elle réelle ? (vérité : décision humaine)" },
+  { etape: 6, titre: "Étape 6 : Solutions de l'IA", question: "La solution sera-t-elle validée au test ? (vérité : retour du testeur)" },
 ];
 const ALGOS = [
   { valeur: "auto", libelle: "Automatique (le plus simple sauf amélioration nette)" },

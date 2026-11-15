@@ -14,18 +14,23 @@ export default function AuthLayout() {
         overflow: "hidden", isolation: "isolate", bgcolor: "#fff",
       }}>
         <Box aria-hidden="true" sx={(theme) => ({
+          position: "absolute", zIndex: -1, width: { xs: 50, sm: 140 }, height: { xs: 50, sm: 140 }, borderRadius: "50%",
+          top: { xs: -100, sm: -140 }, right: { xs: 20, sm: "8%" },
+          border: `1px solid ${alpha(theme.palette.secondary.main, 0.15)}`, bgcolor: alpha(theme.palette.secondary.main, 0.07),
+        })} />
+        <Box aria-hidden="true" sx={(theme) => ({
           position: "absolute", zIndex: -1, width: { xs: 220, sm: 340 }, height: { xs: 220, sm: 340 }, borderRadius: "50%",
           top: { xs: -100, sm: -140 }, right: { xs: -80, sm: "8%" },
-          border: `1px solid ${alpha(theme.palette.secondary.main, 0.12)}`, bgcolor: alpha(theme.palette.secondary.main, 0.035),
+          border: `1px solid ${alpha(theme.palette.secondary.main, 0.12)}`, bgcolor: alpha(theme.palette.secondary.main, 0.05),
         })} />
         <Box aria-hidden="true" sx={(theme) => ({
           position: "absolute", zIndex: -1, width: { xs: 250, sm: 390 }, height: { xs: 250, sm: 390 }, borderRadius: "50%",
           bottom: { xs: -145, sm: -190 }, left: { xs: -110, sm: "9%" },
-          border: `1px solid ${alpha(theme.palette.secondary.main, 0.1)}`, bgcolor: alpha(theme.palette.secondary.main, 0.03),
+          border: `1px solid ${alpha(theme.palette.secondary.main, 0.1)}`, bgcolor: alpha(theme.palette.secondary.main, 0.1),
         })} />
         <Paper component="main" sx={{
           width: "100%", maxWidth: 460, p: { xs: 3, sm: 4.5 }, position: "relative", overflow: "hidden",
-          borderRadius: 4, bgcolor: "#fff", color: "#1a365d", boxShadow: "0 22px 64px rgba(15, 42, 77, 0.12)",
+          borderRadius: 2, bgcolor: "#fff", color: "#1a365d", boxShadow: "0 22px 64px rgba(15, 42, 77, 0.12)",
           borderColor: "rgba(49, 130, 206, 0.16)",
         }}>
           <Stack alignItems="center" spacing={1.25}>

@@ -74,6 +74,27 @@ export default function MonCompte() {
     catch (e) { notifier(messageErreur(e), "error"); }
   }
 
+  function testerNotificationNavigateur() {
+    if (typeof Notification === "undefined") {
+      setPermissionNavigateur("indisponible");
+      return;
+    }
+    setPermissionNavigateur(Notification.permission);
+    if (Notification.permission !== "granted") return;
+
+    try {
+      const notification = new Notification("Maintenance des applications", {
+        body: "Les notifications navigateur sont activées.",
+      });
+      notification.onclick = () => {
+        window.focus();
+        notification.close();
+      };
+    } catch (e) {
+      notifier(`Impossible d'afficher la notification : ${messageErreur(e)}`, "error");
+    }
+  }
+
   return (
     <>
       <PageHeader titre="Mon compte" />
@@ -92,12 +113,11 @@ export default function MonCompte() {
           </Stack>
         </Paper>
         <Paper component="form" onSubmit={changerMdp} noValidate sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 2 }}>
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
-            <LockOutlined color="primary" />
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
             <Typography variant="subtitle1" fontWeight={700}>Mot de passe</Typography>
           </Stack>
           <Stack spacing={2}>
-            <Box sx={{ width: "100%", maxWidth: 520, mx: "auto" }}>
+            <Box sx={{ width: "100%", maxWidth: 620, mx: "auto" }}>
               <Stack spacing={2}>
                 <ChampTexte fullWidth size="small" label="Mot de passe actuel" type="password" value={ancien} onChange={(e) => setAncien(e.target.value)} autoComplete="current-password" />
                 <ChampTexte fullWidth size="small" label="Nouveau mot de passe" type="password" value={nouveau} onChange={(e) => setNouveau(e.target.value)} autoComplete="new-password" />
@@ -110,7 +130,6 @@ export default function MonCompte() {
         </Paper>
         <Paper sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 2 }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-            <NotificationsActiveOutlined color="primary" />
             <Typography variant="subtitle1" fontWeight={700}>Notifications à recevoir</Typography>
           </Stack>
           <Stack sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, columnGap: 2 }}>
@@ -136,6 +155,12 @@ export default function MonCompte() {
           )}
           {canaux.navigateur && permissionNavigateur === "indisponible" && (
             <Alert severity="info" sx={{ mt: 1 }}>Ce navigateur ne prend pas en charge les notifications système.</Alert>
+          )}
+          {canaux.navigateur && permissionNavigateur === "granted" && (
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
+              <Alert severity="success" sx={{ flex: 1 }}>L'autorisation du navigateur est accordée.</Alert>
+              <BoutonAction size="small" variant="outlined" onClick={testerNotificationNavigateur}>Tester</BoutonAction>
+            </Stack>
           )}
           <BoutonAction variant="contained" onClick={enregistrerPreferences} sx={{ mt: 1, display: "flex", mx: { xs: 0, sm: "auto" }, minWidth: { sm: 220 } }}>Enregistrer</BoutonAction>
         </Paper>

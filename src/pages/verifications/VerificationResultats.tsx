@@ -1,7 +1,7 @@
-import BoutonAction from "../../components/BoutonAction";
-import { Alert, Box, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Alert, Box, Button, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
+import { listCriteres } from "../../api/criteres";
 import { criteresManuels, getVerification, resultatsVerification } from "../../api/verifications";
 import Etat from "../../components/Etat";
 import FiltreSelect from "../../components/FiltreSelect";
@@ -26,12 +26,19 @@ export default function VerificationResultats() {
   const [categorie, setCategorie] = useState("");
   const [source, setSource] = useState("");
   const [validation, setValidation] = useState("");
+  const [critere, setCritere] = useState("");
   const { data: v, loading, error, reload } = useAsync(() => getVerification(id), [id]);
   const enCours = v?.statut === "en_attente" || v?.statut === "en_cours";
   usePolling(useCallback(reload, [reload]), Boolean(enCours));
   const { data: tous } = useAsync(() => resultatsVerification(id), [id, v?.statut]);
   const { data: resultats } = useAsync(() => resultatsVerification(id, { categorie: categorie || undefined, source: source || undefined, statut_validation: validation || undefined }), [id, categorie, source, validation, v?.statut]);
+  const { data: criteres } = useAsync(() => listCriteres(application.id), [application.id]);
   const { data: manuels } = useAsync(() => criteresManuels(id), [id]);
+
+  const nomCritere = new Map((criteres ?? []).map((c) => [c.id, c.nom]));
+  const optionsCriteres = [...new Set((tous ?? []).map((r) => r.critere_id).filter((x): x is number => x != null))]
+    .map((cid) => ({ valeur: String(cid), libelle: nomCritere.get(cid) ?? `Critère ${cid}` }));
+  const affiches = (resultats ?? []).filter((r) => !critere || String(r.critere_id) === critere);   // le filtre « Critère » se fait ici, sans changer l'API
 
   const nb = (f: (r: NonNullable<typeof tous>[number]) => boolean) => (tous ?? []).filter(f).length;
   const base = `/applications/${application.id}/verifications/${id}`;
@@ -49,28 +56,30 @@ export default function VerificationResultats() {
           <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, mb: 2 }}>
             <Compteur titre="Résultats d'outils" valeur={nb((r) => r.source === "outil")} />
             <Compteur titre="Hypothèses de l'IA" valeur={nb((r) => r.source === "ia")} />
-            <Compteur titre="Confirmés par un humain" valeur={nb((r) => r.statut_validation === "confirme")} />
+            <Compteur titre="Confirmés" valeur={nb((r) => r.statut_validation === "confirme")} />
             <Compteur titre="Écartés" valeur={nb((r) => r.statut_validation === "ecarte")} />
           </Box>
 
           <Stack direction="row" spacing={1} sx={{ mb: 1 }} flexWrap="wrap" useFlexGap>
             <FiltreSelect label="Catégorie" valeur={categorie} onChange={setCategorie} options={options("categorie")} />
+            <FiltreSelect label="Critère" valeur={critere} onChange={setCritere} options={optionsCriteres} largeur={260} />
             <FiltreSelect label="Source" valeur={source} onChange={setSource} options={[{ valeur: "outil", libelle: "Outil" }, { valeur: "ia", libelle: "IA" }, { valeur: "humain", libelle: "Humain" }]} />
             <FiltreSelect label="Statut" valeur={validation} onChange={setValidation} options={options("validation")} />
           </Stack>
           <Paper sx={{ overflowX: "auto" }}>
             <Table size="small">
-              <TableHead><TableRow><TableCell>Gravité</TableCell><TableCell>Source</TableCell><TableCell>Résultat</TableCell><TableCell>Fiabilité estimée</TableCell><TableCell>Statut</TableCell><TableCell /></TableRow></TableHead>
+              <TableHead><TableRow><TableCell>Gravité</TableCell><TableCell>Critère</TableCell><TableCell>Source</TableCell><TableCell>Résultat</TableCell><TableCell>Fiabilité estimée</TableCell><TableCell>Statut</TableCell><TableCell /></TableRow></TableHead>
               <TableBody>
-                {(resultats ?? []).length === 0 && <TableRow><TableCell colSpan={6}><Typography color="text.secondary">{enCours ? "En attente des résultats…" : "Aucun résultat."}</Typography></TableCell></TableRow>}
-                {(resultats ?? []).map((r) => (
+                {affiches.length === 0 && <TableRow><TableCell colSpan={7}><Typography color="text.secondary">{enCours ? "En attente des résultats…" : "Aucun résultat."}</Typography></TableCell></TableRow>}
+                {affiches.map((r) => (
                   <TableRow key={r.id} hover>
                     <TableCell><StatutChip groupe="gravite" valeur={r.gravite} /></TableCell>
-                    <TableCell><SourceBadge source={r.source} /></TableCell>
+                    <TableCell sx={{ maxWidth: 200 }}>{r.critere_id != null ? (nomCritere.get(r.critere_id) ?? `Critère ${r.critere_id}`) : "—"}</TableCell>
+                    <TableCell><SourceBadge source={r.source} />{r.outil && <Typography variant="caption" display="block" color="text.secondary">{r.outil}</Typography>}</TableCell>
                     <TableCell>{r.message}<Typography variant="caption" display="block" color="text.secondary" sx={{ fontFamily: "monospace" }}>{r.fichier}{r.ligne_debut ? `:${r.ligne_debut}` : ""}</Typography></TableCell>
                     <TableCell><FiabiliteChip fiabilite={r.fiabilite} /></TableCell>
                     <TableCell><StatutChip groupe="validation" valeur={r.statut_validation} /></TableCell>
-                    <TableCell align="right"><BoutonAction size="small" component={RouterLink} to={`${base}/resultats/${r.id}`}>Examiner</BoutonAction></TableCell>
+                    <TableCell align="right"><Button size="small" component={RouterLink} to={`${base}/resultats/${r.id}`}>Examiner</Button></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
