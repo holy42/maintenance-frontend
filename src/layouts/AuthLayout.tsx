@@ -11,7 +11,8 @@ export default function AuthLayout() {
     <ThemeProvider theme={themeConnexion}>
       <Box sx={{
         minHeight: "100vh", display: "grid", placeItems: "center", p: { xs: 2, sm: 3 }, position: "relative",
-        overflow: "hidden", isolation: "isolate", bgcolor: "#fff",
+        overflow: "hidden", isolation: "isolate",
+        background: (theme) => `linear-gradient(135deg, ${alpha(theme.palette.secondary.main, 0.1)} 0%, #fff 42%, ${alpha(theme.palette.primary.main, 0.045)} 100%)`,
       }}>
         <Box aria-hidden="true" sx={(theme) => ({
           position: "absolute", zIndex: -1, width: { xs: 50, sm: 140 }, height: { xs: 50, sm: 140 }, borderRadius: "50%",
@@ -27,6 +28,18 @@ export default function AuthLayout() {
           position: "absolute", zIndex: -1, width: { xs: 250, sm: 390 }, height: { xs: 250, sm: 390 }, borderRadius: "50%",
           bottom: { xs: -145, sm: -190 }, left: { xs: -110, sm: "9%" },
           border: `1px solid ${alpha(theme.palette.secondary.main, 0.1)}`, bgcolor: alpha(theme.palette.secondary.main, 0.1),
+        })} />
+        <Box aria-hidden="true" sx={(theme) => ({
+          position: "absolute", zIndex: -1, width: 250, height: 250, borderRadius: "50%",
+          top: -90, left: -90,
+          border: `1px solid ${alpha(theme.palette.secondary.main, 0.18)}`,
+          background: `linear-gradient(135deg, ${alpha(theme.palette.secondary.main, 0.11)}, ${alpha(theme.palette.secondary.main, 0.025)})`,
+        })} />
+        <Box aria-hidden="true" sx={(theme) => ({
+          position: "absolute", zIndex: -1, width: 250, height: 250, borderRadius: "50%",
+          right: -90, bottom: -90,
+          border: `1px solid ${alpha(theme.palette.secondary.main, 0.18)}`,
+          background: `linear-gradient(315deg, ${alpha(theme.palette.primary.main, 0.1)}, ${alpha(theme.palette.secondary.main, 0.025)})`,
         })} />
         <Paper component="main" sx={{
           width: "100%", maxWidth: 460, p: { xs: 3, sm: 4.5 }, position: "relative", overflow: "hidden",

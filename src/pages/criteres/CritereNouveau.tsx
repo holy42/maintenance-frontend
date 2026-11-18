@@ -1,6 +1,5 @@
 import BoutonAction from "../../components/BoutonAction";
 import ChampTexte from "../../components/ChampTexte";
-import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import { Alert, Box, Checkbox, Chip, FormControlLabel, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -58,7 +57,7 @@ export default function CritereNouveau() {
           <Typography variant="subtitle1" fontWeight={600} gutterBottom>1. Votre critère, en langage naturel</Typography>
           <ChampTexte multiline minRows={5} fullWidth value={texte} onChange={(e) => setTexte(e.target.value)}
             placeholder="Ex. Un utilisateur ne doit pas pouvoir consulter les messages d'un autre utilisateur sans autorisation." />
-          <BoutonAction sx={{ mt: 1 }} fullWidth variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={structurer} disabled={attente}>
+          <BoutonAction sx={{ mt: 1 }} fullWidth variant="outlined" onClick={structurer} disabled={attente}>
             {attente ? "L'IA structure votre critère…" : "Demander à l'IA de le structurer"}
           </BoutonAction>
           <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>

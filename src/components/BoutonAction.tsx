@@ -1,8 +1,7 @@
 import AddOutlined from "@mui/icons-material/AddOutlined";
 import ArrowBackOutlined from "@mui/icons-material/ArrowBackOutlined";
 import ArrowForwardOutlined from "@mui/icons-material/ArrowForwardOutlined";
-import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
-import CheckOutlined from "@mui/icons-material/CheckOutlined";
+import SearchOutlined from "@mui/icons-material/SearchOutlined";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import ContentCopyOutlined from "@mui/icons-material/ContentCopyOutlined";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
@@ -60,10 +59,10 @@ function iconePourAction(texte: string): ReactNode {
   if (/pause|mettre en pause/.test(action)) return <PauseOutlined />;
   if (/arreter/.test(action)) return <StopOutlined />;
   if (/exporter|telecharger/.test(action)) return <DownloadOutlined />;
+  if (/assistant|ia|proposer|aide/.test(action)) return <SearchOutlined />;
   if (/envoyer|publier|demander/.test(action)) return <SendOutlined />;
   if (/partager/.test(action)) return <ShareOutlined />;
   if (/copier/.test(action)) return <ContentCopyOutlined />;
-  if (/assistant|ia|proposer|aide/.test(action)) return <AutoAwesomeOutlined />;
   if (/examiner|ouvrir|voir|afficher|consulter|detail/.test(action)) return <VisibilityOutlined />;
   if (/precedent|retour/.test(action)) return <ArrowBackOutlined />;
   if (/suivant/.test(action)) return <ArrowForwardOutlined />;
@@ -77,7 +76,7 @@ function iconePourAction(texte: string): ReactNode {
 const BoutonAction: OverridableComponent<ButtonTypeMap<{ to?: string }>> = (props: Props) => {
   const texte = texteDesEnfants(props.children);
   const startIcon = props.startIcon ?? (props.endIcon ? undefined : iconePourAction(texte));
-  return <BaseButton {...props} startIcon={startIcon} />;
+  return <BaseButton {...props} startIcon={startIcon ?? ""} />;
 };
 
 export default BoutonAction;

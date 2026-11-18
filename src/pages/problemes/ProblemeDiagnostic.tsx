@@ -1,5 +1,6 @@
 import BoutonAction from "../../components/BoutonAction";
 import ChampTexte from "../../components/ChampTexte";
+import AddOutlined from "@mui/icons-material/AddOutlined";
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import TipsAndUpdatesOutlined from "@mui/icons-material/TipsAndUpdatesOutlined";
 import { alpha } from "@mui/material/styles";
@@ -88,7 +89,7 @@ export default function ProblemeDiagnostic() {
                 options={(data ?? []).map((d, i) => ({ valeur: String(d.id), libelle: `Diagnostic ${(data?.length ?? 0) - i} · ${dateHeure(d.cree_le)}${d.branche_analysee ? ` · ${d.branche_analysee}` : ""}` }))} />
             </Box>
           )}
-          <BoutonAction variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={demander} disabled={attente || !peut(PERM.PROBLEME_MODIFIER) || archivee}>
+          <BoutonAction variant="outlined" startIcon={<AddOutlined />} onClick={demander} disabled={attente || !peut(PERM.PROBLEME_MODIFIER) || archivee}>
             {attente ? "L'IA analyse…" : "Demander un nouveau diagnostic"}
           </BoutonAction>
         </Stack>

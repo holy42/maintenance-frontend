@@ -1,6 +1,5 @@
 import BoutonAction from "../../components/BoutonAction";
 import ChampTexte from "../../components/ChampTexte";
-import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import { Alert, Box, Chip, IconButton, Paper, Stack, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
@@ -86,7 +85,7 @@ export default function TacheDetail() {
                           options={[s.statut, ...(TRANSITIONS_TACHE[s.statut] ?? [])].map((v) => ({ valeur: v, libelle: libelle("statutTache", v) }))}
                           onChange={(v) => agir(() => statutSousTache(t.id, s.id, v))} />
                       </Box>
-                      <BoutonAction size="small" startIcon={<AutoAwesomeOutlined />} onClick={() => aide(s.id, s.titre)}>Aide</BoutonAction>
+                      <BoutonAction size="small" onClick={() => aide(s.id, s.titre)}>Aide</BoutonAction>
                       {gerer && <IconButton size="small" aria-label="Retirer" onClick={() => agir(() => retirerSousTache(t.id, s.id))}><DeleteOutline fontSize="small" /></IconButton>}
                     </Stack>
                   ))}

@@ -1,6 +1,5 @@
 import BoutonAction from "../../components/BoutonAction";
 import ChampTexte from "../../components/ChampTexte";
-import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import FactCheckOutlined from "@mui/icons-material/FactCheckOutlined";
 import { Alert, List, ListItemButton, ListItemText, Paper, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -53,7 +52,7 @@ export default function ProblemeTest() {
           <ChampTexte multiline minRows={4} fullWidth size="small" value={description} onChange={(e) => setDescription(e.target.value)} disabled={!modifiable}
             placeholder="Étapes à suivre et résultat attendu" sx={{ "& .MuiOutlinedInput-root": { bgcolor: "background.default" } }} />
           <Stack direction="row" spacing={1} sx={{ mt: 1 }} flexWrap="wrap" useFlexGap>
-            <BoutonAction variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={proposer} disabled={!modifiable || attente}>{attente ? "L'IA rédige…" : "Proposer avec l'IA"}</BoutonAction>
+            <BoutonAction variant="outlined" onClick={proposer} disabled={!modifiable || attente}>{attente ? "L'IA rédige…" : "Proposer avec l'IA"}</BoutonAction>
             <BoutonAction variant="outlined" onClick={sauvegarder} disabled={!modifiable || !description.trim()}>Enregistrer la description</BoutonAction>
             <BoutonAction variant="contained" onClick={demander} disabled={!modifiable || probleme.statut !== "en_cours"}>Demander le test</BoutonAction>
           </Stack>

@@ -1,6 +1,5 @@
 import BoutonAction from "../../components/BoutonAction";
 import ChampTexte from "../../components/ChampTexte";
-import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import DeleteOutline from "@mui/icons-material/DeleteOutline";
 import { Alert, Box, Checkbox, FormControlLabel, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
@@ -92,7 +91,7 @@ export default function TacheNouvelle() {
         {pid && (
           <>
             <Stack direction="row" spacing={1}>
-              <BoutonAction variant="outlined" startIcon={<AutoAwesomeOutlined />} onClick={proposer} disabled={attente}>{attente ? "L'IA propose…" : "Demander des propositions à l'IA"}</BoutonAction>
+              <BoutonAction variant="outlined" onClick={proposer} disabled={attente}>{attente ? "L'IA propose…" : "Demander des propositions à l'IA"}</BoutonAction>
               <BoutonAction variant="outlined" onClick={() => setBrouillons([...brouillons, vide()])}>Ajouter une tâche</BoutonAction>
             </Stack>
             {brouillons.map((b) => (

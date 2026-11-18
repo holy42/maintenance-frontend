@@ -62,7 +62,7 @@ export default function ProblemeResume() {
           <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", lineHeight: 1.75 }}>{p.description ?? "—"}</Typography>
           <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5, mt: 2 }}>
             {[["Comportement attendu", p.comportement_attendu], ["Comportement observé", p.comportement_observe]].map(([label, valeur]) => (
-              <Box key={label} sx={{ p: 1.5, borderRadius: 2, bgcolor: "action.hover", borderLeft: 3, borderColor: "secondary.main" }}>
+              <Box key={label} sx={{ p: 1.5, borderRadius: 2, bgcolor: "action.hover", borderLeft: 0, borderColor: "white" }}>
                 <Typography variant="caption" color="text.secondary" fontWeight={700} display="block" sx={{ mb: 0.5 }}>{label}</Typography>
                 <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}>{valeur || "—"}</Typography>
               </Box>
