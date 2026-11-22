@@ -21,10 +21,10 @@ export default function ProblemeTaches() {
 
   return (
     <Etat loading={loading} error={error}>
-      <BoutonAction variant="contained" startIcon={<AddTaskOutlined />} sx={{ mb: 2 }} disabled={!peutCreer} component={RouterLink} to={`/applications/${application.id}/taches/nouvelle?problemeId=${probleme.id}`}>
+      <BoutonAction variant="contained" startIcon={<AddTaskOutlined />} sx={{ mb: 2, width: "30%", ml :"auto", mr: "30px" }} disabled={!peutCreer} component={RouterLink} to={`/applications/${application.id}/taches/nouvelle?problemeId=${probleme.id}`}>
         Créer des tâches
       </BoutonAction>
-      <Paper sx={{ maxWidth: 1120, mx: "auto", borderRadius: 2.5, overflow: "hidden", borderColor: "divider" }}>
+      <Paper sx={{ width: "95%", mx: "auto", borderRadius: 2.5, overflow: "hidden", borderColor: "divider" }}>
         <List>
           {(data ?? []).length === 0 && <Box sx={{ p: { xs: 3, sm: 4 }, textAlign: "center" }}><Typography color="text.secondary">Aucune tâche pour ce problème.</Typography></Box>}
           {(data ?? []).map((t) => (

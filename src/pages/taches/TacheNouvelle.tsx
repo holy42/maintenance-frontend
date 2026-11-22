@@ -137,9 +137,8 @@ export default function TacheNouvelle() {
               </Paper>
             ))}
             {erreur && <Alert severity="error">{erreur}</Alert>}
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="caption" color="text.secondary" sx={{ flex: 1 }}>Rien n'est créé tant que vous n'avez pas validé. Les éléments non retenus ne sont jamais enregistrés.</Typography>
-              <BoutonAction variant="contained" onClick={creer} disabled={brouillons.length === 0 || archivee}>Créer les tâches retenues</BoutonAction>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ width: "100%" }}>
+              <BoutonAction variant="contained" sx={{ml: "auto"}} onClick={creer} disabled={brouillons.length === 0 || archivee}>Créer les tâches retenues</BoutonAction>
             </Stack>
           </>
         )}

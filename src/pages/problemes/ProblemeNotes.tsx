@@ -54,7 +54,6 @@ export default function ProblemeNotes() {
         {(data ?? []).slice().reverse().map((n) => (
           <Paper key={n.id} sx={{
             p: { xs: 1.5, sm: 2 }, borderRadius: 2, borderColor: "divider", opacity: n.supprime_le ? 0.65 : 1,
-            borderLeft: 3, borderLeftColor: (theme) => alpha(theme.palette.secondary.main, 0.7),
           }}>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }}>
               <Typography variant="body2" sx={{ overflowWrap: "anywhere" }}><strong>{nom(n.auteur_id)}</strong> · {dateHeure(n.cree_le)}{n.modifie_le ? ` · modifiée le ${dateHeure(n.modifie_le)}` : ""}</Typography>

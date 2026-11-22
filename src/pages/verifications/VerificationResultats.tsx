@@ -65,7 +65,7 @@ export default function VerificationResultats() {
             <FiltreSelect label="Critère" valeur={critere} onChange={setCritere} options={optionsCriteres} largeur={260} />
             <FiltreSelect label="Source" valeur={source} onChange={setSource} options={[{ valeur: "outil", libelle: "Outil" }, { valeur: "ia", libelle: "IA" }, { valeur: "humain", libelle: "Humain" }]} />
             <FiltreSelect label="Statut" valeur={validation} onChange={setValidation} options={options("validation")} />
-          </Stack>
+          </Stack>  
           <Paper sx={{ overflowX: "auto" }}>
             <Table size="small">
               <TableHead><TableRow><TableCell>Gravité</TableCell><TableCell>Critère</TableCell><TableCell>Source</TableCell><TableCell>Résultat</TableCell><TableCell>Fiabilité estimée</TableCell><TableCell>Statut</TableCell><TableCell /></TableRow></TableHead>

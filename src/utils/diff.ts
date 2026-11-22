@@ -10,32 +10,32 @@ export function lireDiff(diff: string): DiffLu {
   const blocs: Bloc[] = [];
   let courant: Bloc | null = null;
   for (const l of diff.replace(/\r\n/g, "\n").split("\n")) {
-    if (l.startsWith("+++ ")) {                                   // en-tête du fichier modifié
+    if (l.startsWith("+++ ")) { 
       const c = nettoyer(l.slice(4));
       if (c && c !== "/dev/null") fichier = c;
       courant = null;
     } else if (l.startsWith("--- ") || l.startsWith("diff --git") || l.startsWith("index ")) {
-      continue;                                                    // en-têtes : jamais copiés
+      continue;       
     } else if (l.startsWith("@@")) {
       const m = /\+(\d+)/.exec(l);
       courant = { ligneDebut: m ? Number(m[1]) : null, lignes: [] };
       blocs.push(courant);
     } else {
       if (!courant) { courant = { ligneDebut: null, lignes: [] }; blocs.push(courant); }
-      if (l.startsWith("-")) continue;                             // ancien code (l'erreur) : jamais copié
+      if (l.startsWith("-")) continue;                           
       courant.lignes.push(l.startsWith("+") ? l.slice(1) : l.startsWith(" ") ? l.slice(1) : l);
     }
   }
   return { fichier, blocs: blocs.filter((b) => b.lignes.some((x) => x.trim() !== "")) };
 }
 
-/** Le texte à coller : uniquement la NOUVELLE version du code (lignes inchangées + lignes ajoutées). */
+/** Le texte à coller. */
 export function codeACopier(diff: string): string {
   const { blocs } = lireDiff(diff);
   return blocs.map((b) => b.lignes.join("\n").replace(/\n+$/, "")).join("\n\n");
 }
 
-/** Phrase « où corriger » : d'abord ce que dit le diff, sinon le fichier/la ligne du problème. */
+/** Phrase « où corriger » */
 export function ouCorriger(diff: string | null, fichierProbleme: string | null, ligneProbleme: number | null): string | null {
   const d = diff ? lireDiff(diff) : null;
   const fichier = d?.fichier ?? fichierProbleme;
