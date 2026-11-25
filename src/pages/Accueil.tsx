@@ -91,7 +91,7 @@ export default function Accueil() {
             Voir les problèmes
           </BoutonAction>
         </Paper>
-        <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr 1fr", sm: "repeat(2, 1fr)", xl: "repeat(4, 1fr)" }, mb: 2 }}>
+        <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(2, minmax(0, 1fr))", xl: "repeat(4, minmax(0, 1fr))" }, mb: 2 }}>
           <Indicateur accent="info" icone={<AppsOutlined />} titre="Applications actives" valeur={applications.filter((a) => a.statut === "active").length} />
           <Indicateur accent="error" icone={<BugReportOutlined />} titre="Problèmes ouverts" valeur={ouverts.length} detail={`dont ${critiques.length} critique(s)`} alerte={critiques.length > 0} />
           <Indicateur accent="warning" icone={<ChecklistOutlined />} titre="Tâches en cours" valeur={enCours.length} detail={`${retards.length} en retard`} alerte={retards.length > 0} />
@@ -146,7 +146,7 @@ export default function Accueil() {
         </Box>
         <Box sx={{ mt: 3 }}>
           <Typography variant="h6" component="h2" fontWeight={700} sx={{ mb: 1.5 }}>Applications récemment consultées</Typography>
-          <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" } }}>
+          <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))" }}>
             {recentes.length === 0 && <Typography variant="body2" color="text.secondary">Aucune application consultée récemment.</Typography>}
             {recentes.map((a) => a && (
               <Paper key={a.id} component={RouterLink} to={`/applications/${a.id}`} sx={{

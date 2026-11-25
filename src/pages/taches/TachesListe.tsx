@@ -6,7 +6,7 @@ import ViewKanbanOutlined from "@mui/icons-material/ViewKanbanOutlined";
 import { alpha } from "@mui/material/styles";
 import { Box, Checkbox, Chip, FormControlLabel, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import { listTaches } from "../../api/taches";
 import type { Tache } from "../../api/types";
 import Etat from "../../components/Etat";
@@ -28,7 +28,8 @@ export default function TachesListe() {
   const ctx = useApplicationOptionnelle();
   const { trouver } = useApplications();
   const { nom } = useAnnuaire();
-  const [vue, setVue] = useState<"liste" | "kanban">("liste");
+  const [params, setParams] = useSearchParams();
+  const vue = params.get("vue") === "kanban" ? "kanban" : "liste";
   const [statut, setStatut] = useState("");
   const [mes, setMes] = useState(false);
   const [retard, setRetard] = useState(false);
@@ -42,7 +43,15 @@ export default function TachesListe() {
         actions={ctx ? <BoutonAction variant="outlined" component={RouterLink} to={`/applications/${ctx.application.id}/problemes`}>Choisir un problème</BoutonAction> : undefined} />
       <Box sx={{ p: { xs: 1, sm: 1.5 }, mb: 2 }}>
         <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap" useFlexGap>
-          <ToggleButtonGroup exclusive size="small" value={vue} aria-label="Mode d’affichage des tâches" onChange={(_, v: "liste" | "kanban" | null) => v && setVue(v)}
+          <ToggleButtonGroup exclusive size="small" value={vue} aria-label="Mode d’affichage des tâches" onChange={(_, v: "liste" | "kanban" | null) => {
+            if (!v) return;
+            setParams((courants) => {
+              const suivants = new URLSearchParams(courants);
+              if (v === "liste") suivants.delete("vue");
+              else suivants.set("vue", v);
+              return suivants;
+            });
+          }}
             sx={{ "& .MuiToggleButton-root": { px: 1.5, fontWeight: 600 } }}>
             <ToggleButton value="liste">Liste</ToggleButton>
             <ToggleButton value="kanban"><ViewKanbanOutlined fontSize="small" sx={{ mr: 0.75 }} />Kanban</ToggleButton>

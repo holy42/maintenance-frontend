@@ -74,7 +74,7 @@ export default function TacheNouvelle() {
     <>
       <PageHeader titre="Créer des tâches à partir d'un problème" fil={[{ libelle: "Tâches", to: `/applications/${application.id}/taches` }, { libelle: "Nouvelles tâches" }]} />
       {archivee && <Alert severity="warning" sx={{ mb: 2 }}>Application archivée : création impossible.</Alert>}
-      <Stack spacing={2} sx={{ maxWidth: 960, width: "100%", mx: "auto" }}>
+      <Stack spacing={2} sx={{ width: "100%", minWidth: 0 }}>
         <Paper sx={{ p: 2 }}>
           <ChampSelect label="Problème" valeur={pid} onChange={(v) => { setPid(v); setBrouillons([]); }}
             options={(candidats ?? []).filter((p) => ["confirme", "en_cours", "rouvert"].includes(p.statut)).map((p) => ({ valeur: String(p.id), libelle: `${p.code} · ${p.titre}` }))} />
@@ -96,13 +96,15 @@ export default function TacheNouvelle() {
             </Stack>
             {brouillons.map((b) => (
               <Paper key={b.cle} sx={{ p: 2, opacity: b.retenue ? 1 : 0.6 }}>
-                <Stack spacing={1.5}>
+                <Stack spacing={1.5} sx={{ minWidth: 0 }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <FormControlLabel label={b.origine === "ia" ? "Retenir cette tâche (proposée par l'IA)" : "Retenir cette tâche"} control={<Checkbox checked={b.retenue} onChange={(e) => maj(b.cle, (x) => ({ ...x, retenue: e.target.checked }))} />} />
                     <IconButton aria-label="Retirer le brouillon" onClick={() => setBrouillons(brouillons.filter((x) => x.cle !== b.cle))}><DeleteOutline /></IconButton>
                   </Stack>
-                  <ChampTexte size="small" label="Titre" value={b.titre} onChange={(e) => maj(b.cle, (x) => ({ ...x, titre: e.target.value }))} />
-                  <ChampTexte size="small" label="Description" multiline value={b.description} onChange={(e) => maj(b.cle, (x) => ({ ...x, description: e.target.value }))} />
+                  <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr", xl: "minmax(0, 1fr) minmax(0, 2fr)" } }}>
+                    <ChampTexte size="small" label="Titre" value={b.titre} onChange={(e) => maj(b.cle, (x) => ({ ...x, titre: e.target.value }))} />
+                    <ChampTexte size="small" label="Description" multiline value={b.description} onChange={(e) => maj(b.cle, (x) => ({ ...x, description: e.target.value }))} />
+                  </Box>
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
                     <ChampSelect label="Responsable" valeur={b.responsable} onChange={(v) => maj(b.cle, (x) => ({ ...x, responsable: v }))} vide="Aucun" options={(membres ?? []).map((m) => ({ valeur: String(m.utilisateur_id), libelle: m.identifiant }))} />
                     <ChampTexte size="small" type="date" label="Échéance" InputLabelProps={{ shrink: true }} fullWidth value={b.echeance} onChange={(e) => maj(b.cle, (x) => ({ ...x, echeance: e.target.value }))} />

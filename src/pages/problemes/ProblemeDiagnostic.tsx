@@ -81,7 +81,7 @@ export default function ProblemeDiagnostic() {
 
   return (
     <Etat loading={loading} error={error}>
-      <Stack spacing={2} sx={{ maxWidth: 1120, width: "100%", mx: "auto" }}>
+      <Stack spacing={2} sx={{ width: "100%", minWidth: 0 }}>
         <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
           {(data ?? []).length > 0 && (
             <Box sx={{ minWidth: { xs: "100%", sm: 320 }, flex: "1 1 320px" }}>

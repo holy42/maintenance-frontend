@@ -65,7 +65,7 @@ export default function ProblemeDecision() {
 
   return (
     <Etat loading={loading} error={error}>
-      <Stack spacing={2} sx={{ maxWidth: 960, width: "100%", mx: "auto" }}>
+      <Stack spacing={2} sx={{ width: "100%", minWidth: 0 }}>
         {!statutOk && <Alert severity="info">La décision se prend pour un problème confirmé, en cours ou rouvert (statut actuel : {libelle("statutProbleme", probleme.statut)}).</Alert>}
         <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "white" }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>

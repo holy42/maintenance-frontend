@@ -44,7 +44,7 @@ export default function DepotGit() {
     <Etat loading={loading} error={error}>
       <>
       <PageHeader titre="Dépôt Git" sousTitre="Configurez une source de code consultée en lecture seule pour cette application." />
-      <Stack spacing={2} sx={{ maxWidth: 1440, width: "100%", mx: "auto" }}>
+      <Stack spacing={2} sx={{ width: "100%", minWidth: 0 }}>
         <Paper sx={{ overflow: "hidden", borderColor: "white" }}>
           <Box sx={{ p: { xs: 2, sm: 2.5 } }}>
             <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={1}>

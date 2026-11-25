@@ -70,7 +70,7 @@ export default function TacheDetail() {
                 </Tooltip>
               )}
             </>} />
-          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.9fr 1fr" }, maxWidth: 1220, width: "100%", mx: "auto" }}>
+          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1.9fr) minmax(300px, 1fr)" }, width: "100%", minWidth: 0 }}>
             <Stack spacing={2}>
               <Paper sx={{ p: 2 }}><Typography variant="subtitle1" fontWeight={600}>Description</Typography><Typography variant="body2">{t.description ?? "—"}</Typography></Paper>
               <Paper sx={{ p: 2 }}>

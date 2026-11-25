@@ -44,7 +44,7 @@ export default function ProblemeTest() {
 
   return (
     <Etat loading={loading} error={error}>
-      <Stack spacing={2} sx={{ maxWidth: 1000, width: "100%", mx: "auto" }}>
+      <Stack spacing={2} sx={{ width: "100%", minWidth: 0 }}>
         <Paper sx={{ p: { xs: 1.75, sm: 2.5 }, borderRadius: 2.5, borderColor: "white" }}>
           <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
             <Typography variant="subtitle1" fontWeight={700}>Description du test</Typography>

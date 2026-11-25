@@ -75,7 +75,7 @@ export default function Notifications() {
             {(data ?? []).map((n) => (
               <Paper key={n.id} sx={(theme) => ({
                 overflow: "hidden",
-                borderColor: n.lu ? theme.palette.secondary.light : theme.palette.divider ,
+                borderColor: n.lu ? "#d7e8f5c2" : theme.palette.divider ,
                 bgcolor: n.lu ? theme.palette.mode === "light" ? "rgba(66, 153, 224, 0.045)" : "rgba(66, 153, 224, 0.09)" :"background.paper",
               })}>
                 <ListItemButton onClick={() => ouvrir(n)} sx={{ p: { xs: 1.5, sm: 2 }, gap: 1.5, alignItems: "flex-start" }}>

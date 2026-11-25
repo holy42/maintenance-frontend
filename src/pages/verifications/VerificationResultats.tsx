@@ -53,7 +53,7 @@ export default function VerificationResultats() {
           {enCours && <Alert severity="info" sx={{ mb: 2 }}>Analyse en cours… cette page se met à jour toute seule.</Alert>}
           {v.statut === "echouee" && <Alert severity="error" sx={{ mb: 2 }}>Vérification échouée : {v.motif_echec ?? "cause inconnue"}.</Alert>}
 
-          <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, mb: 2 }}>
+          <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" }, mb: 2 }}>
             <Compteur titre="Résultats d'outils" valeur={nb((r) => r.source === "outil")} />
             <Compteur titre="Hypothèses de l'IA" valeur={nb((r) => r.source === "ia")} />
             <Compteur titre="Confirmés" valeur={nb((r) => r.statut_validation === "confirme")} />

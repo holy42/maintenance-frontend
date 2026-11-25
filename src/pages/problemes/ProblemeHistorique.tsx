@@ -18,7 +18,7 @@ export default function ProblemeHistorique() {
 
   return (
     <Etat loading={loading} error={error}>
-      <Stack spacing={1.25} sx={{ maxWidth: 1100, width: "100%", mx: "auto" }}>
+      <Stack spacing={1.25} sx={{ width: "100%", minWidth: 0 }}>
         {(data ?? []).length === 0 && (
           <Paper sx={{ p: 4, textAlign: "center", bgcolor: "rgba(66, 153, 224, 0.035)" }}>
             <HistoryOutlined color="disabled" sx={{ fontSize: 36, mb: 1 }} />
@@ -43,7 +43,7 @@ export default function ProblemeHistorique() {
                   </Typography>
                   {(e.ancienne_valeur || e.nouvelle_valeur || e.commentaire) && (
                     <Paper sx={{ p: 1.5, mt: 1.25, bgcolor: "rgba(66, 153, 224, 0.045)", border: 0 }}>
-                      <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" } }}>
+                      <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" } }}>
                         {e.ancienne_valeur && (
                           <Box>
                             <Typography variant="caption" color="text.secondary" fontWeight={700}>Avant</Typography>

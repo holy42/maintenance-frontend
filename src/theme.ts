@@ -24,7 +24,10 @@ export const creerTheme = (sombre: boolean) =>
           sizeSmall: { minHeight: 34 },
         },
       },
-      MuiTextField: { defaultProps: { variant: "outlined", size: "small", color: "secondary" } },
+      MuiTextField: {
+        defaultProps: { variant: "outlined", size: "small", color: "secondary" },
+        styleOverrides: { root: { marginBlock: "2px" } },
+      },
       MuiOutlinedInput: {
         styleOverrides: {
           root: ({ theme }) => ({
@@ -49,7 +52,7 @@ export const creerTheme = (sombre: boolean) =>
       },
       MuiFormControlLabel: {
         styleOverrides: {
-          root: { marginLeft: 0, marginRight: 0, minHeight: 40 },
+          root: { marginLeft: 0, marginRight: 0, marginBlock: "2px", minHeight: 40 },
           label: { lineHeight: 1.4 },
         },
       },

@@ -2,6 +2,7 @@ import BoutonAction from "../../components/BoutonAction";
 import { Alert, Box, LinearProgress, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { messageErreur } from "../../api/client";
 import { enregistrerRapport, rapportIaTests, rapportProblemesTaches } from "../../api/suivi";
 import Etat from "../../components/Etat";
@@ -453,7 +454,8 @@ export default function Rapports() {
   const ctx = useApplicationOptionnelle();
   const { trouver } = useApplications();
   const notifier = useNotifier();
-  const [onglet, setOnglet] = useState<"pt" | "ia">("pt");
+  const [params, setParams] = useSearchParams();
+  const onglet = params.get("vue") === "ia" ? "ia" : "pt";
   const [jours, setJours] = useState("30");
   const appId = ctx?.application.id;
   const pt = useAsync(() => (onglet === "pt" ? rapportProblemesTaches({ application_id: appId, jours: Number(jours) }) : Promise.resolve(null)), [onglet, appId, jours]);
@@ -504,7 +506,14 @@ export default function Rapports() {
       }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center"
           sx={{ px: { xs: 1.5, sm: 2 }, py: 1.5, flexShrink: 0 }} flexWrap="wrap" useFlexGap>
-          <OngletsHorizontaux valeur={onglet} onglets={ONGLETS_RAPPORT} onChange={setOnglet} />
+          <OngletsHorizontaux valeur={onglet} onglets={ONGLETS_RAPPORT} onChange={(valeur) => {
+            setParams((courants) => {
+              const suivants = new URLSearchParams(courants);
+              if (valeur === "pt") suivants.delete("vue");
+              else suivants.set("vue", valeur);
+              return suivants;
+            });
+          }} />
           {onglet === "pt" && <FiltreSelect label="Période" valeur={jours} onChange={(v) => setJours(v || "30")} options={[{ valeur: "7", libelle: "7 jours" }, { valeur: "30", libelle: "30 jours" }, { valeur: "90", libelle: "90 jours" }, { valeur: "365", libelle: "1 an" }]} largeur={150} />}
         </Stack>
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", p: { xs: 1.5, sm: 2 }, pt: 0 }}>
@@ -513,13 +522,13 @@ export default function Rapports() {
         <Etat loading={pt.loading} error={pt.error}>
           {d && (
             <Stack spacing={2}>
-              <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" } }}>
+              <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" } }}>
                 <Indicateur titre="Problèmes créés" valeur={d.problemes_crees} detail={`sur ${d.periode_jours} jours`} />
                 <Indicateur titre="Problèmes terminés" valeur={d.problemes_termines} />
                 <Indicateur titre="Résolution moyenne" valeur={dureeEnJours(d.temps_moyen_resolution.length ? d.temps_moyen_resolution[0].duree_moyenne : null)} detail="par gravité ci-dessous" />
                 <Indicateur titre="Tâches en retard" valeur={d.taches.reduce((a, x) => a + x.nb_en_retard, 0)} />
               </Box>
-              <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" } }}>
+              <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" } }}>
                 <Colonnes titre="Problèmes par gravité" points={d.par_gravite.map((x) => ({
                   libelle: libelle("gravite", x.gravite),
                   nb: x.nb,
@@ -578,13 +587,13 @@ export default function Rapports() {
         <Etat loading={ia.loading} error={ia.error}>
           {r && (
             <Stack spacing={2}>
-              <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" } }}>
+              <Box sx={{ display: "grid", gap: 1.5, gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" } }}>
                 <Indicateur titre="Taux de validation des tests" valeur={valides + refus > 0 ? `${Math.round((100 * valides) / (valides + refus))} %` : "—"} detail={`${valides} sur ${valides + refus} jugés`} />
                 <Indicateur titre="Problèmes rouverts" valeur={rouverts} />
                 <Indicateur titre="Solutions IA évaluées" valeur={r.utilite_solutions_ia.reduce((a, x) => a + x.nb, 0)} />
                 <Indicateur titre="Décisions de correction" valeur={r.decisions_correction.reduce((a, x) => a + x.nb, 0)} />
               </Box>
-              <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" } }}>
+              <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" } }}>
                 <Mosaique titre="Décisions de correction" points={r.decisions_correction.map((x, i) => ({
                   libelle: libelle("typeDecision", x.type_decision),
                   nb: x.nb,

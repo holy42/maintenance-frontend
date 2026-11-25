@@ -52,7 +52,7 @@ export default function CritereNouveau() {
   return (
     <>
       <PageHeader titre="Nouveau critère" fil={[{ libelle: "Critères", to: `/applications/${application.id}/criteres` }, { libelle: "Nouveau critère" }]} />
-      <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1fr 1.3fr" }, maxWidth: 1100, width: "100%", mx: "auto" }}>
+      <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) minmax(0, 1.3fr)" }, width: "100%", minWidth: 0 }}>
         <Paper sx={{ p: 2 }}>
           <Typography variant="subtitle1" fontWeight={600} gutterBottom>1. Votre critère, en langage naturel</Typography>
           <ChampTexte multiline minRows={5} fullWidth value={texte} onChange={(e) => setTexte(e.target.value)}

@@ -2,7 +2,7 @@ import BoutonAction from "../components/BoutonAction";
 import AutoAwesomeOutlined from "@mui/icons-material/AutoAwesomeOutlined";
 import ForumOutlined from "@mui/icons-material/ForumOutlined";
 import { Chip, Stack, Typography } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Outlet, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { messageErreur } from "../api/client";
 import { listSalons } from "../api/collaboration";
@@ -40,7 +40,7 @@ export default function ProblemeLayout() {
   const [params, setParams] = useSearchParams();
   const notifier = useNotifier();
   const { data: probleme, loading, error, reload } = useAsync(() => getProbleme(id), [id]);
-  const [assistantOuvert, setAssistantOuvert] = useState(params.get("assistant") === "1");
+  const assistantOuvert = params.get("assistant") === "1";
 
   const base = `/applications/${application.id}/problemes/${id}`;
   const segment = pathname.startsWith(base) ? pathname.slice(base.length).split("/")[1] ?? "" : "";
@@ -56,9 +56,26 @@ export default function ProblemeLayout() {
     } catch (e) { notifier(messageErreur(e), "error"); }
   }
 
+  function ouvrirAssistant() {
+    if (assistantOuvert) return;
+    setParams((courants) => {
+      const suivants = new URLSearchParams(courants);
+      suivants.set("assistant", "1");
+      return suivants;
+    });
+  }
+
   function fermerAssistant() {
-    setAssistantOuvert(false);
-    if (params.has("assistant")) { params.delete("assistant"); params.delete("question"); setParams(params, { replace: true }); }
+    if (params.has("assistant")) {
+      setParams((courants) => {
+        const suivants = new URLSearchParams(courants);
+        suivants.delete("assistant");
+        suivants.delete("question");
+        suivants.delete("tache");
+        suivants.delete("sous");
+        return suivants;
+      });
+    }
   }
 
   return (
@@ -79,7 +96,7 @@ export default function ProblemeLayout() {
             actions={
               <>
                 <BoutonAction variant="outlined" onClick={ouvrirSalon}>Salon</BoutonAction>
-                <BoutonAction variant="outlined" onClick={() => setAssistantOuvert(true)}>Assistant IA</BoutonAction>
+                <BoutonAction variant="outlined" onClick={ouvrirAssistant}>Assistant IA</BoutonAction>
               </>
             }
           />

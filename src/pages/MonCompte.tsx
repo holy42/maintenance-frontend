@@ -98,7 +98,7 @@ export default function MonCompte() {
   return (
     <>
       <PageHeader titre="Mon compte" />
-      <Stack spacing={2} sx={{ maxWidth: 680, width: "100%", mx: "auto" }}>
+      <Stack spacing={2} sx={{ width: "100%", minWidth: 0 }}>
         <Paper sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 2 }}>
           <Stack direction="row" spacing={1.5} alignItems="center">
             <Avatar sx={{ width: 48, height: 48, bgcolor: "primary.main" }}><AccountCircleOutlined /></Avatar>
@@ -117,12 +117,10 @@ export default function MonCompte() {
             <Typography variant="subtitle1" fontWeight={700}>Mot de passe</Typography>
           </Stack>
           <Stack spacing={2}>
-            <Box sx={{ width: "100%", maxWidth: 620, mx: "auto" }}>
-              <Stack spacing={2}>
-                <ChampTexte fullWidth size="small" label="Mot de passe actuel" type="password" value={ancien} onChange={(e) => setAncien(e.target.value)} autoComplete="current-password" />
-                <ChampTexte fullWidth size="small" label="Nouveau mot de passe" type="password" value={nouveau} onChange={(e) => setNouveau(e.target.value)} autoComplete="new-password" />
-                <ChampTexte fullWidth size="small" label="Confirmer" type="password" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} autoComplete="new-password" />
-              </Stack>
+            <Box sx={{ width: "100%", minWidth: 0, display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", xl: "repeat(3, minmax(0, 1fr))" } }}>
+              <ChampTexte fullWidth size="small" label="Mot de passe actuel" type="password" value={ancien} onChange={(e) => setAncien(e.target.value)} autoComplete="current-password" />
+              <ChampTexte fullWidth size="small" label="Nouveau mot de passe" type="password" value={nouveau} onChange={(e) => setNouveau(e.target.value)} autoComplete="new-password" />
+              <ChampTexte fullWidth size="small" label="Confirmer" type="password" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} autoComplete="new-password" />
             </Box>
             {erreur && <Alert severity="error">{erreur}</Alert>}
             <BoutonAction type="submit" variant="outlined" sx={{ alignSelf: { xs: "stretch", sm: "center" }, minWidth: { sm: 240 } }}>Changer le mot de passe</BoutonAction>

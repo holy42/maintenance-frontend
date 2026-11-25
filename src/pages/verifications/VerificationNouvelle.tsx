@@ -59,7 +59,7 @@ export default function VerificationNouvelle() {
       <PageHeader titre="Nouvelle vérification" fil={[{ libelle: "Vérifications", to: `/applications/${application.id}/verifications` }, { libelle: "Nouvelle vérification" }]} />
       {archivee && <Alert severity="warning" sx={{ mb: 2 }}>Application archivée : impossible de lancer une vérification.</Alert>}
       <Etat loading={loading} error={error}>
-        <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.6fr 1fr" }, maxWidth: 1100, width: "100%", mx: "auto" }}>
+        <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1.6fr) minmax(300px, 1fr)" }, width: "100%", minWidth: 0 }}>
           <Paper sx={{ p: 2, borderColor: "white" }}>
             <Typography variant="subtitle1" fontWeight={600} gutterBottom mb={2}>
               Code à analyser

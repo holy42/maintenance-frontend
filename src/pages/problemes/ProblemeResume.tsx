@@ -55,7 +55,7 @@ export default function ProblemeResume() {
     </Stack>
   );
   return (
-    <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1.7fr 1fr" }, maxWidth: 1220, width: "100%", mx: "auto", alignItems: "start" }}>
+    <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1.7fr) minmax(300px, 1fr)" }, width: "100%", minWidth: 0, alignItems: "start" }}>
       <Stack spacing={2}>
         <Paper sx={carte}>
           {titreSection(<AssignmentOutlined fontSize="small" />, "Description")}

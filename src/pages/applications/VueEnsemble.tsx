@@ -28,13 +28,13 @@ export default function VueEnsemble() {
     <Etat loading={loading} error={error}>
       {data && (
         <Stack spacing={2} sx={{ flex: 1 }}>
-          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" } }}>
+          <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" } }}>
             <Indicateur titre="Problèmes ouverts" valeur={data.problemes_ouverts} />
             <Indicateur titre="Critiques" valeur={data.problemes_critiques} alerte={data.problemes_critiques > 0} />
             <Indicateur titre="Tâches en cours" valeur={data.taches_en_cours} detail={`${data.taches_en_retard} en retard`} alerte={data.taches_en_retard > 0} />
             <Indicateur titre="Tests en attente" valeur={data.tests_en_attente} />
           </Box>
-          <Box sx={{ display: "grid", gap: 2, flex: 1, gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, "& > .MuiPaper-root": { height: "100%" } }}>
+          <Box sx={{ display: "grid", gap: 2, flex: 1, gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" }, "& > .MuiPaper-root": { height: "100%" } }}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="subtitle1" fontWeight={600}>Dernière vérification</Typography>
               {data.derniere_verification ? (
