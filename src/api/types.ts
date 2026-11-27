@@ -47,7 +47,7 @@ export interface Verification {
 }
 export interface VerificationCreation { branche: string; dossiers: string[]; exclusions: string[]; critere_ids: Id[]; avec_interpretation_ia: boolean }
 /** Fiabilité ESTIMÉE par notre modèle (étape 3 : l'anomalie est-elle réelle ? étape 6 : la solution sera-t-elle validée ?).
- *  Distincte de la confiance déclarée par Gemini. `appris` est faux pour le score de départ par règles. */
+ *  Distincte de la confiance déclarée par l'IA. `appris` est faux pour le score de départ par règles. */
 export interface FacteurFiabilite { variable: string; libelle: string; effet: number; sens: "augmente" | "diminue" }
 export interface Fiabilite {
   etape: 3 | 6; score: number; pourcentage: number; niveau: "faible" | "moyen" | "eleve"; libelle_niveau: string;

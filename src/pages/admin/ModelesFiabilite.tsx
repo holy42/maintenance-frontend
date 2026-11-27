@@ -22,7 +22,9 @@ const ALGOS = [
 ];
 const ALGO_LIBELLE: Record<string, string> = {
   logistique: "Régression logistique", foret: "Forêt aléatoire", constant: "Référence : prédiction constante",
-  confiance_declaree_par_gemini: "Référence : confiance déclarée par Gemini", sklearn_logistique: "scikit-learn : logistique", sklearn_foret: "scikit-learn : forêt",
+  confiance_declaree_par_ia: "Référence : confiance déclarée par l'IA",
+  confiance_declaree_par_gemini: "Référence : confiance déclarée par l'IA", // ancien nom (versions entraînées avant le renommage)
+  sklearn_logistique: "scikit-learn : logistique", sklearn_foret: "scikit-learn : forêt",
 };
 const n3 = (v: number | null | undefined) => (v === null || v === undefined ? "—" : v.toFixed(3));
 

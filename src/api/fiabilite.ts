@@ -1,7 +1,7 @@
 import { api, donnees } from "./client";
 import type { ApercuFiabilite, Id, ModeleFiabiliteVersion } from "./types";
 
-/** Administration du modèle de fiabilité (réservé à l'administrateur). Étape 3 : preuves de l'analyse ; étape 6 : solutions de Gemini. */
+/** Administration du modèle de fiabilité (réservé à l'administrateur). Étape 3 : preuves de l'analyse ; étape 6 : solutions de l'IA. */
 export const apercuFiabilite = () => donnees<ApercuFiabilite[]>(api.get("/fiabilite/apercu"));
 export const listModelesFiabilite = () => donnees<ModeleFiabiliteVersion[]>(api.get("/fiabilite/modeles"));
 export const entrainerModeleFiabilite = (etape: 3 | 6, algorithme: "auto" | "logistique" | "foret") =>

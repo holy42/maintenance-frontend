@@ -1,7 +1,7 @@
 import { Box, LinearProgress, Stack, Typography } from "@mui/material";
 import { pourcent } from "../utils/format";
 
-/** Confiance DÉCLARÉE par l'IA (Gemini), en pourcentage. Ce n'est pas la fiabilité estimée par notre modèle (voir FiabiliteBadge). */
+/** Confiance DÉCLARÉE par l'IA, en pourcentage. Ce n'est pas la fiabilité estimée par notre modèle (voir FiabiliteBadge). */
 export default function BarreConfiance({ valeur }: { valeur: number | string | null | undefined }) {
   const p = pourcent(valeur);
   if (p === null) return null;

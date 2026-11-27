@@ -21,7 +21,7 @@ export function FiabiliteChip({ fiabilite }: { fiabilite: Fiabilite | null | und
 }
 
 /**
- * Fiabilité ESTIMÉE par notre modèle (distincte de la « confiance déclarée » par Gemini, affichée ailleurs).
+ * Fiabilité ESTIMÉE par notre modèle (distincte de la « confiance déclarée » par l'IA, affichée ailleurs).
  * Étape 3 : probabilité que l'anomalie soit réelle. Étape 6 : probabilité que la solution soit validée au test.
  */
 export default function FiabiliteBadge({ fiabilite, titre = "Fiabilité estimée" }: { fiabilite: Fiabilite | null | undefined; titre?: string }) {
